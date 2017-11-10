@@ -1,0 +1,283 @@
+unit Configuracoes;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  FireDAC.Comp.Client,
+  Data.DB, Base, atributos,uDMnfebkp;
+
+  Type
+  [attTabela('configuracoes')]
+  TConfiguracoes = class(TTabela)
+  const
+  cNomeTabela = 'configuracoes';
+  private
+  FId            : integer;
+  FIDusuario      : Integer;
+  FDescriConfig   : string;
+  FNameBD        : string;
+  FPathBD        : string;
+  FSenhaBD       : string;
+  FUsuarioBD     : string;
+  {NFe}
+  FNFePathEnvio   : string;
+  FNFePathProcessado : string;
+  FNFePathRejeitado : string;
+  FNFePathRetornoLido : string;
+  FNFePathPDFSalvo  : string;
+  {NFCe}
+  FNFCePathEnvio   : string;
+  FNFCePathProcessado : string;
+  FNFCePathRejeitado  : string;
+  FNFCePathRetornoLido : string;
+  FNFCePathPDFSalvo : string;
+
+  {NFSe}
+  FNFSePathEnvio       : string;
+  FNFSePathProcessado  : string;
+  FNFSePathRejeitado   : string;
+  FNFSePathRetornoLido : string;
+  FNFSePathPDFSalvo    : string;
+
+
+  public                          NFePathRejeitado
+  [attPK]
+  [TCampo('id', tcPK)]
+  property Id           : integer read FId    write FId;
+  property IDusuario    : Integer read FIDusuario      write FIDusuario;
+  property DescriConfig : string  read FDescriConfig    write FDescriConfig;
+  property NameBD       : string  read FNameBD    write FNameBD;
+  property PathBD       : string  read FPathBD    write FPathBD;
+  property SenhaBD      : string  read FSenhaBD   write FSenhaBD;
+  property UsuarioBD    : string  read FUsuarioBD write FUsuarioBD;
+  {NFe}
+  property NFePathEnvio        : string read FNFePathEnvio    write FNFePathEnvio;
+  property NFePathProcessado   : string read FNFePathProcessado  write FNFePathProcessado;
+  property NFePathRejeitado    : string read FNFePathRejeitado  write FNFePathRejeitado;
+  property NFePathRetornoLido  : string read FNFePathRetornoLido  write FNFePathRetornoLido;
+  property NFePathPDFSalvo     : string read FNFePathPDFSalvo   write FNFePathPDFSalvo;
+  {NFCe}
+  property : string read FNFCePathEnvio   write FNFCePathEnvio;
+  property : string read FNFCePathProcessado write FNFCePathProcessado;
+  property : string read FNFCePathRejeitado  write FNFCePathRejeitado;
+  property : string read FNFCePathRetornoLido write FNFCePathRetornoLido;
+  property : string read FNFCePathPDFSalvo write FNFCePathPDFSalvo;
+  {NFSe}
+  property NFSePathSend    : string read FNFSePathEnvio   write FNFSePathEnvio;
+  property NFSePathReturn  : string read FNFSePathProcessado write FNFSePathProcessado;
+  property PathRetEnvNFSe  : string read FNFSePathRejeitado  write FNFSePathRejeitado;
+  property PathRetCancNFSe : string read FNFSePathRetornoLido write FNFSePathRetornoLido;
+  property PathRetInutNFSe : string read FNFSePathPDFSalvo write FNFSePathPDFSalvo;
+  end;
+
+ type
+   TDaoConfiguracoes= class(TObject)
+   public
+     function fInserirConfiguracoes(pTab: TConfiguracoes): Integer;
+     function fSalvarConfiguracoes (pTab: TConfiguracoes): Boolean;
+     function fExcluirConfiguracoes(pTab : TConfiguracoes): Boolean;
+     function fCarregaConfiguracoes (var pTab: TConfiguracoes; aCampos : array of string): TDataSet;
+     function fSelectAllConfiguracoes(pTab: TConfiguracoes): Boolean;
+     function fBuscaIDConfig(pTab: TConfiguracoes; pConfigDescri: string): Integer;
+     function ConsultaSQLConfiguracoes(pTab : TConfiguracoes; aCampos : array of string):TDataSet;
+
+   private
+   end;
+
+const
+   cretsai = 'retsai_*.xml';
+   creteven = 'reteven_*.xml';
+   cretinut = 'vretinut_*.xml';
+var
+  tabConfiguracoes : TConfiguracoes;
+  daoConfiguracoes : TDaoConfiguracoes;
+implementation
+
+{ TDaoLogin }
+function TDaoConfiguracoes.fSalvarConfiguracoes(pTab: TConfiguracoes): Boolean;
+begin
+  try
+    if not Assigned(pTab) then
+      Result := False;
+
+    with DM_NFEDFE do
+    begin
+      Dao.StartTransaction;
+      try
+        Result := Dao.Salvar(pTab) > 0;
+        Dao.Commit;
+      except on E: Exception do
+        begin
+          Dao.RollBack;
+          ShowMessage('Ocorreu um problema ao executar operação: ' + e.Message);
+        end;
+      end;
+    end;
+  finally
+  end;
+end;
+
+function TDaoConfiguracoes.fSelectAllConfiguracoes(pTab: TConfiguracoes): Boolean;
+var Registros : Integer;
+begin
+  try
+    Result := DM_NFEDFE.Dao.SelectAll(pTab).RecordCount > 0;
+  finally
+
+  end;
+end;
+
+function TDaoConfiguracoes.ConsultaSQLConfiguracoes(pTab: TConfiguracoes;
+  aCampos: array of string): TDataSet;
+var wDataSet : TDataSet;
+begin
+  wDataSet := TDataSet.Create(Application);
+  try
+    wDataSet := DM_NFEDFE.Dao.ConsultaTab(ptab,aCampos);
+    Result := wDataSet;
+  finally
+    FreeAndNil(wDataSet);
+  end;
+end;
+
+function TDaoConfiguracoes.fBuscaIDConfig(pTab: TConfiguracoes;
+  pConfigDescri: string): Integer;
+var
+  DatSet : TDataSet;
+  TabAux : TConfiguracoes;
+begin
+  DatSet := TDataSet.Create(nil);
+  TabAux := pTab;
+  try
+    with DM_NFEDFE do
+    begin
+      TabAux.DescriConfig := pConfigDescri;
+      DatSet := dao.ConsultaTab(TabAux, ['DescriConfig']);
+
+      Result := DatSet.FieldByName('id').AsInteger;
+    end;
+
+  finally
+   FreeAndNil(DatSet);
+   FreeAndNil(TabAux);
+  end;
+end;
+
+function TDaoConfiguracoes.fCarregaConfiguracoes(var pTab: TConfiguracoes; aCampos : array of string): TDataSet;
+var DatSet : TDataSet;
+begin
+  DatSet := TDataSet.Create(nil);
+  if not Assigned(pTab) then
+    pTab.Create;
+
+  try
+    with DM_NFEDFE, pTab do
+    begin
+      DatSet := Dao.ConsultaTab(pTab, aCampos);
+
+      if DatSet.RecordCount >= 1 then
+      begin
+        Fid := DatSet.FieldByName('id').AsInteger;
+        FUsuarioBD := DatSet.FieldByName('UsuarioBD').AsString;
+        FSenhaBD := DatSet.FieldByName('SenhaBD').AsString;
+        FPathBD := DatSet.FieldByName('PathBD').AsString;
+        FNameBD := DatSet.FieldByName('NameBD').AsString;
+        FNFePathEnvio := DatSet.FieldByName('NFePathSend').AsString;
+        FNFePathProcessado := DatSet.FieldByName('NFePathReturn').AsString;
+        FNFePathPDFSalvo := DatSet.FieldByName('PathRetEnvNFe').AsString;
+        FNFePathRejeitado := DatSet.FieldByName('PathRetCancNFe').AsString;
+        FNFePathRetornoLido := DatSet.FieldByName('PathRetInutNFe').AsString;
+        FExtAutNFe := DatSet.FieldByName('ExtAutNFe').AsString;
+        FExtCancNFe := DatSet.FieldByName('ExtCancNFe').AsString;
+        FExtInutNFe := DatSet.FieldByName('ExtInutNFe').AsString;
+        FNFCePathEnvio := DatSet.FieldByName('NFCePathSend').AsString;
+        FNFCePathProcessado := DatSet.FieldByName('NFCePathReturn').AsString;
+        FNFCePathRejeitado := DatSet.FieldByName('PathRetEnvNFCe').AsString;
+        FNFCePathRetornoLido := DatSet.FieldByName('PathRetCancNFCe').AsString;
+        FNFCePathPDFSalvo := DatSet.FieldByName('PathRetInutNFCe').AsString;
+        FExtAutNFCe := DatSet.FieldByName('ExtAutNFCe').AsString;
+        FExtCancNFCe := DatSet.FieldByName('ExtCancNFCe').AsString;
+        FExtInutNFCe := DatSet.FieldByName('ExtInutNFCe').AsString;
+        FNFSePathEnvio := DatSet.FieldByName('NFSePathSend').AsString;
+        FNFSePathProcessado := DatSet.FieldByName('NFSePathReturn').AsString;
+        FNFSePathRejeitado := DatSet.FieldByName('PathRetEnvNFSe').AsString;
+        FNFSePathRetornoLido := DatSet.FieldByName('PathRetCancNFSe').AsString;
+        FNFSePathPDFSalvo := DatSet.FieldByName('PathRetInutNFSe').AsString;
+        FExtAutNFSe := DatSet.FieldByName('ExtAutNFSe').AsString;
+        FExtCancNFSe := DatSet.FieldByName('ExtCancNFSe').AsString;
+        FExtInutNFSe := DatSet.FieldByName('ExtInutNFSe').AsString;
+        FDescriConfig := DatSet.FieldByName('DescriConfig').AsString;
+        FIDusuario := DatSet.FieldByName('IDusuario').AsInteger;
+
+        result := DatSet;
+      end
+      else
+      begin
+        ShowMessage('Registro não encontrado!');
+        result := nil;
+        Exit;
+      end;
+    end;
+  finally
+   DatSet.Free;
+  end;
+
+end;
+
+function TDaoConfiguracoes.fExcluirConfiguracoes(pTab: TConfiguracoes): Boolean;
+begin
+  try
+  Result := False;
+  with DM_NFEDFE do
+  begin
+    Dao.StartTransaction;
+    try
+    Result := (Dao.Excluir(pTab) > 0);
+    Dao.Commit;
+    except
+      on E: Exception do
+      begin
+        if Dao.InTransaction then
+          Dao.RollBack;
+
+        ShowMessage('Ocorreu um problema ao executar operação excluir: ' + e.Message);
+      end;
+    end;
+  end;
+  finally
+    ptab.Free;
+  end;
+end;
+
+function TDaoConfiguracoes.fInserirConfiguracoes(ptab: TConfiguracoes): Integer;
+var tabAux : TConfiguracoes;
+begin
+  try
+    tabAux := pTab;
+    Result := 0;
+    with DM_NFEDFE do
+     begin
+       Dao.StartTransaction;
+        try
+          Result := Dao.Inserir(tabAux);
+          Dao.Commit;
+        except
+          on E: Exception do
+          begin
+            if Dao.InTransaction then
+              Dao.RollBack;
+
+            ShowMessage('Ocorreu um problema ao executar operação inserir: ' + e.Message);
+          end;
+        end;
+     end;
+  finally
+//    FreeAndNil(tabAux);
+  end;
+
+end;
+
+end.

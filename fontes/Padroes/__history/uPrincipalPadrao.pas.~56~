@@ -1,0 +1,219 @@
+unit uPrincipalPadrao;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, System.ImageList, Vcl.ImgList,
+  Vcl.ComCtrls, Vcl.ExtCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids,uDMnfebkp,
+  Vcl.StdCtrls, Vcl.ToolWin;
+
+
+type
+  TOrdena = (ordCodigo, ordData, ordChave);
+
+  TfrmNFeDFEPrincipal = class(TForm)
+    mmPrincipal: TMainMenu;
+    mniArquivo: TMenuItem;
+    mniNovo: TMenuItem;
+    mniPessoa: TMenuItem;
+    mniPonto: TMenuItem;
+    mniN1: TMenuItem;
+    mnisair1: TMenuItem;
+    mniFerrametas1: TMenuItem;
+    mniJanela1: TMenuItem;
+    mniCascata: TMenuItem;
+    mniAjuda: TMenuItem;
+    mniLadoHorizontal: TMenuItem;
+    mniLadoVertical: TMenuItem;
+    mniConfiguracoes: TMenuItem;
+    mniAjustesdoponto: TMenuItem;
+    mniFeriado: TMenuItem;
+    ilPrincipal: TImageList;
+    statPrincipal: TStatusBar;
+    tmrHora: TTimer;
+    mniReconectar: TMenuItem;
+    mniConfigBD: TMenuItem;
+    dbgNfebkp: TDBGrid;
+    pnlRodape: TPanel;
+    cbOrdenaGrid: TComboBox;
+    tlbMenuPrincipal: TToolBar;
+    ToolButton1: TToolButton;
+    pmExporta: TPopupMenu;
+    Expo1: TMenuItem;
+    Exportatodos1: TMenuItem;
+    procedure FormCreate(Sender: TObject);
+    procedure mniConfigBDClick(Sender: TObject);
+    procedure mniReconectarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure cbOrdenaGridChange(Sender: TObject);
+    procedure dbgNfebkpDrawColumnCell(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
+    procedure ToolButton1Click(Sender: TObject);
+  private
+    { Private declarations }
+    procedure fOrdenaGrid(prOrder: Integer);
+
+  public
+    { Public declarations }
+  published
+  function OpenTabela:boolean;
+  end;
+
+var
+  frmNFeDFEPrincipal: TfrmNFeDFEPrincipal;
+
+implementation
+
+uses
+  uConfigBD, uMetodosUteis, uPadraoCons;
+
+{$R *.dfm}
+
+procedure TfrmNFeDFEPrincipal.cbOrdenaGridChange(Sender: TObject);
+begin
+  fOrdenaGrid(cbOrdenaGrid.ItemIndex);
+end;
+
+procedure TfrmNFeDFEPrincipal.dbgNfebkpDrawColumnCell(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+begin
+  with (Sender as TDBGrid).Canvas do
+  begin
+    if (gdSelected in State) then
+    begin
+     Brush.Color := cl3DLight;
+     FillRect(Rect);
+     Font.Color:= clBlue;
+     TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
+    end;
+  end;
+  dbgNfebkp.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+end;
+
+procedure TfrmNFeDFEPrincipal.fOrdenaGrid(prOrder: Integer);
+var wOrdem :String;
+begin
+  try
+
+    case prOrder of
+     0 : wOrdem := 'ID';
+     1 : wOrdem := 'DATAEMISSao';
+     2 : wOrdem := 'CHAVE';
+    else
+     wOrdem := 'ID';
+    end;
+
+
+    with DM_NFEDFE do
+    begin
+    SQLNFe_DFE.Close;
+    SQLNFe_DFE.SQL.Clear;
+    SQLNFe_DFE.SQL.Add('Select * from');
+    SQLNFe_DFE.SQL.Add(' M3_DFE');
+    SQLNFe_DFE.SQL.Add(' order by '+wOrdem);
+    SQLNFe_DFE.Open;
+
+    cdsNFebkp.Close;
+    cdsNFebkp.Open;
+
+    SQLNFe_DFE.Close;
+    end;
+  except
+  on E: Exception do
+  begin
+    showmessage(E.Message + 'Houve um problema na rotina fOrdenaGrid da tabela M3_DFE');
+  end;
+  end;
+end;
+
+procedure TfrmNFeDFEPrincipal.FormCreate(Sender: TObject);
+var
+ statusCon : string;
+begin
+  if ConexaoBD(DM_NFEDFE.conConexaoDB) then
+  begin
+   statusCon := 'Conectado';
+  end
+  else
+  begin
+    statusCon := 'Desconecado';
+  end;
+
+ statPrincipal.Panels[1].Text := statusCon;
+end;
+
+procedure TfrmNFeDFEPrincipal.FormShow(Sender: TObject);
+begin
+ OpenTabela;
+end;
+
+procedure TfrmNFeDFEPrincipal.mniConfigBDClick(Sender: TObject);
+begin
+  frmConfigBD := TfrmConfigBD.Create(application);
+  try
+    frmConfigBD.showmodal;
+  finally
+    frmConfigBD.Free;
+  end;
+end;
+
+procedure TfrmNFeDFEPrincipal.mniReconectarClick(Sender: TObject);
+var statusCon : string;
+begin
+  if ConexaoBD(DM_NFE_DFE.conNFe_DFE) then
+   statusCon := 'Conectado';
+  else
+    statusCon := 'Desconecado';
+end;
+
+function TfrmNFeDFEPrincipal.OpenTabela: boolean;
+begin
+  try
+    with DM_NFE_DFE do
+    begin
+      SQLNFe_DFE.Close;
+      SQLNFe_DFE.SQL.Clear;
+      SQLNFe_DFE.SQL.Add('Select * from');
+      SQLNFe_DFE.SQL.Add(' M3_DFE');
+      SQLNFe_DFE.SQL.Add(' order by id');
+      SQLNFe_DFE.Open;
+
+      cdsNFebkp.Close;
+      cdsNFebkp.Open;
+
+      SQLNFe_DFE.Close;
+    end;
+  except
+    on E: Exception do
+    begin
+      showmessage(E.Message + 'Houve um problema na rotina Open da tabela M3_DFE');
+    end;
+  end;
+end;
+
+procedure TfrmNFeDFEPrincipal.ToolButton1Click(Sender: TObject);
+begin
+  Result := False;
+  try
+    with DMnfebkp do
+    begin
+      SQLNFe_DFE.Close;
+      SQLNFe_DFE.SQL.Clear;
+      SQLNFe_DFE.SQL.Add('Insert into feriados');
+      SQLNFe_DFE.SQL.Add('(data, descricao)');
+      SQLNFe_DFE.SQL.Add(' values');
+      SQLNFe_DFE.SQL.Add('( :data, :descricao)');
+      SQLNFe_DFE.ParamByName('data').AsDate := dtpDataFer.Date;
+      SQLNFe_DFE.ParamByName('descricao').AsString := Trim(edDescricaoFer.Text);
+      Result := SQLNFe_DFE.ExecSQL() = 1;
+    end;
+  except
+    on E: Exception do
+    begin
+      showmessage(E.Message + 'Houve um problema na rotina Inserir Feriados');
+    end;
+  end;
+end;
+
+end.

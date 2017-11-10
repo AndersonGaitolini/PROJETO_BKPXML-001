@@ -1,0 +1,70 @@
+object foConsultaPadrao: TfoConsultaPadrao
+  Left = 0
+  Top = 0
+  Caption = 'foConsultaPadrao'
+  ClientHeight = 478
+  ClientWidth = 771
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  PixelsPerInch = 120
+  TextHeight = 16
+  object pnlCentral: TPanel
+    Left = 0
+    Top = 65
+    Width = 771
+    Height = 394
+    Align = alClient
+    TabOrder = 1
+    ExplicitLeft = 272
+    ExplicitTop = 200
+    ExplicitWidth = 185
+    ExplicitHeight = 41
+    object dbg1: TDBGrid
+      Left = 1
+      Top = 1
+      Width = 769
+      Height = 343
+      Align = alClient
+      TabOrder = 0
+      TitleFont.Charset = DEFAULT_CHARSET
+      TitleFont.Color = clWindowText
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Style = []
+    end
+    object pnlRodape: TPanel
+      Left = 1
+      Top = 344
+      Width = 769
+      Height = 49
+      Align = alBottom
+      TabOrder = 1
+    end
+  end
+  object stat1: TStatusBar
+    Left = 0
+    Top = 459
+    Width = 771
+    Height = 19
+    Panels = <>
+    ExplicitLeft = 216
+    ExplicitTop = 448
+    ExplicitWidth = 0
+  end
+  object JvToolBar1: TJvToolBar
+    Left = 0
+    Top = 0
+    Width = 771
+    Height = 65
+    ButtonHeight = 65
+    ButtonWidth = 97
+    Caption = 'JvToolBar1'
+    TabOrder = 0
+  end
+end

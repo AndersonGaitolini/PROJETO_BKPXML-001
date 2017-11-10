@@ -1,0 +1,121 @@
+program nfebkp;
+
+uses
+  Vcl.Forms,
+  Vcl.Controls,
+  SysUtils,
+  uDMnfebkp in 'J:\fontes\uDMnfebkp.pas' {DM_NFEDFE: TDataModule},
+  uMetodosUteis in 'J:\fontes\uMetodosUteis.pas',
+  uPadraoCons in 'J:\fontes\Padroes\uPadraoCons.pas' {frmPadraoCons},
+  uFoPrincipal in 'J:\fontes\uFoPrincipal.pas' {foPrincipal},
+  Atributos in 'J:\fontes\ORM\Atributos.pas',
+  Base in 'J:\fontes\ORM\Base.pas',
+  DaoFD in 'J:\fontes\ORM\DaoFD.pas',
+  GerarClasse.BancoFirebird in 'J:\fontes\ORM\GerarClasse.BancoFirebird.pas',
+  GerarClasse.BancoMySQL in 'J:\fontes\ORM\GerarClasse.BancoMySQL.pas',
+  GerarClasse in 'J:\fontes\ORM\GerarClasse.pas',
+  GerarClasseFireDac in 'J:\fontes\ORM\GerarClasseFireDac.pas',
+  Configuracoes in 'J:\fontes\classes\Configuracoes.pas',
+  ufoGerarClasse in 'J:\fontes\ORM\ufoGerarClasse.pas' {foGeraClasse},
+  Lm_bkpdfe in 'J:\fontes\classes\Lm_bkpdfe.pas',
+  uPadraoEdicao in 'J:\fontes\Padroes\uPadraoEdicao.pas' {frmPadraoEdi},
+  uLoadXML in 'J:\fontes\uLoadXML.pas',
+  ufoLoginPadrao in 'J:\fontes\Padroes\ufoLoginPadrao.pas' {foLoginPadrao},
+  ufoLogin in 'J:\fontes\ufoLogin.pas' {foLogin},
+  Usuarios in 'J:\fontes\classes\Usuarios.pas',
+  uFoConsultaPadrao in 'J:\fontes\Padroes\uFoConsultaPadrao.pas' {foConsultaPadrao},
+  uFoConsConfiguracao in 'J:\fontes\uFoConsConfiguracao.pas' {foConsConfiguracoes},
+  ConfigPadrao in 'J:\fontes\classes\ConfigPadrao.pas',
+  uFoConfigPadrao in 'J:\fontes\uFoConfigPadrao.pas' {foConfigPadrao},
+  uFoConfiguracao in 'J:\fontes\uFoConfiguracao.pas' {foConfiguracao},
+  uRotinas in 'J:\fontes\uRotinas.pas',
+  uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao};
+
+var
+ ShowResult : Byte;
+ wMsg, wFileName : string;
+ SoapUsuario : TUsuarios;
+ i : integer;
+{$R *.res}
+begin
+
+
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
+  if (ParamCount = 0) then
+  begin
+    if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
+    begin
+      Application.Terminate;
+      exit;
+    end;
+    Application.CreateForm(TfoLogin, foLogin);
+    ShowResult := foLogin.ShowModal;
+
+    if ShowResult = mrOk then
+    begin
+      wMsg := foLogin.statMsg.Panels[1].Text;
+      SoapUsuario :=  tabUsuarios;
+
+      FreeAndNil(foLogin); //Libera o form de Login da memória
+      Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
+      tabUsuarios := SoapUsuario;
+      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
+      Application.Run; //Roda a aplicação
+      SoapUsuario.Free;
+     end
+    else
+    if ShowResult = mrCAncel then //Caso o retorno da tela de Login seja mrCancel então
+      Application.Terminate; //Encerra a aplicação  end
+  end
+  else
+  if ParamCount = 2 then
+  begin
+    if ParamCount > 0 then
+    for I := 0 to ParamCount do
+      uMetodosUteis.AddLog('LOGPARAMSTR','E:', ParamStr(i));
+
+
+   tabUsuarios.Usuario := Trim(ParamStr(1));
+   tabUsuarios.Senha    := Trim(ParamStr(2));
+
+   if daoLogin.fLogar(tabUsuarios) then
+   begin
+     tabConfiguracoes.id := tabUsuarios.ConfigSalva;
+     Application.CreateForm(TFoPrincipal, FoPrincipal);
+     Application.Run;
+   end;
+
+   Application.Terminate;
+  end
+  else
+  if (ParamCount >= 3) then
+  begin
+
+    if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
+    begin
+      Application.Terminate;
+      exit;
+    end;
+
+    if ParamCount > 0 then
+    for I := 0 to ParamCount do
+      uMetodosUteis.AddLog('LOGPARAMSTR','E:', ParamStr(i));
+
+    tabUsuarios.Usuario := Trim(ParamStr(1));
+    tabUsuarios.Senha    := Trim(ParamStr(2));
+
+   if (daoLogin.fLogar(tabUsuarios)) then
+   begin
+     tabConfiguracoes.id := tabUsuarios.ConfigSalva;
+     daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
+
+     uRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(3));
+   end;
+
+   Application.Terminate;
+  end;
+
+    //by Anderson Gaitolini
+end.

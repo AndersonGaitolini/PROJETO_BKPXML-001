@@ -1,0 +1,70 @@
+object frmTelaLoginPadrao: TfrmTelaLoginPadrao
+  Left = 640
+  Top = 540
+  Caption = 'Tela de acesso'
+  ClientHeight = 371
+  ClientWidth = 303
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  Menu = mmMenuTelaAcesso
+  OldCreateOrder = False
+  Position = poDesigned
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
+  PixelsPerInch = 120
+  TextHeight = 16
+  object pnl1: TPanel
+    Left = 0
+    Top = 0
+    Width = 303
+    Height = 371
+    Align = alClient
+    TabOrder = 0
+    object lbUserNome: TLabel
+      Left = 91
+      Top = 140
+      Width = 33
+      Height = 16
+      Caption = 'Nome'
+    end
+    object lbUSerNivelAcesso: TLabel
+      Left = 91
+      Top = 162
+      Width = 76
+      Height = 16
+      Caption = 'Nivel Acesso:'
+    end
+    object edUsuario: TEdit
+      Left = 91
+      Top = 72
+      Width = 121
+      Height = 24
+      TabOrder = 0
+    end
+    object edSenha: TEdit
+      Left = 91
+      Top = 110
+      Width = 121
+      Height = 24
+      PasswordChar = '*'
+      TabOrder = 1
+    end
+    object btnAcessar: TBitBtn
+      Left = 105
+      Top = 184
+      Width = 75
+      Height = 25
+      Caption = '&Acessar'
+      TabOrder = 2
+    end
+  end
+  object mmMenuTelaAcesso: TMainMenu
+    Left = 248
+    Top = 16
+  end
+end

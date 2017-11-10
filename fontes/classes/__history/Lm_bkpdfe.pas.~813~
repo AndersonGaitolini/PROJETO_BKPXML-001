@@ -1,0 +1,643 @@
+unit Lm_bkpdfe;
+
+interface
+
+uses
+  Base, System.SysUtils, Atributos, System.Classes,Data.DB, uDMnfebkp,FireDAC.Comp.Client,Vcl.DBGrids,
+  Datasnap.DBClient, Datasnap.Provider,Vcl.Forms,Vcl.Dialogs,Vcl.Controls;
+type
+  TPushXML = (pshNone, pshEnvio1st, pshEnvioSinc);
+  TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
+  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven);
+
+type
+  TCNPJDOC = class(TObject)
+   private 
+   FDocumento: String;
+   FFantasia : String;
+   FParametro: boolean;
+   procedure setDocumento(const Value: string);
+   procedure setParametro(const Value: boolean);
+
+   public
+   property Fantasia : String read FFantasia write FFantasia;
+   property Documento: String read FDocumento write setDocumento;
+   property Parametro: boolean read FParametro write setParametro;
+  end;
+
+  [attTabela('LM_BKPDFE')]
+  TLm_bkpdfe = class(TTabela)
+  private
+    FId: Integer;
+    FStatus : Integer;
+//    FEmpresa: SmallInt;
+//    FFilial :SmallInt;
+    FCNPJ : string;
+    FChave: string;
+    FIdf_documento: Integer;
+    FDataemissao: TDate;
+    FDatarecto: TDate;
+    FMotivo: string;
+    FProtocolocanc: string;
+    FProtocolorecto: string;
+    FDataalteracao: TDate;
+    FTipo: string;
+    FEmailsnotificados: string;
+    FTipoambiente: string;
+    FXmlenvio: TStream;
+    FXmlextend: TStream;
+    FMotivocanc: string;
+    FXmlenviocanc: TStream;
+    FXmlextendcanc: TStream;
+    FProtocoloaut: string;
+    FCampoStream : TStream;
+    FSelecao: string;
+    FCheckBox: SmallInt;
+
+  public
+    [attPK]
+    property Id: Integer read FId write FId;
+    property Status : Integer read FStatus write FStatus;
+    property CNPJ: string read FCNPJ write FCNPJ;
+    property Chave: string read FChave write FChave;
+    property Idf_documento: Integer read FIdf_documento write FIdf_documento;
+    property Dataemissao: TDate read FDataemissao write FDataemissao;
+    property Datarecto: TDate read FDatarecto write FDatarecto;
+    property Motivo: string read FMotivo write FMotivo;
+    property Protocolocanc: string read FProtocolocanc write FProtocolocanc;
+    property Protocolorecto: string read FProtocolorecto write FProtocolorecto;
+    property Dataalteracao: TDate read FDataalteracao write FDataalteracao;
+    property Tipo: string read FTipo write FTipo;
+    property Emailsnotificados: string read FEmailsnotificados write FEmailsnotificados;
+    property Tipoambiente: string read FTipoambiente write FTipoambiente;
+    property Xmlenvio: TStream read FXmlenvio write FXmlenvio;
+    property Xmlextend: TStream read FXmlextend write FXmlextend;
+    property Motivocanc: string read FMotivocanc write FMotivocanc;
+    property Xmlenviocanc: TStream read FXmlenviocanc write FXmlenviocanc;
+    property Xmlextendcanc: TStream read FXmlextendcanc write FXmlextendcanc;
+    property Protocoloaut: string read FProtocoloaut write FProtocoloaut;
+    property CampoStream : TStream read FCampoStream write FCampoStream;
+    property Selecao: string read FSelecao write FSelecao;
+    property CheckBox: SmallInt read FCheckBox write FCheckBox;
+  end;
+
+type
+  TFieldFiltros  = (ffID,
+                    ffStatus,
+                    ffCHAVE,
+//                    ffEmpresa,
+//                    ffFilial,
+                    ffCNPJ,
+                    ffIDF_DOCUMENTO,
+                    ffDATAEMISSAO,
+                    ffDATARECTO,
+                    ffMOTIVO,
+                    ffPROTOCOLOCANC,
+                    ffPROTOCOLORECTO,
+                    ffDATAALTERACAO,
+                    ffTIPO,
+                    ffEMAILSNOTIFICADOS,
+                    ffTIPOAMBIENTE,
+                    ffXMLENVIO,
+                    ffXMLEXTEND,
+                    ffMOTIVOCANC,
+                    ffXMLENVIOCANC,
+                    ffXMLEXTENDCANC,
+                    ffPROTOCOLOAUT,
+                    ffCAMPOSTREAM,
+                    ffSELECAO,
+                    ffCHECKBOX);
+
+  TOrdenaBy = (obyASCENDENTE, obyDESCEDENTE, obyNone);
+
+  TDaoBkpdfe = class(TObject)
+  private
+  public
+    function fNextId(pObjXML                : TLm_bkpdfe): Integer;
+    function fExcluirObjXML(pObjXML         : TLm_bkpdfe): Integer;
+    function fTotalArquivos(pObjXML         : TLm_bkpdfe): Integer;
+    function fCarregaXMLEnvio(pObjXML       : TLm_bkpdfe): Boolean;
+    function fFindChaveXML(var pObjXML      : TLm_bkpdfe): Boolean;
+    function fCarregaXMLRetorno(pObjXML     : TLm_bkpdfe): Boolean;
+    function fConsultaObjXML(var pObjXML    : TLm_bkpdfe; pCampos: array of string): Boolean; OVERLOAD;
+    function fConsDeleteObjXML(var pObjXML  : TLm_bkpdfe; pCampos: array of string): Boolean;
+
+    procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
+    procedure fFiltraOrdena(pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone;
+     pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ; pValue1: string = '';pValue2: string = '');
+
+  end;
+
+  var
+   ObjetoXML : TLm_bkpdfe;
+   DaoObjetoXML : TDaoBkpdfe;
+   FieldFiltros : TFieldFiltros;
+   Ordenaby     : TOrdenaBy;
+   CNPJDOC  : TCNPJDOC;
+
+implementation
+
+uses
+  uMetodosUteis;
+
+{ TDaoBkpdfe }
+
+function TDaoBkpdfe.fCarregaXMLEnvio(pObjXML : TLm_bkpdfe): Boolean;
+var wDataSet : TDataSet;
+    wChaveAux : string;
+    wControle : Integer;
+    wSQL : string;
+begin
+  wChaveAux := pObjXML.Chave;
+  wDataSet := TDataSet.Create(Application);
+  try
+    DM_NFEDFE.Dao.StartTransaction;
+    try
+      with DM_NFEDFE do
+      begin
+        if (DaoObjetoXML.fConsultaObjXML(pObjXML,['chave'])) then
+        begin
+          wControle := Dao.Salvar(pObjXML);
+        end
+        else
+        begin
+           pObjXML.Id := fNextId(pObjXML);
+           wControle:= Dao.Inserir(pObjXML);
+        end;
+
+        Result := (wControle > 0);
+        DM_NFEDFE.Dao.Commit;
+        Application.ProcessMessages;
+      end;
+    except on E: Exception do
+           begin
+             DM_NFEDFE.Dao.RollBack;
+             ShowMessage('Método: fCarregaXMLEnvio!'+#10#13+
+                         'Exception: '+E.Message);
+           end;
+    end;
+  finally
+   FreeAndNil(wDataSet);
+  end;
+end;
+
+function TDaoBkpdfe.fCarregaXMLRetorno(pObjXML: TLm_bkpdfe): Boolean;
+var wDataSet : TDataSet;
+    wChaveAux : String;
+begin
+  wDataSet := TDataSet.Create(Application);
+  try
+    DM_NFEDFE.Dao.StartTransaction;
+    try
+      with DM_NFEDFE do
+      begin
+//      if fConsultaTabXML(ptabXML,['chave']) then
+        wDataSet := Dao.ConsultaTab(pObjXML,['chave']);
+
+        if (wDataSet.RecordCount = 1) and
+           (wDataSet.FieldByName('chave').AsString = pObjXML.Chave) then
+        begin
+          pObjXML.Id := wDataSet.FieldByName('id').AsInteger;
+          Result := Dao.Salvar(pObjXML,['id','chave','Dataemissao','Datarecto','Tipoambiente','Xmlenvio']) > 0
+        end
+        else
+          Result := Dao.Inserir(pObjXML,['id'],fcIgnore) > 0;
+
+        DM_NFEDFE.Dao.Commit;
+      end;
+
+    except on E: Exception do
+           begin
+             DM_NFEDFE.Dao.RollBack;
+             ShowMessage('Método: fCarregaXMLRetorno!'+#10#13+
+                         'Exception: '+E.Message);
+           end;
+    end;
+  finally
+   FreeAndNil(wDataSet);
+  end;
+end;
+
+function TDaoBkpdfe.fConsDeleteObjXML(var pObjXML: TLm_bkpdfe;
+  pCampos: array of string): Boolean;
+var wDataSet : TDataSet;
+    wStream : TStream;
+    i: Integer;
+begin
+  Result := False;
+  wDataSet := TDataSet.Create(Application);
+  try
+    with DM_NFEDFE do
+    begin
+      wDataSet := dao.ConsultaTab(pObjXML, pCampos);
+      wDataSet.Close;
+      wDataSet.Open;
+      if wDataSet.RecordCount >= 1 then
+      begin
+        Result := true;
+        if wDataSet.RecordCount > 1 then
+          wDataSet.First
+      end;
+
+      if Result then
+        pObjXML.Idf_documento :=  wDataSet.FieldByName('Idf_documento').AsInteger;
+    end;
+  except on E: Exception do
+          ShowMessage('Método: fConsDeleteObjXML!'+#10#13+
+                      'Exception: '+e.Message);
+  end;
+end;
+
+function TDaoBkpdfe.fConsultaObjXML(var pObjXML: TLm_bkpdfe; pCampos: array of string): Boolean;
+var wDataSet : TDataSet;
+    wStream : TStream;
+    i: Integer;
+begin
+  REsult := False;
+  wDataSet := TDataSet.Create(Application);
+    try
+      with DM_NFEDFE do
+      begin
+        wDataSet := dao.ConsultaTab(pObjXML, pCampos);
+        wDataSet.Close;
+        wDataSet.Open;
+        wDataSet.Edit;
+        with wDataSet do
+        if wDataSet.RecordCount = 1 then
+        begin
+          if (pObjXML.Id < 1) then
+            pObjXML.Id := FieldByName('id').AsInteger;
+
+          if (pObjXML.Status >= 0) then
+            pObjXML.Status := FieldByName('Status').AsInteger;
+//
+//          if pObjXML.Empresa >= 0 then
+//            pObjXML.Empresa := FieldByName('Empresa').AsInteger;
+//
+//          if pObjXML.Filial >= 0 then
+//            pObjXML.Filial := FieldByName('Filial').AsInteger;
+
+          if pObjXML.CNPJ = '' then
+            pObjXML.CNPJ := FieldByName('CNPJ').AsString;
+
+          if (pObjXML.Chave = '') then
+            pObjXML.Chave := FieldByName('chave').AsString;
+
+          if (pObjXML.Idf_documento = 0) then
+            pObjXML.Idf_documento := FieldByName('Idf_documento').AsInteger;
+
+          if (pObjXML.Dataemissao = 0)then
+            pObjXML.Dataemissao := FieldByName('Dataemissao').AsDateTime;
+
+          if (pObjXML.Datarecto = 0) then
+            pObjXML.Datarecto := FieldByName('Datarecto').AsDateTime;
+
+          if (pObjXML.Motivo = '') then
+            pObjXML.Motivo := FieldByName('Motivo').AsString;
+
+          if (pObjXML.Protocolocanc = '') then
+            pObjXML.Protocolocanc := FieldByName('Protocolocanc').AsString;
+
+          if (pObjXML.Protocolorecto = '') then
+            pObjXML.Protocolorecto := FieldByName('Protocolorecto').AsString;
+
+          if (pObjXML.Dataalteracao = 0) then
+          pObjXML.Dataalteracao := Trunc(Now); //FieldByName('Dataalteracao').AsDateTime;
+
+          if (pObjXML.Tipo = '') then
+          pObjXML.Tipo := FieldByName('Tipo').AsString;
+
+          if (pObjXML.Emailsnotificados = '') then
+          pObjXML.Emailsnotificados := FieldByName('Emailsnotificados').AsString;
+
+          if (pObjXML.Tipoambiente = '') then
+          pObjXML.Tipoambiente := FieldByName('Tipoambiente').AsString;
+
+          if (pObjXML.Motivocanc = '') then
+          pObjXML.Motivocanc := FieldByName('Motivocanc').AsString;
+
+          if (pObjXML.Protocoloaut = '') then
+          pObjXML.Protocoloaut := FieldByName('Protocoloaut').AsString;
+
+          if pObjXML.Selecao = '' then
+          pObjXML.Selecao := FieldByName('selecao').AsString;
+
+          if pObjXML.CheckBox = -1 then
+          pObjXML.CheckBox := FieldByName('CheckBox').AsInteger;
+
+          wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('CAMPOSTREAM'),bmReadWrite);
+          if Assigned(wStream) then
+          begin
+            if not Assigned(pObjXML.CampoStream) then
+              pObjXML.CampoStream :=  wStream;
+          end
+          else
+           wStream := nil;
+
+          wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('Xmlenvio'),bmReadWrite);
+          if Assigned(wStream) then
+          begin
+            if not Assigned(pObjXML.Xmlenvio) then
+              pObjXML.Xmlenvio:=  wStream;
+          end
+          else
+           wStream := nil;
+
+          wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('Xmlextend'),bmReadWrite);
+          if Assigned(wStream) then
+          begin
+            if not Assigned(pObjXML.Xmlextend) then
+              pObjXML.Xmlextend:=  wStream;
+          end
+          else
+           wStream := nil;
+
+          wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('Xmlenviocanc'),bmReadWrite);
+          if Assigned(wStream) then
+          begin
+            if not Assigned(pObjXML.Xmlenviocanc) then
+              pObjXML.Xmlenviocanc :=  wStream;
+          end
+          else
+           wStream := nil;
+
+          wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('Xmlextendcanc'),bmReadWrite);
+          if Assigned(wStream) then
+          begin
+            if not Assigned(pObjXML.Xmlextendcanc) then
+              pObjXML.Xmlextendcanc :=  wStream;
+          end
+          else
+           wStream := nil;
+
+          Result := true;
+        end;
+      end;
+    except on E: Exception do
+           ShowMessage('Método: fConsultaObjXML!'+#10#13+
+                       'Exception: '+e.Message);
+    end;
+end;
+
+function TDaoBkpdfe.fExcluirObjXML(pObjXML : TLm_bkpdfe): Integer;
+begin
+  Result := 0;
+  try
+    DM_NFEDFE.Dao.StartTransaction;
+    try
+      Result := DM_NFEDFE.Dao.Excluir(pObjXML);
+
+      DM_NFEDFE.Dao.Commit;
+    except
+      on E: Exception do
+      begin
+        DM_NFEDFE.Dao.RollBack;
+        ShowMessage('Método: fExcluirObjXML!'+#10#13+
+                    'Exception: '+e.Message);
+      end;
+    end;
+  finally
+    pObjXML.Free;
+  end;
+
+end;
+
+function TDaoBkpdfe.fFindChaveXML(var pObjXML: TLm_bkpdfe): Boolean;
+var wDataSet : TDataSet;
+begin
+  wDataSet := TDataSet.Create(Application);
+  try
+    with DM_NFEDFE do
+    begin
+      if pObjXML.Chave = '' then
+      begin
+        Result := False;
+        Exit;
+      end;
+
+      wDataSet := Dao.ConsultaTab(pObjXML,['Chave']);
+      if wDataSet.RecordCount > 0 then
+      begin
+        if wDataSet.FieldByName('Chave').AsString = pObjXML.Chave then
+          Result := True;
+      end;
+    end;
+  finally
+    FreeAndNil(wDataSet);
+  end;
+
+end;
+
+function TDaoBkpdfe.fNextId(pObjXML: TLm_bkpdfe): integer;
+var wDataSet: TDataset;
+begin
+  if not Assigned(pObjXML) then
+    pObjXML := TLm_bkpdfe.Create;
+
+  Result := 0;
+  pObjXML.Id := Result;
+  wDataSet := TDataSet.Create(Application);
+  try
+    try
+      wDataSet := DM_NFEDFE.dao.ConsultaAll(pObjXML,'id' );
+      wDataSet.Close;
+      wDataSet.Open;
+      wDataSet.last;
+      Result := wDataSet.FieldByName('id').AsInteger+1;
+    except on E: Exception do
+             ShowMessage('Método: fNextId!'+#10#13+
+                         'Exception: '+e.Message);
+    end;
+  finally
+    FreeAndNil(wDataSet);
+  end;
+end;
+
+procedure fFiltraOrdena(pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone;
+     pCNPJ: string = '*' ;pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ; pValue1: string = '';pValue2: string = '');
+var data1STR, data2STR, str1, str2:string;
+    wDataSet : TDataSet;
+    wUpDown: string;
+    wV1Empty, wV2Empty : boolean;
+const cAsc = 'Asc'; cdesc = 'desc';
+
+
+  procedure pFiltroData(pFieldOrder:string);
+  begin
+    try
+      with DM_NFEDFE, sqlBkpDfe do
+      begin
+        DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
+        data1STR := QuotedStr(data1STR);
+        DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
+        data2STR := QuotedStr(data2STR);
+
+        str1 := ('Select * from lm_bkpdfe where ');
+        str1 :=  str1 + Format('(%s between %s and %s) ',[pFieldName,data1STR, data2STR]);
+
+        if pUpDown = obyNone then
+        begin
+          str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
+        end;
+
+
+
+      end;
+    except on E: Exception do
+               ShowMessage('Método: pFiltroData!'+#10#13+
+                           'Exception: '+e.Message);
+    end;
+  end;
+
+  procedure pFiltro(pFieldOrder:string);
+  var wOrdData: Boolean;
+      auxFF : TFieldFiltros;
+      wList : TList;
+      i:Integer;
+      wFilename: string;
+      wOpen : TOpenDialog;
+  begin
+    auxFF := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldOrder);
+    wOrdData := ((auxFF = ffDATARECTO) or (auxFF = ffDATAALTERACAO) or (auxFF = ffDATAEMISSAO));
+    //    wOrdData := ((pFieldOrder = 'DATARECTO') or (pFieldOrder = 'DATAALTERACAO') or (pFieldOrder = 'DATAEMISSAO)'));
+    try
+      with DM_NFEDFE do
+      begin
+        DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
+        data1STR := QuotedStr(data1STR);
+        DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
+        data2STR := QuotedStr(data2STR);
+
+        str1 := str1 + 'Select * from lm_bkpdfe where ';
+        if wOrdData then
+        begin
+          str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR]);
+        end
+        else
+        begin
+          if wV1Empty then
+            str1 := str1 + Format('(%s like %s ) and ',[pFieldName, pValue1]); 
+
+          str1 := str1 + Format('(DATAALTERACAO between %s and %s ) ',[data1STR, data2STR]);
+        end;
+
+        if pUpDown <> obyNone then
+          str1 := str1 + Format('order by %s %s',[pFieldOrder, wUpDown]);
+
+        dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1);
+      end;
+    except on E: Exception do
+           begin
+             ShowMessage('Método: pFiltro!'+#10#13+
+             'Exception: '+e.Message);
+
+             if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
+               ShowMessage('Não reconectou!');
+           end;
+    end;
+  end;
+
+
+begin
+
+  if pUpDown = obyNone then
+    pUpDown:= obyASCENDENTE;
+
+  wV1Empty := pValue1 = '';
+  wV2Empty := pValue2 = '';
+
+  case pUpDown of
+    obyASCENDENTE: wUpDown := cAsc;
+    obyDESCEDENTE: wUpDown := cdesc;
+  end;
+
+  case pFieldNameOrder of
+    ffID: begin end;
+    ffCHAVE: begin pFiltro('CHAVE') end;
+    ffIDF_DOCUMENTO: begin pFiltro('IDF_DOCUMENTO') end;
+    ffDATAEMISSAO: begin pFiltro('DATAEMISSAO') end;//pFiltroData('DATAEMISSAO') end;
+    ffDATARECTO: begin pFiltro('DATARECTO') end;
+    ffMOTIVO: begin pFiltro('MOTIVO') end;
+    ffPROTOCOLOCANC: begin pFiltro('PROTOCOLOCANC') end;
+    ffPROTOCOLORECTO: begin pFiltro('PROTOCOLORECTO') end;
+    ffDATAALTERACAO: begin pFiltro('DATAALTERACAO') end;
+    ffTIPO: begin pFiltro('TIPO') end;
+    ffEMAILSNOTIFICADOS: begin pFiltro('EMAILSNOTIFICADOS') end;
+    ffTIPOAMBIENTE: begin pFiltro('TIPOAMBIENTE') end;
+    ffXMLENVIO: begin pFiltro('ID') end;
+    ffXMLEXTEND: begin pFiltro('ID') end;
+    ffMOTIVOCANC: begin pFiltro('MOTIVOCANC') end;
+    ffXMLENVIOCANC: begin pFiltro('ID') end;
+    ffXMLEXTENDCANC: begin pFiltro('ID') end;
+    ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
+//      ffSELECAO:begin Filtro('SELECAO') end;
+  end;
+
+end;
+
+function TDaoBkpdfe.fTotalArquivos(pObjXML: TLm_bkpdfe): Integer;
+begin
+  if not Assigned(pObjXML) then
+    Exit;
+
+  Result := 0;
+  try
+    try
+       with DM_NFEDFE do
+       begin
+         Result := Dao.GetRecordCount(pObjXML, ['id']);
+       end;
+    except on E: Exception do
+            ShowMessage('Método: fTotalArquivos!'+#10#13+
+            'Exception: '+e.Message);
+    end;
+  finally
+  end;
+end;
+
+procedure TDaoBkpdfe.pLimpaObjetoXML(var pObjXML: TLm_bkpdfe);
+begin
+  with pObjXML do
+  begin
+    id := 0;
+    Status := 9;
+//    Empresa := 0;
+//    Filial := 0;
+    CNPJ := '';
+    Chave := '';
+    Idf_documento := 0;
+    Dataemissao := 0;
+    Datarecto := 0;
+    Motivo := '';
+    Protocolocanc := '';
+    Protocolorecto := '';
+    Dataalteracao := 0;
+    Tipo := '';
+    Emailsnotificados := '';
+    Tipoambiente := '';
+    Xmlenvio := nil;
+    Xmlextend := nil;
+    Motivocanc := '';
+    Xmlenviocanc := nil;
+    Xmlextendcanc := nil;
+    Protocoloaut := '';
+    CampoStream  := nil;
+    Selecao := '';
+  end;
+end;
+
+{ TCNPJDOC }
+procedure TCNPJDOC.setDocumento(const Value: string);
+begin
+  if fValidaCNPJ(Value) then
+   FDocumento := Value
+  else
+   FDocumento := ''   ;
+end;
+
+procedure TCNPJDOC.setParametro(const Value: boolean);
+begin
+  FParametro := Value;
+end;
+
+end.
