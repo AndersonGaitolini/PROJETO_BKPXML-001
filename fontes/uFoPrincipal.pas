@@ -16,6 +16,7 @@ uses
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
+  TSelectRowsGrid = (sgTodos, sgNenhum, sgVarios);
 
 //type
 //  TDBGrid = class(Vcl.DBGrids.TDBGrid)
@@ -184,8 +185,8 @@ type
     procedure pDataFiltro;
     procedure pStatusBarProgress;
     procedure pSalveName(pFieldName: string; var wFileName: string);
-    procedure pSelecaoChave(var pLista: TStringList);
-    procedure pSelTodasLinhas;
+    procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
+    procedure pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
     procedure pDeleteRowsSelectGrid;
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
@@ -207,9 +208,13 @@ var
   wLastField : string;
   wLoadXML : TLoadXML;
   SLXMLEnv :TStringList;
-  wListaSelecionados : TStringList;
-
-const
+  wListaEmp, wListaSelecionados : TStringList;
+  clCorGrid00,
+  clCorGrid01,
+  clCorGrid02,
+  clCorGrid03,
+  clCorGrid04: integer;
+  const
   cTodosCNPJ = '*';
 
 implementation
@@ -573,7 +578,7 @@ end;
 
 procedure TfoPrincipal.mmDelRefazAutTodosClick(Sender: TObject);
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   fDeleteObjetoXML(wListaSelecionados);
   if fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
@@ -606,7 +611,7 @@ end;
 
 procedure TfoPrincipal.mmExpTodosClick(Sender: TObject);
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
     fExportaLoteXML(wListaSelecionados);
@@ -623,7 +628,7 @@ end;
 procedure TfoPrincipal.mmExpPDFTodosClick(Sender: TObject);
 var wTotSalvos: integer;
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   if fExportaPDF(wListaSelecionados, wTotSalvos) then
     ShowMessage(IntToStr(wTotSalvos) + ' arquivos de PFDs exportado com sucesso!');
@@ -879,92 +884,74 @@ procedure TfoPrincipal.dbgNfebkpDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
   const IsChecked : array[Boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
 var wStream : TStream;
-    wFileName : String;
-    wRow: integer;
-    wListaCNPJ : TStringList;
+    wFileName, wSTR : String;
+    wRow, wStatus : Integer;
+    wColor: TColor;
 
   procedure pSetColorLinhas;
-  var wStatus : Integer;
-         wSTR : string;
   begin
-    try
-      with (Sender as TDBGrid) do
-      begin
-        Canvas.Font.Style := [];
+    with (Sender as TDBGrid) do
+    begin
+      wSTR := DataSource.DataSet.FieldByName('cnpj').AsString;
+      wStatus := wListaEmp.IndexOf(wSTR);
 
-        if (gdFocused in State) then
-        begin
-         Canvas.Brush.Color := clWebLightYellow;
-         Canvas.Font.Style := [];
-         Canvas.FillRect(Rect);
-         Canvas.Font.Color:= clBlack;
-         Canvas.TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
-         Canvas.FillRect(Rect);
-        end;
-
-        if (gdFixed in State) then
-        begin
-         Canvas.Brush.Color := clFuchsia;
-         Canvas.Font.Style := [];
-         Canvas.FillRect(Rect);
-         Canvas.Font.Color:= clwhite;
-         Canvas.TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
-         Canvas.FillRect(Rect);
-        end;
-
-        if (gdSelected in State) then
-        begin
-         Canvas.Brush.Color := clMedGray;
-         Canvas.Font.Style := [];
-         Canvas.FillRect(Rect);
-         Canvas.Font.Color:= clWhite;
-         Canvas.TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
-         Canvas.FillRect(Rect);
-        end;
-
-        wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
-        case wStatus of
-          001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
-          004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
-          100: Canvas.Font.Color := clBlack;    //XML Envio Processado
-          101,
-          135: Canvas.Font.Color := clRed;      //XML Cancel. Processado
-          110,205,301,302,
-          303: Canvas.Font.Color := clGray;     //Denegada
-          206,
-          256,
-          662: Canvas.Font.Color := clFuchsia;  //Inutilizada
-        else
-          Canvas.Font.Color := clNavy;
-        end;
-
-        wListaCNPJ := CNPJDOC.fListaEmpresas;
-
-        wSTR := DataSource.DataSet.FieldByName('cnpj').AsString;
-        wStatus := wListaCNPJ.IndexOf(wSTR);
-        case wStatus of
-          000: Canvas.Brush.Color := clWebBurlywood;
-          001: Canvas.Brush.Color := clWebAliceBlue;     //XML Envio aguardando
-          002: Canvas.Brush.Color := clWebRed;    //XML Cancelamento Envio aguardando
-          003: Canvas.Brush.Color := clWebYellow;     //XML Envio Processado
-          004: Canvas.Brush.Color := clWebPapayaWhip;
-          005: Canvas.Brush.Color := clWebMintcream;
-          006: Canvas.Brush.Color := clWebChocolate;
-          007: Canvas.Brush.Color := clWebForestGreen;
-//        else
-//          Canvas.Font.Color := clNavy;
-        end;
-
-       Canvas.FillRect(Rect);
-       DefaultDrawColumnCell(Rect, DataCol, Column, State);
+      case wStatus of
+        000: Canvas.Brush.Color := clCream; //clCorGrid00;
+        001: Canvas.Brush.Color := clCorGrid01;
+        002: Canvas.Brush.Color := clCorGrid02;
+        003: Canvas.Brush.Color := clCorGrid03;
+        004: Canvas.Brush.Color := clCorGrid04;
+        005: Canvas.Brush.Color := clPurple;
+        006: Canvas.Brush.Color := clAqua;
+        007: Canvas.Brush.Color := clOlive;
       end;
-    finally
-      wListaCNPJ.Free;
     end;
   end;
 
 begin
-  pSetColorLinhas;
+  with (Sender as TDBGrid) do
+  begin
+    wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
+    case wStatus of
+      001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
+      004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
+      100: Canvas.Font.Color := clBlack;    //XML Envio Processado
+      101,
+      135: Canvas.Font.Color := clRed;      //XML Cancel. Processado
+      110,205,301,302,
+      303: Canvas.Font.Color := clSilver;     //Denegada
+      206,
+      256,
+      662: Canvas.Font.Color := clFuchsia;  //Inutilizada
+    else
+      Canvas.Font.Color := clNavy;
+    end;
+
+//    if (not (gdSelected in State) and not (gdRowSelected in State) and not(dbgNfebkp.Focused)) or
+       if (not (gdSelected in State) and
+        not (gdRowSelected in State) and
+        not (gdFocused in State) and
+        not (gdFixed in State) and
+        not (gdHotTrack in State) and
+        not (gdPressed in State)) and not Focused then
+    begin
+      if  (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
+        pSetColorLinhas;
+    end
+    else
+    if ((gdSelected in State) or (gdRowSelected in State)) then
+    begin
+      Canvas.Brush.Color := clDkGray;
+      Canvas.Font.Style := [];
+      Canvas.FillRect(Rect);
+      Canvas.Font.Color:= clBlack;
+      Canvas.TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
+      Canvas.FillRect(Rect);
+    end;
+
+   Canvas.FillRect(Rect);
+   DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  end;
 end;
 
 procedure TfoPrincipal.dbgNfebkpKeyPress(Sender: TObject; var Key: Char);
@@ -1013,10 +1000,19 @@ end;
 procedure TfoPrincipal.FormCreate(Sender: TObject);
 var i,k:Integer;
     dts : TDataSet;
+
+ procedure pSetaCores;
+ begin
+   clCorGrid00 := StrToInt('$ffffda'); //Amarelo suave
+   clCorGrid01 := StrToInt('$ffd7e1'); //Algodão-Doce framboesa
+   clCorGrid02 := StrToInt('$fdfad0'); //Laranja Cream
+   clCorGrid03 := StrToInt('$D6FEE1'); //Menta suave
+   clCorGrid04 := StrToInt('$B4D0F7'); //Azul calcinha
+ end;
+
 begin
   foPrincipal.Caption := 'SOUIS MAXXML Versão 1.2 - beta';
-
-//  pStatusBarProgress;
+  pSetaCores;
   pIniciaGrid;
 
   if not Assigned(DaoObjetoXML) then
@@ -1076,7 +1072,7 @@ begin
    wFileName := 'Can_'+dbgNfebkp.Fields[1].AsString + '.xml';
 end;
 
-procedure TfoPrincipal.pSelecaoChave(var pLista: TStringList);
+procedure TfoPrincipal.pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
 var I : Integer;
     wObjXML :TLm_bkpdfe;
     wSLAux : TStringList;
@@ -1101,33 +1097,49 @@ begin
         begin
           wObjXML := TLm_bkpdfe.Create;
           wObjXML.Chave := dbgNfebkp.DataSource.DataSet.FieldByName('chave').AsString;
-          DaoObjetoXML.fConsultaObjXML(wObjXML,['chave']);
-          pLista.AddObject(wObjXML.Chave, wObjXML);
+          if pAddObjet then
+          begin
+            DaoObjetoXML.fConsultaObjXML(wObjXML,['chave']);
+            pLista.AddObject(wObjXML.Chave, wObjXML);
+          end
+          else
+          pLista.Add(wObjXML.Chave);
         end;
       end;
     end;
   end;
 end;
 
-procedure TfoPrincipal.pSelTodasLinhas;
+procedure TfoPrincipal.pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
 var
- wlLinha: Integer;
-begin
-//  DaoObjetoXML.fFiltraOrdena(ffDATAALTERACAO, wLastOrderBy,'Dataalteracao', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
-  with dbgNfebkp.DataSource.DataSet do
+ wDataSet : TDataSet;
+
+  procedure pSelectRows;
+  var wLinha: Integer;
   begin
-    First;
-    for wlLinha := 0 to RecordCount - 1 do
+    with dbgNfebkp.DataSource.DataSet do
     begin
-      dbgNfebkp.SelectedRows.CurrentRowSelected := True;
-      Next;
+      First;
+      for wLinha := 0 to RecordCount - 1 do
+      begin
+        dbgNfebkp.SelectedRows.CurrentRowSelected := True;
+        Next;
+      end;
     end;
   end;
 
-//  dbgNfebkp.SelectedRows.Refresh;
+begin
+  case pSelecao of
+    sgTodos  : begin
+                 wDataSet := DM_NFEDFE.Dao.ConsultaSql('select * from LM_BKPDFE');
+                 pSelectRows;
+               end;
 
+    sgNenhum : begin
+                 pRemoveSelTodasLinhas;
+               end;
+  end;
 end;
-
 
 procedure TfoPrincipal.pRemoveSelTodasLinhas;
 var
@@ -1166,35 +1178,31 @@ begin
 if Assigned(CNPJDOC) then
   begin
     wLastField := 'CNPJ';
-    try
-      cbbEmpCNPJ.Clear;
-      wListaEmp := Lm_bkpdfe.CNPJDOC.fListaEmpresas;
+    cbbEmpCNPJ.Clear;
+    wListaEmp := Lm_bkpdfe.CNPJDOC.fListaEmpresas;
 
-      if wListaEmp.IndexOf(CNPJDOC.Documento) < 0 then
-        if fValidaCNPJ(CNPJDOC.Documento) then
-           wListaEmp.Add(CNPJDOC.Documento);
-
-      if wListaEmp.Count = 0 then
-        cbbEmpCNPJ.Items.Add('Não há registros!')
-      else
-      if wListaEmp.Count = 1 then
-        cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[0]))
-      else
-      if wListaEmp.Count > 1 then
-      begin
-        cbbEmpCNPJ.Items.Add('Todos');
-        for K := 0 to wListaEmp.Count-1 do
-          cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[k]));
-      end;
-
-      if CNPJDOC.Documento = '*' then
-         cbbEmpCNPJ.ItemIndex := 0
-      else
+    if wListaEmp.IndexOf(CNPJDOC.Documento) < 0 then
       if fValidaCNPJ(CNPJDOC.Documento) then
-         cbbEmpCNPJ.ItemIndex := cbbEmpCNPJ.Items.IndexOf('CNPJ: '+ fMascaraCNPJ(CNPJDOC.Documento));
-    finally
-      wListaEmp.Free;
+         wListaEmp.Add(CNPJDOC.Documento);
+
+    if wListaEmp.Count = 0 then
+      cbbEmpCNPJ.Items.Add('Não há registros!')
+    else
+    if wListaEmp.Count = 1 then
+      cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[0]))
+    else
+    if wListaEmp.Count > 1 then
+    begin
+      cbbEmpCNPJ.Items.Add('Todos');
+      for K := 0 to wListaEmp.Count-1 do
+        cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[k]));
     end;
+
+    if CNPJDOC.Documento = '*' then
+       cbbEmpCNPJ.ItemIndex := 0
+    else
+    if fValidaCNPJ(CNPJDOC.Documento) then
+       cbbEmpCNPJ.ItemIndex := cbbEmpCNPJ.Items.IndexOf('CNPJ: '+ fMascaraCNPJ(CNPJDOC.Documento));
   end;
 end;
 
@@ -1210,7 +1218,7 @@ end;
 
 procedure TfoPrincipal.mmMarcarTodosClick(Sender: TObject);
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
 end;
 
 procedure TfoPrincipal.mmRefazAutorizacaoSelecaoClick(Sender: TObject);
@@ -1279,12 +1287,12 @@ end;
 procedure TfoPrincipal.mmSelTodosClick(Sender: TObject);
 var wI: Integer;
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
 end;
 
 procedure TfoPrincipal.mmSelTodosExportarClick(Sender: TObject);
 begin
-  pSelTodasLinhas;
+  pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   fExportaLoteXML(wListaSelecionados);
 end;

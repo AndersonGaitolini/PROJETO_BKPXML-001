@@ -140,7 +140,6 @@ type
    Ordenaby     : TOrdenaBy;
    CNPJDOC  : TCNPJDOC;
    CNPJDOCarray : array of TCNPJDOC;
-   wListaEmp : TStringList;
 
 implementation
 
