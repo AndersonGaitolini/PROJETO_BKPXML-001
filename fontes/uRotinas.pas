@@ -23,7 +23,7 @@ function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
 function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
 function fLoadXMLNFeLista(pLista : TStringList): Boolean;
 
-function fExportaPDF(pLista: TStringList;  var pTotalSavo: integer): boolean;
+function fExportaPDF(pLista: TStringList): Integer;
 //Métodos de Compressão
 function fCompactar(pPath: string): TFileStream;
 function fDescompacartar(pPath: string): boolean;
@@ -1372,7 +1372,7 @@ begin
   end;
 end;
 
-function fExportaPDF(pLista: TStringList; var pTotalSavo: integer): boolean;
+function fExportaPDF(pLista: TStringList): Integer;
 var
   wOK : boolean;
   wDaoXML    : TDaoBkpdfe;
@@ -1380,8 +1380,8 @@ var
   wDaoConfig : TDaoConfiguracoes;
   wObjetoXML : TLm_bkpdfe;
   wFRec      : TSearchRec;
-  wErro, wI, wTotSave  : integer;
-  wFileSource, wDirZIPFILE: string;
+  wErro, wI,wJ, wTotSave  : integer;
+  wFileSource,wPathSave, wPathArq, wFileName: string;
 
  function fCarregaObjConfig(pIDConfig : Integer): boolean;
   begin
@@ -1394,58 +1394,79 @@ var
   end;
 
 
-  procedure pPDFChave(pChave: String);
+  function fCarregaPAthPDF: String;
+  var wPathMAX : string;
   begin
-    wErro := FindFirst(wObjConfig.NFePathPDFSalvo+'\*'+ pChave+'*.pdf', faAnyFile, wFRec);
-    wOK := wErro = 0;
-    wFileSource := wObjConfig.NFePathPDFSalvo+'\'+wFRec.Name;
-    with wObjetoXML do
-    while wOK do
+    wPathMAX := ExtractFileDir(ParamStr(0));
+    wPathMAX := Copy(wPathMAX, 1, LastDelimiter('\', wPathMAX));
+    if FileExists(wPathMAX+'Maxwin.exe') or (FileExists(wPathMAX+'Maxecv.exe')) then
+      Result := wPathMAX + 'DFE\PDF';
+
+    if not DirectoryExists(Result) then
+    with foPrincipal.jopdDirDir do
     begin
-      if Pos(pChave,wFileSource) > 0 then
+      InitialDir := Copy(ExtractFileDir(ParamStr(0)),1, LastDelimiter('\',InitialDir));
+      Title := 'Localize a pasta de arquivos PDFs salvos';
+      if Execute then
       begin
-        if fZipFile(wDirZIPFILE,wFileSource) then
-          Inc(wTotSave,1);
+        Result := Directory
       end;
-
-      wErro := FindNext(wFRec);
-      wFileSource := wObjConfig.NFePathPDFSalvo+'\'+wFRec.Name;
-      wOK := (wErro = 0);
     end;
-
   end;
 
 begin
-  Result := False;
-
+  Result := 0;
+  wJ := 0;
   wDaoXML    := TDaoBkpdfe.Create;
   wObjConfig := TConfiguracoes.Create;
   wDaoConfig := TDaoConfiguracoes.Create;
 
   try
+    wPathSave := fCarregaPAthPDF;
     try
-      if fCarregaObjConfig(tabUsuarios.Id) then
+      with foPrincipal.dlgSaveXML, DaoObjetoXML do
       begin
-        with foPrincipal.dlgSaveXML, DaoObjetoXML do
+        InitialDir := GetCurrentDir;
+        Filter := 'ZIP | *.zip';
+        FilterIndex := FilterIndex+1;
+        wJ := pLista.Count;
+        FileName := 'LotePDF'+IntToStr(wJ)+'.zip';
+
+        if Execute then
         begin
-          Filter := 'ZIP | *.zip';
-          FilterIndex := FilterIndex+1;
-          FileName := 'LotePDF.zip';
-          if Execute then
+//          if  ofOverwritePrompt in Options then
+//          begin
+//            wOK := FileExists(foPrincipal.dlgSaveXML.FileNamE);
+//            while wOK do
+//            begin
+//              Inc(wJ,1);
+//              wPathArq := ExtractFileDir(FileNamE);
+//              FileName := 'LotePDF'+IntToStr(wJ)+'.zip';
+//              wOK := FileExists(wPathArq+'\'+FileName);
+//            end;
+//          end;
+          wJ := 0;
+          wTotSave := 0;
+          for wI := 0 to pLista.Count - 1 do
           begin
-            wDirZIPFILE := foPrincipal.dlgSaveXML.FileName;
-            wTotSave := 0;
-            for wI := 0 to pLista.Count - 1 do
-              pPDFChave(pLista.Strings[wi]);
+            wErro := FindFirst(wPathSave+'\*'+ pLista.Strings[wi]+'*.pdf', faAnyFile, wFRec);
+            wOK := wErro = 0;
+            while wOK do
+            begin
+              wFileSource := wPathSave+'\'+wFRec.Name;
+              if Pos(pLista.Strings[wi] ,wFileSource) > 0 then
+                if fZipFile(FileName,wFileSource) then
+                   Inc(wJ,1);
 
-            Result := wTotSave >= pLista.Count;
-          end;
+              wErro := FindNext(wFRec);
+              wOK := (wErro = 0);
+            end;
+           end;
+
+          Result := wJ;
         end;
-      end
-      else
-      exit;
+      end;
 
-//      Result := fGravaXML;
     except on E: Exception do
       ShowMessage('Método: fExportaPDF' + #10#13+
                    E.Message);

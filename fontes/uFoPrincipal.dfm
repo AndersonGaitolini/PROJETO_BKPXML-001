@@ -264,8 +264,8 @@ object foPrincipal: TfoPrincipal
         220
         48)
       object Shape1: TShape
-        Left = -137
-        Top = -156
+        Left = -145
+        Top = -164
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -275,8 +275,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -20
-        Top = -128
+        Left = -28
+        Top = -136
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -286,8 +286,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -137
-        Top = -128
+        Left = -145
+        Top = -136
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -297,8 +297,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -20
-        Top = -114
+        Left = -28
+        Top = -122
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -309,8 +309,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -137
-        Top = -114
+        Left = -145
+        Top = -122
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -320,8 +320,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -20
-        Top = -155
+        Left = -28
+        Top = -163
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -331,8 +331,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -137
-        Top = -142
+        Left = -145
+        Top = -150
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -342,8 +342,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -121
-        Top = -156
+        Left = -129
+        Top = -164
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -352,8 +352,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -6
-        Top = -129
+        Left = -14
+        Top = -137
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -362,8 +362,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -121
-        Top = -128
+        Left = -129
+        Top = -136
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -372,8 +372,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -6
-        Top = -115
+        Left = -14
+        Top = -123
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -383,8 +383,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -121
-        Top = -114
+        Left = -129
+        Top = -122
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -393,8 +393,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -121
-        Top = -142
+        Left = -129
+        Top = -150
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -403,8 +403,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -6
-        Top = -156
+        Left = -14
+        Top = -164
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -413,8 +413,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -20
-        Top = -142
+        Left = -28
+        Top = -150
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -424,8 +424,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -6
-        Top = -143
+        Left = -14
+        Top = -151
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -735,7 +735,7 @@ object foPrincipal: TfoPrincipal
     Left = 300
     Top = 233
     Bitmap = {
-      494C01012C003C00640220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C006C0220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7084,8 +7084,8 @@ object foPrincipal: TfoPrincipal
   end
   object pmExportar: TPopupMenu
     OnPopup = pmExportaPopup
-    Left = 451
-    Top = 153
+    Left = 452
+    Top = 150
     object mmAcoes: TMenuItem
       Caption = '&A'#231#245'es'
       object mmExpTodos: TMenuItem
@@ -7097,21 +7097,26 @@ object foPrincipal: TfoPrincipal
         OnClick = mmExpSelecaoClick
       end
       object mmLinhaGrupoExpPDF: TMenuItem
+        Tag = 3
         Caption = '-'
       end
       object mmExpPDFTodos: TMenuItem
+        Tag = 3
         Caption = 'Exporta PDF'#39's (todos)'
         OnClick = mmExpPDFTodosClick
       end
       object mmExpPDFSelecao: TMenuItem
+        Tag = 3
         Caption = 'Exporta PDF'#39's (sele'#231#227'o) '
         OnClick = mmExpPDFSelecaoClick
       end
       object mmExpXMLPDFTodos: TMenuItem
+        Tag = 3
         Caption = 'Exporta XML'#39's + PDF'#39's (todos) '
         Visible = False
       end
       object mmExpXMLPDFSelecao: TMenuItem
+        Tag = 3
         Caption = 'Exporta XML'#39's + PDF'#39's (sele'#231#227'o)  '
         Visible = False
       end
@@ -7139,7 +7144,10 @@ object foPrincipal: TfoPrincipal
         Caption = '-'
       end
       object mmRefazAutorizacaoSelecao: TMenuItem
+        Tag = 2
         Caption = 'Refazer autoriza'#231#245'es (Sele'#231#227'o)'
+        Enabled = False
+        Visible = False
         OnClick = mmRefazAutorizacaoSelecaoClick
       end
       object mmRefazAutorizacaoTodos: TMenuItem
@@ -7200,7 +7208,7 @@ object foPrincipal: TfoPrincipal
     Left = 376
     Top = 157
     Bitmap = {
-      494C010103000C000C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00140210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF

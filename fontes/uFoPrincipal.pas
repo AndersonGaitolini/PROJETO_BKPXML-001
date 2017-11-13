@@ -371,7 +371,10 @@ begin
    if not Assigned(CNPJDOC) then
      CNPJDOC := TCNPJDOC.Create;
 
-   CNPJDOC.Documento := Copy(cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex],7,18);
+   if cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos' then
+     CNPJDOC.Documento := '*'
+   else
+     CNPJDOC.Documento := Copy(cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex],7,18);
 end;
 
 procedure TfoPrincipal.pCarregaConfigUsuario(pIDConfig: Integer);
@@ -451,6 +454,11 @@ end;
 procedure TfoPrincipal.pmExportaPopup(Sender: TObject);
 var wHabilita : boolean;
 
+const
+ cMaster = 2;
+ cAllEmp = 3;
+ cOneEmp = 4;
+
   procedure pMenuMaster(pAtiva : boolean);
   var i, j, k: integer;
   begin
@@ -463,11 +471,19 @@ var wHabilita : boolean;
           begin
             for j := 0 to TMainMenu(sender).Items[i].Count -1 do
             begin
-               if TMainMenu(Sender).Items[i].Items[j].Tag = 2 then
+               if TMainMenu(Sender).Items[i].Items[j].Tag = cMaster then
                begin
                  TMainMenu(Sender).Items[i].Items[j].Enabled := pAtiva;
                  TMainMenu(Sender).Items[i].Items[j].Visible := pAtiva;
                end;
+
+               if (TMainMenu(Sender).Items[i].Items[j].Tag = cOneEmp)  and
+                  (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
+               begin
+                 TMainMenu(Sender).Items[i].Items[j].Enabled := pAtiva;
+                 TMainMenu(Sender).Items[i].Items[j].Visible := pAtiva;
+               end;
+
             end;
           end;
 
@@ -478,10 +494,8 @@ var wHabilita : boolean;
 
             exit;
           end;
-
         end;
       end;
-
   end;
 
 begin
@@ -571,7 +585,9 @@ begin
 
     if MessageDlg(wMsg, mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
      if  fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
-       dbgNfebkp.Refresh;
+     begin
+       cbbEmpCNPJ.Clear;
+     end;
   end;
  dbgNfebkp.Refresh;
 end;
@@ -621,8 +637,15 @@ procedure TfoPrincipal.mmExpPDFSelecaoClick(Sender: TObject);
 var wTotSalvos: integer;
 begin
   pSelecaoChave(wListaSelecionados);
-  if fExportaPDF(wListaSelecionados, wTotSalvos) then
-    ShowMessage(IntToStr(wTotSalvos) +  ' arquivos de PFDs exportado com sucesso!');
+  wTotSalvos :=  fExportaPDF(wListaSelecionados);
+  if wTotSalvos > 0 then
+  begin
+    if wTotSalvos = wListaSelecionados.Count then
+      ShowMessage(IntToStr(wTotSalvos) + ' Todos PFDs selecionados exportados com sucesso!')
+    else
+    if wTotSalvos > 0 then
+      ShowMessage(IntToStr(wTotSalvos) + ' arquivos de PFDs exportados com sucesso!');
+  end;
 end;
 
 procedure TfoPrincipal.mmExpPDFTodosClick(Sender: TObject);
@@ -630,8 +653,15 @@ var wTotSalvos: integer;
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
-  if fExportaPDF(wListaSelecionados, wTotSalvos) then
-    ShowMessage(IntToStr(wTotSalvos) + ' arquivos de PFDs exportado com sucesso!');
+  wTotSalvos :=  fExportaPDF(wListaSelecionados);
+  if (wTotSalvos > 0)then
+  begin
+    if wTotSalvos > wListaSelecionados.Count then
+      ShowMessage(IntToStr(wTotSalvos) + ' Todos PFDs exportados com sucesso!')
+    else
+    if wTotSalvos > 0 then
+       ShowMessage(IntToStr(wTotSalvos) + ' arquivos de PFDs exportados com sucesso!');
+  end;
 end;
 
 procedure TfoPrincipal.mmExpSelecaoClick(Sender: TObject);
@@ -927,27 +957,35 @@ begin
       Canvas.Font.Color := clNavy;
     end;
 
-//    if (not (gdSelected in State) and not (gdRowSelected in State) and not(dbgNfebkp.Focused)) or
-       if (not (gdSelected in State) and
-        not (gdRowSelected in State) and
-        not (gdFocused in State) and
-        not (gdFixed in State) and
-        not (gdHotTrack in State) and
-        not (gdPressed in State)) and not Focused then
+
+//    if (not (gdSelected in State) and
+//        not (gdRowSelected in State) and
+//        not (gdFocused in State) and
+//        not (gdFixed in State) and
+//        not (gdHotTrack in State) and
+//        not (gdPressed in State)) and not Focused then
+//    begin
+//      if  (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
+//        pSetColorLinhas;
+//    end
+//    else
+
+    if ((gdSelected in State) or (gdRowSelected in State)) or SelectedRows.CurrentRowSelected then
     begin
-      if  (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
-        pSetColorLinhas;
-    end
-    else
-    if ((gdSelected in State) or (gdRowSelected in State)) then
-    begin
-      Canvas.Brush.Color := clDkGray;
+      if SelectedRows.CurrentRowSelected then
+        Canvas.Brush.Color := clDkGray
+      else
+          Canvas.Brush.Color := clGray;
+
       Canvas.Font.Style := [];
       Canvas.FillRect(Rect);
       Canvas.Font.Color:= clBlack;
       Canvas.TextOut(Rect.Left, Rect.Top,Column.Field.AsString);
       Canvas.FillRect(Rect);
-    end;
+    end
+    else
+    if (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
+      pSetColorLinhas;
 
    Canvas.FillRect(Rect);
    DefaultDrawColumnCell(Rect, DataCol, Column, State);
@@ -1125,10 +1163,12 @@ var
         dbgNfebkp.SelectedRows.CurrentRowSelected := True;
         Next;
       end;
+      First;
     end;
   end;
 
 begin
+  try
   case pSelecao of
     sgTodos  : begin
                  wDataSet := DM_NFEDFE.Dao.ConsultaSql('select * from LM_BKPDFE');
@@ -1138,6 +1178,9 @@ begin
     sgNenhum : begin
                  pRemoveSelTodasLinhas;
                end;
+  end;
+  finally
+    wDataSet.Free;
   end;
 end;
 
@@ -1262,6 +1305,9 @@ begin
      jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
     if jopdDirDir.Execute then
       tabConfiguracoes.NFePathProcessado := jopdDirDir.Directory;
+
+    if (tabConfiguracoes.NFePathProcessado = '') OR (NOT DirectoryExists(tabConfiguracoes.NFePathProcessado)) then
+      exit;
 
     if fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
     begin
