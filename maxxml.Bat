@@ -3,5 +3,5 @@
 subst J: /d
 net use J: /delete > nul
 
-*subst J: D:\Programacao\DELPHI\BackupXML\PROJETO_BKPXML_GITHUB
-Subst J: E:\projeto2\PROJETO_BKPXML-001
+subst J: D:\Programacao\DELPHI\BackupXML\PROJETO_BKPXML_GITHUB-001
+*Subst J: E:\projeto2\PROJETO_BKPXML-001
