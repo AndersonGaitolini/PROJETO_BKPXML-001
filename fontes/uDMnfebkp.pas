@@ -101,7 +101,7 @@ var
 implementation
 
 uses
-  ConfigPadrao, Configuracoes, Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs;
+  ConfigPadrao, Configuracoes, Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs, uRotinas;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
@@ -167,6 +167,7 @@ begin
   DaoObjetoXML := TDaoBkpdfe.Create;
 
   CNPJDOC := TCNPJDOC.Create;
+  wRotinas := TRotinas.Create;
 end;
 
 procedure TDM_NFEDFE.sqlBkpDfeAfterOpen(DataSet: TDataSet);

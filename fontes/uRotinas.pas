@@ -9,39 +9,52 @@ uses
  Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
  Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls, System.ZLib,uDMnfebkp,
  Xml.XMLDoc,Xml.XMLIntf, uMetodosUteis,Data.DB,System.Zip,System.DateUtils,
- Usuarios, ShellAPI, TlHelp32, Comobj,System.StrUtils;
+ Usuarios, ShellAPI, TlHelp32, Comobj,System.StrUtils,
+ uProgressThread;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
-//Demo
-procedure pLeituradaNFE;
-function fGetIdf_DocPelaChave(pChave: string):Integer;
-function fGetCNPJPelaChave(pChave: string):string;
-//Métodos para importar e exportar arquivos XML
-function fExportaLoteXML(pLista: TStringList):Boolean;
-function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
-//function fLoadXMLNFe(pTipoXML: TTipoXML; pChaveNFE: string = ''; pEmail : string = ''): Boolean;
-function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
-function fLoadXMLNFeLista(pLista : TStringList): Boolean;
 
-function fExportaPDF(pLista: TStringList): Integer;
-//Métodos de Compressão
-function fCompactar(pPath: string): TFileStream;
-function fDescompacartar(pPath: string): boolean;
-//Métodos de Compactação de arquivos
-function fZipFile(pZipFile, AFileName: string; pArqDuplicado : boolean = false): Boolean;
-function fZipFileExtrair(FZipFile, APath: string): Boolean;
-//Metodos da IS
-function fNumProcessThreads: Integer;
-function fIsValidDispatch(const v: OleVariant): Boolean;
-procedure pCompress(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
-procedure pDecompress(var vXML: TStream; ADest: string); overload;
-procedure pShellZip(pZipfile, pSourceFolder: OleVariant; pFilter: String);
-//Metodos de compressão em lote
-procedure pCompressFiles(Files: TStrings; const Filename: String);
-procedure pDecompressFiles(const Filename, DestDirectory : String);
-procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
-  Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
-function fMaster(pObjUsuario: TUsuarios): boolean;
+ type TRotinas = class(TProgressThread)
+  private
+    FMaximo : Int64;
+    FResult : Int64;
+    FResultMax : Int64;
+  public
+    property Result: Int64 read FResult;
+    property Maximo: Int64 read FMaximo write FMaximo;
+    procedure Execute; override;//Demo
+
+    procedure pLeituradaNFE;
+    function fGetIdf_DocPelaChave(pChave: string):Integer;
+    function fGetCNPJPelaChave(pChave: string):string;
+    //Métodos para importar e exportar arquivos XML
+    function fExportaLoteXML(pLista: TStringList):Boolean;
+    function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
+    function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
+    function fLoadXMLNFeLista(pLista : TStringList): Boolean;
+
+    function fExportaPDF(pLista: TStringList): Integer;
+    //Métodos de Compressão
+    function fCompactar(pPath: string): TFileStream;
+    function fDescompacartar(pPath: string): boolean;
+    //Métodos de Compactação de arquivos
+    function fZipFile(pZipFile, AFileName: string; pArqDuplicado : boolean = false): Boolean;
+    function fZipFileExtrair(FZipFile, APath: string): Boolean;
+    //Metodos da IS
+    function fNumProcessThreads: Integer;
+    function fIsValidDispatch(const v: OleVariant): Boolean;
+    procedure pCompress(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
+    procedure pDecompress(var vXML: TStream; ADest: string); overload;
+    procedure pShellZip(pZipfile, pSourceFolder: OleVariant; pFilter: String);
+    //Metodos de compressão em lote
+    procedure pCompressFiles(Files: TStrings; const Filename: String);
+    procedure pDecompressFiles(const Filename, DestDirectory : String);
+    procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
+      Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
+    function fMaster(pObjUsuario: TUsuarios): boolean;
+
+  end;
+
 
 const
   SHCONTCH_NOPROGRESSBOX = 4;
@@ -60,15 +73,18 @@ const
   cAguardando = 1;
   cCancAguard = 4;
 
+var
+ wRotinas : TRotinas;
+
 implementation
 
 uses
   uFoPrincipal, Base;
 
 var
-wChaveErro : TStringList;
+ wChaveErro : TStringList;
 
-procedure pDecompressFiles(const Filename, DestDirectory : String);
+procedure TRotinas.pDecompressFiles(const Filename, DestDirectory : String);
 var
   dest,s : String;
   decompr : TDecompressionStream;
@@ -109,7 +125,7 @@ begin
 end;
 
 
-procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
+procedure TRotinas.pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
   Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
 var
   res: TSearchRec;
@@ -130,14 +146,12 @@ begin
   end;
 end;
 
-
-function fMaster(pObjUsuario: TUsuarios): boolean;
+function TRotinas.fMaster(pObjUsuario: TUsuarios): boolean;
 begin
   Result := ((Trim(LowerCase(pObjUsuario.Usuario)) = 'master') and (pObjUsuario.Senha = fSenhaAtual('')));
 end;
 
-
-procedure pCompress(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
+procedure TRotinas.pCompress(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
 var
   FileIni: TFileStream;
   Zip:     TCompressionStream;
@@ -169,7 +183,7 @@ begin
   end;
 end;
 
-function fNumProcessThreads: Integer;
+function TRotinas.fNumProcessThreads: Integer;
 var
   HSnapShot: THandle;
   Te32: TThreadEntry32;
@@ -195,12 +209,12 @@ begin
   Result := ProcThreads;
 end;
 
-function fIsValidDispatch(const v: OleVariant): Boolean;
+function TRotinas.fIsValidDispatch(const v: OleVariant): Boolean;
 begin
   result := (VarType(v) = varDispatch) and Assigned(TVarData(v).VDispatch);
 end;
 
-procedure pShellZip(pZipfile, pSourceFolder: OleVariant; pFilter: String);
+procedure TRotinas.pShellZip(pZipfile, pSourceFolder: OleVariant; pFilter: String);
 const //A tipagem dos diretórios(parâmetros) deve ser OleVariant para funcionar o get 'shellobj.NameSpace'.
   emptyzip: array[0..23] of byte  = (80,75,5,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
 var
@@ -248,7 +262,7 @@ begin
    Sleep(100);
 end;
 
-procedure pCompressFiles(Files: TStrings; const Filename: String);
+procedure TRotinas.pCompressFiles(Files: TStrings; const Filename: String);
 var
   infile, outfile, tmpFile : TFileStream;
   compr : TCompressionStream;
@@ -301,7 +315,7 @@ begin
   end;
 end;
 
-procedure pDecompress(var vXML: TStream; ADest: string);
+procedure TRotinas.pDecompress(var vXML: TStream; ADest: string);
 var
   FileOut: TFileStream;
   DeZip: TDecompressionStream;
@@ -328,7 +342,7 @@ begin
   end;
 end;
 
-function fExportaLoteXML(pLista: TStringList):Boolean;
+function TRotinas.fExportaLoteXML(pLista: TStringList):Boolean;
 var
   I : Integer;
   wStream : TStream;
@@ -338,7 +352,7 @@ begin
   wStream := TMemoryStream.Create;
   try
     wDirTemp := ExtractFileDir(GetCurrentDir);
-    with foPrincipal.dlgSaveXML, DaoObjetoXML do
+    with foPrincipal.dlgSaveXML do
     begin
       Filter := 'ZIP | *.zip';
       FilterIndex := FilterIndex+1;
@@ -354,20 +368,21 @@ begin
               exit;
             end;
 
-
-//        if FileExists(FileName) then
-//          FileName := FileName + '('++')'
-
         wPathZIP := FileName;
         if not Assigned(ObjetoXML) then
           ObjetoXML := TLm_bkpdfe.Create;
 
+        Max := pLista.Count;
+        Maximo := pLista.Count;
         for I := 0 to pLista.Count - 1 do
         begin
+          Text := pLista.Strings[i];
+          Number := I;
+          DoProgress;
           ObjetoXML:= TLm_bkpdfe.Create;
           ObjetoXML.Chave := pLista.Strings[i];
 
-          if fConsultaObjXML(ObjetoXML, ['chave']) then
+          if DaoObjetoXML.fConsultaObjXML(ObjetoXML, ['chave']) then
           begin
             if (ObjetoXML.Protocolocanc <> '') and (ObjetoXML.Protocoloaut <> '') then
             begin
@@ -414,53 +429,8 @@ begin
   end;
 end;
 
-function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
-var i: integer;
-    wObjtXML : TLm_bkpdfe;
-    wDataSet : TDataSet;
-begin
-  Result := False;
-    DM_NFEDFE.Dao.StartTransaction;
-  try
 
-    if pCNPJ = '*' then
-    begin
-      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe');
-      Result := wDataSet.IsEmpty;
-      Exit;
-    end
-    else
-    if fValidaCNPJ(pCNPJ) then
-    begin
-      if Length(pCNPJ) >= 18  then
-       pCNPJ := fTiraMascaraCNPJ(pCNPJ);
-
-      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe where CNPJ = '+ QuotedStr(pCNPJ));
-      Result := wDataSet.FieldCount = 0;
-      Exit;
-    end;
-
-    with DaoObjetoXML do
-    for I := 0 to pLista.Count - 1 do
-    begin
-      wObjtXML := TLm_bkpdfe.create;
-      wObjtXML := TLm_bkpdfe(pLista.Objects[I]);
-      if wObjtXML.Chave = pLista.Strings[i] then
-        if DaoObjetoXML.fConsDeleteObjXML(wObjtXML,['CHAVE']) then
-        begin
-          Result := DaoObjetoXML.fExcluirObjXML(wObjtXML) > 0;
-          ObjetoXML:= TLm_bkpdfe.Create;
-        end;
-    end;
-
-   DM_NFEDFE.Dao.Commit;
-  except
-    DM_NFEDFE.Dao.RollBack;
-    Result := False;
-  end;
-end;
-
-function fZipFileExtrair(FZipFile, APath: string): Boolean;
+function TRotinas.fZipFileExtrair(FZipFile, APath: string): Boolean;
 var
   Zip: TZipFile;
 begin
@@ -483,7 +453,7 @@ begin
   end;
 end;
 
-function fZipFile(pZipFile, AFileName: string; pArqDuplicado : boolean = false): Boolean;
+function TRotinas.fZipFile(pZipFile, AFileName: string; pArqDuplicado : boolean = false): Boolean;
 var
   Zip: TZipFile;
   i : Integer;
@@ -511,26 +481,7 @@ begin
   end;
 end;
 
-function fCompactar(pPath: string): TFIleStream;
-var
-FileIni, FileOut: TFileStream;
-Zip: TCompressionStream;
-begin
-  try
-    FileIni:=TFileStream.Create(pPath, fmOpenRead and fmShareExclusive);//fmOpenRead);
-    FileOut:=TFileStream.Create(pPath, fmCreate and fmShareExclusive);   // fmShareExclusive);
-    Zip:=TCompressionStream.Create(clMax, FileOut);
-    Zip.CopyFrom(FileIni, FileIni.Size);
-
-    Result := FileIni;
-  finally
-    Zip.Free;
-    FileOut.Free;
-    FileIni.Free;
-  end;
-end;
-
-function fDescompacartar(pPath: string): boolean;
+function TRotinas.fDescompacartar(pPath: string): boolean;
 var
   FileIni, FileOut: TFileStream;
   DeZip: TDecompressionStream;
@@ -555,8 +506,7 @@ begin
   end;
 end;
 
-//function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
-function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
+function TRotinas.fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
 var
   wDataSet   : TDataSet;
   wDaoXML    : TDaoBkpdfe;
@@ -998,16 +948,21 @@ var
  begin
    Result := False;
    try
-   for I := Low(wArrayObjXML) to High(wArrayObjXML) do
-   begin
-     if Assigned(wArrayObjXML[I]) then
+//     Max    := High(wArrayObjXML);
+//     FResult := High(wArrayObjXML);
+     for I := Low(wArrayObjXML) to High(wArrayObjXML) do
      begin
-       if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
-          wArrayObjXML[i].Free;
-     end
-     else
-       wArrayObjXML[i].Free;
-   end;
+       if Assigned(wArrayObjXML[I]) then
+       begin
+         Text := wArrayObjXML[I].Chave;
+         Number := I;
+         DoProgress;
+         if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
+           wArrayObjXML[i].Free;
+       end
+       else
+         wArrayObjXML[i].Free;
+     end;
    finally
      Result := True;
      FreeAndNil(wChaveErro);
@@ -1033,17 +988,17 @@ begin
       Result := fGravaXML;
     except on E: Exception do
            begin
-              if pLote then
-                exit;
+             if pLote then
+               exit;
 
-                if wChaveErro.IndexOf(wChaveAux) < 0 then
-                   wChaveErro.Add(wChaveAux);
+              if wChaveErro.IndexOf(wChaveAux) < 0 then
+                 wChaveErro.Add(wChaveAux);
 
              if (not wYesAll) then
              begin
-              wYesAll :=  MessageDlg('Erro na leitura do arquivo: '+ wChaveAux+ #10#13+
-                    'Deseja refazer o processo? '+#10#13+
-                     E.Message, mtError, [mbYes, mbYesToAll, mbNo],0) = mrYesToAll;
+               wYesAll :=  MessageDlg('Erro na leitura do arquivo: '+ wChaveAux+ #10#13+
+                                      'Deseja refazer o processo? '+#10#13+
+                                      E.Message, mtError, [mbYes, mbYesToAll, mbNo],0) = mrYesToAll;
 
                 fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','');
              end;
@@ -1064,7 +1019,7 @@ begin
 
 end;
 
-function fLoadXMLNFeLista(pLista : TStringList): Boolean;
+function TRotinas.fLoadXMLNFeLista(pLista : TStringList): Boolean;
 var
   wDaoXML    : TDaoBkpdfe;
   wObjConfig : TConfiguracoes;
@@ -1372,7 +1327,7 @@ begin
   end;
 end;
 
-function fExportaPDF(pLista: TStringList): Integer;
+function TRotinas.fExportaPDF(pLista: TStringList): Integer;
 var
   wOK : boolean;
   wDaoXML    : TDaoBkpdfe;
@@ -1424,7 +1379,7 @@ begin
   try
     wPathSave := fCarregaPAthPDF;
     try
-      with foPrincipal.dlgSaveXML, DaoObjetoXML do
+      with foPrincipal.dlgSaveXML do
       begin
         InitialDir := GetCurrentDir;
         Filter := 'ZIP | *.zip';
@@ -1481,7 +1436,7 @@ begin
 end;
 
 
-function fGetIdf_DocPelaChave(pChave: string):integer;
+function TRotinas.fGetIdf_DocPelaChave(pChave: string):integer;
 var wLen : Integer;
 begin
   Result := 0;
@@ -1517,7 +1472,7 @@ begin
   end;
 end;
 
-function fGetCNPJPelaChave(pChave: string):string;
+function TRotinas.fGetCNPJPelaChave(pChave: string):string;
 var wLen: Integer;
 begin
   Result := '';
@@ -1559,7 +1514,7 @@ begin
   end;
 end;
 
-procedure pLeituradaNFE;
+procedure TRotinas.pLeituradaNFE;
 var
   xmlNCab, xmlNItm : IXMLNode;
   widstrRetorno    : WideString;
@@ -1652,6 +1607,82 @@ begin
     xmlNCab := xmlNCab.NextSibling;
   end;;
 
+end;
+
+{TRotinas}
+
+procedure TRotinas.Execute;
+begin
+  inherited;
+  Max := FMaximo;
+  DoMax;
+  FResult := FResultMax;
+end;
+
+
+function TRotinas.fDeleteObjetoXML(pLista: TStringList; pCNPJ: string): Boolean;
+var i: integer;
+    wObjtXML : TLm_bkpdfe;
+    wDataSet : TDataSet;
+begin
+  Result := False;
+    DM_NFEDFE.Dao.StartTransaction;
+  try
+
+    if pCNPJ = '*' then
+    begin
+      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe');
+      Result := wDataSet.IsEmpty;
+      Exit;
+    end
+    else
+    if fValidaCNPJ(pCNPJ) then
+    begin
+      if Length(pCNPJ) >= 18  then
+       pCNPJ := fTiraMascaraCNPJ(pCNPJ);
+
+      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe where CNPJ = '+ QuotedStr(pCNPJ));
+      Result := wDataSet.FieldCount = 0;
+      Exit;
+    end;
+
+    for I := 0 to pLista.Count - 1 do
+    begin
+      wObjtXML := TLm_bkpdfe.create;
+      wObjtXML := TLm_bkpdfe(pLista.Objects[I]);
+      if wObjtXML.Chave = pLista.Strings[i] then
+        if DaoObjetoXML.fConsDeleteObjXML(wObjtXML,['CHAVE']) then
+        begin
+          Result := (DaoObjetoXML.fExcluirObjXML(wObjtXML) > 0);
+          ObjetoXML:= TLm_bkpdfe.Create;
+        end;
+    end;
+
+   DM_NFEDFE.Dao.Commit;
+  except
+    DM_NFEDFE.Dao.RollBack;
+    Result := False;
+  end;
+end;
+
+
+function TRotinas.fCompactar(pPath: string): TFileStream;
+var
+FileIni, FileOut: TFileStream;
+Zip: TCompressionStream;
+begin
+  try
+    FileIni:=TFileStream.Create(pPath, fmOpenRead and fmShareExclusive);//fmOpenRead);
+    FileOut:=TFileStream.Create(pPath, fmCreate and fmShareExclusive);   // fmShareExclusive);
+    Zip:=TCompressionStream.Create(clMax, FileOut);
+    Zip.CopyFrom(FileIni, FileIni.Size);
+
+    Result := FileIni;
+  finally
+    Zip.Free;
+    FileOut.Free;
+    FileIni.Free;
+  end;
 end;
 
 

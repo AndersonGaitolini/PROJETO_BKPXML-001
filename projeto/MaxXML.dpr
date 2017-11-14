@@ -56,7 +56,6 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
-  Application.CreateForm(TfoTamArquivos, foTamArquivos);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
   if (ParamCount = 0) then
@@ -176,7 +175,7 @@ begin
      tabConfiguracoes.id := tabUsuarios.ConfigSalva;
      daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
 
-     if uRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) then
+     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) then
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe XML: : ' + ParamStr(4), true);
    end;
 

@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,uRotinas,uDMnfebkp,
+  uMetodosUteis, Configuracoes, Lm_bkpdfe;
 
 type
   TfoXMLSimulcao = class(TForm)
@@ -27,8 +28,6 @@ var
 
 implementation
 
-uses
-  uMetodosUteis, uRotinas, Configuracoes, Lm_bkpdfe;
 
 {$R *.dfm}
 
@@ -40,7 +39,7 @@ begin
   if Trim(edEmail.Text) <> '' then
       pEmail := Trim(edEmail.Text);
 
- if fLoadXMLNFe(tabConfiguracoes, txTodos,false, Trim(edXML.Text), pEmail) then
+ if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos,false, Trim(edXML.Text), pEmail) then
    CLose
  else
     ShowMessage('Não carregou XML');

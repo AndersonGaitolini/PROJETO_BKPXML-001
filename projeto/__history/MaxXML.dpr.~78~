@@ -32,7 +32,11 @@ uses
   uRotinas in 'J:\fontes\uRotinas.pas',
   uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
   uFoCadUsuario in 'J:\fontes\uFoCadUsuario.pas' {foCadUsuario},
-  uFoConsUsuario in 'J:\fontes\uFoConsUsuario.pas' {foConsUsuario};
+  uFoConsUsuario in 'J:\fontes\uFoConsUsuario.pas' {foConsUsuario},
+  uPadraoForm in 'J:\fontes\Padroes\uPadraoForm.pas' {foPadraoForm},
+  ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
+  uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
+  uProgressThread in 'J:\fontes\uProgressThread.pas';
 
 var
  ShowResult : Byte;
@@ -52,6 +56,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
+  Application.CreateForm(TfoTamArquivos, foTamArquivos);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
   if (ParamCount = 0) then

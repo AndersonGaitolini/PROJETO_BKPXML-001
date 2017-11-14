@@ -184,12 +184,17 @@ type
     procedure mmTamanhoArquivosClick(Sender: TObject);
   private
     { Private declarations }
+    wStartTime: TTime;
     wVisible: boolean;
     wFieldFiltros : TFieldFiltros;
+//    FDirectoryTreeSize: TDirectoryTreeSize;
+    procedure DoProgress (const PText: String; const PNumber: Cardinal);
+    procedure DoMax(const PMax: Int64);
+    procedure DoTerminate(PSender: TObject);
+
     procedure pCarregaConfigUsuario(pIDConfig: Integer);
     procedure fFiltroEmissaoXML;
     procedure pDataFiltro;
-    procedure pStatusBarProgress;
     procedure pSalveName(pFieldName: string; var wFileName: string);
     procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
     procedure pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
@@ -198,6 +203,8 @@ type
     procedure pIniciaGrid;
     procedure pMenuFiltroData(pFieldFiltros : TFieldFiltros);
     procedure pUpdateCampoCNPJE;
+    procedure pRotinasProgress;
+
 
   public
     { Public declarations }
@@ -270,7 +277,7 @@ procedure TfoPrincipal.btnCanEnvioArqClick(Sender: TObject);
 var wFilename: string;
 begin
   fOpenFile('Selecione o XML de Cancelamento', wFilename,['XML | *.*xml'],1);
-  fLoadXMLNFe(tabConfiguracoes,txCan_,False, wFilename);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txCan_,False, wFilename);
   btnFiltrarClick(Sender);
 end;
 
@@ -278,19 +285,19 @@ procedure TfoPrincipal.btnCanEnvioExtClick(Sender: TObject);
 var wFilename: string;
 begin
   fOpenFile('Selecione o XML de Cancelamento processado', wFilename,['XML | *.*xml'],1);
-  fLoadXMLNFe(tabConfiguracoes,txCan_Ext,False, wFilename);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txCan_Ext,False, wFilename);
   btnFiltrarClick(Sender);
 end;
 
 procedure TfoPrincipal.btnCanEnvioLoteClick(Sender: TObject);
 begin
-  fLoadXMLNFe(tabConfiguracoes,txCan_Lote, True);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txCan_Lote, True);
   btnFiltrarClick(Sender);
 end;
 
 procedure TfoPrincipal.btnCanExetendLoteClick(Sender: TObject);
 begin
-  fLoadXMLNFe(tabConfiguracoes,txCan_ExtLote, True);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txCan_ExtLote, True);
   btnFiltrarClick(Sender);
 end;
 
@@ -299,7 +306,7 @@ var wFilename: string;
 begin
   wFilename := 'Env_Nfe';
   fOpenFile('Selecione o XML de Envio', wFilename,['XML | *.*xml'],1);
-  fLoadXMLNFe(tabConfiguracoes, txNFE_Env, false, wFilename);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes, txNFE_Env, false, wFilename);
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
@@ -309,14 +316,14 @@ var wFilename: string;
 begin
   wFilename := 'Env_Nfe';
   fOpenFile('Selecione o XML de Envio processado', wFilename,['XML | *.*xml'],1);
-  fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt, False, wFilename);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt, False, wFilename);
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
 procedure TfoPrincipal.btnEnvioLoteClick(Sender: TObject);
 begin
-  fLoadXMLNFe(tabConfiguracoes,txNFE_EnvLote, True);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFE_EnvLote, True);
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
@@ -353,7 +360,7 @@ end;
 
 procedure TfoPrincipal.btnProcRetornoClick(Sender: TObject);
 begin
-  if fLoadXMLNFe(tabConfiguracoes,txRet_Sai,True) then
+  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txRet_Sai,True) then
   begin
     pDataFiltro;
     DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
@@ -365,7 +372,7 @@ var wProcess: integer;
 begin
   foXMLSimulcao := TfoXMLSimulcao.Create(Application);
   try
-    wProcess:= fNumProcessThreads;
+    wProcess:= wRotinas.fNumProcessThreads;
     foXMLSimulcao.ShowModal;
     pDataFiltro;
     DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
@@ -377,7 +384,7 @@ end;
 
 procedure TfoPrincipal.btnXMLEnvioExtLoteClick(Sender: TObject);
 begin
-  fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExtLote, True);
+  wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExtLote, True);
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 
@@ -426,15 +433,31 @@ begin
     if MessageDlg('Você está prestes a deletar '+ IntToStr(wListaSelecionados.Count) +' arquivos.'+#10#13+
                    'Confirma ?',
        mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
-      if fDeleteObjetoXML(wListaSelecionados) then
+      if wRotinas.fDeleteObjetoXML(wListaSelecionados) then
         dbgNfebkp.Refresh;;
   end
   else
   if dbgNfebkp.SelectedRows.Count = 1 then
   begin
     if MessageDlg('Deseja excluir o XML selecionado ?', mtConfirmation, [mbNo, mbYes],0 ) = mrYes then
-      if fDeleteObjetoXML(wListaSelecionados) then
+      if wRotinas.fDeleteObjetoXML(wListaSelecionados) then
         dbgNfebkp.Refresh;;
+  end;
+end;
+
+procedure TfoPrincipal.pRotinasProgress;
+begin
+  if not Assigned(wRotinas) then
+    wRotinas := TRotinas.Create;
+
+  with wRotinas do
+  begin
+    OnMax := DoMax;
+    OnProgress := DoProgress;
+    OnTerminate := DoTerminate;
+    statPrincipal.Panels[1] := '0.00%';
+    wStartTime := Now;
+    Resume;
   end;
 end;
 
@@ -517,7 +540,7 @@ const
 
 begin
   pSelecaoChave(wListaSelecionados);
-  wVisible := fMaster(tabUsuarios);
+  wVisible := wRotinas.fMaster(tabUsuarios);
   pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
   pMenuMaster(wVisible);
 end;
@@ -591,7 +614,6 @@ end;
 procedure TfoPrincipal.mmDeletarTodosClick(Sender: TObject);
 var wMsg : string;
 begin
-  ProgressBar1.Position := 0;
   cbbEmpCNPJChange(Sender);
   wMsg := 'Você está prestes a deletar.';
   begin
@@ -602,7 +624,7 @@ begin
      wMsg := 'Você está prestes a deletar todos os arquivos do CNPJ '+ fMascaraCNPJ(CNPJDOC.Documento)+'.';
 
     if MessageDlg(wMsg, mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
-     if  fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
+     if wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
      begin
        cbbEmpCNPJ.Clear;
      end;
@@ -614,8 +636,8 @@ procedure TfoPrincipal.mmDelRefazAutTodosClick(Sender: TObject);
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
-  fDeleteObjetoXML(wListaSelecionados);
-  if fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
+  wRotinas.fDeleteObjetoXML(wListaSelecionados);
+  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
   begin
     dbgNfebkp.Refresh;
   end;
@@ -631,13 +653,13 @@ begin
   begin
     if MessageDlg('Você está prestes a deletar '+ IntToStr(wListaSelecionados.Count) +' arquivos.',
        mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
-      fDeleteObjetoXML(wListaSelecionados);
+      wRotinas.fDeleteObjetoXML(wListaSelecionados);
   end
   else
   if wListaSelecionados.Count = 1 then
   begin
     if MessageDlg('Deseja excluir o arquivo XML ?', mtConfirmation, [mbNo, mbYes],0 ) = mrYes then
-      fDeleteObjetoXML(wListaSelecionados);
+      wRotinas.fDeleteObjetoXML(wListaSelecionados);
   end;
 
   dbgNfebkp.Refresh;
@@ -647,15 +669,20 @@ procedure TfoPrincipal.mmExpTodosClick(Sender: TObject);
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
+  pRotinasProgress;
+
   if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
-    fExportaLoteXML(wListaSelecionados);
+  begin
+    wRotinas.fExportaLoteXML(wListaSelecionados);
+  end;
+
 end;
 
 procedure TfoPrincipal.mmExpPDFSelecaoClick(Sender: TObject);
 var wTotSalvos: integer;
 begin
   pSelecaoChave(wListaSelecionados);
-  wTotSalvos :=  fExportaPDF(wListaSelecionados);
+  wTotSalvos :=  wRotinas.fExportaPDF(wListaSelecionados);
   if wTotSalvos > 0 then
   begin
     if wTotSalvos = wListaSelecionados.Count then
@@ -671,7 +698,7 @@ var wTotSalvos: integer;
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
-  wTotSalvos :=  fExportaPDF(wListaSelecionados);
+  wTotSalvos :=  wRotinas.fExportaPDF(wListaSelecionados);
   if (wTotSalvos > 0)then
   begin
     if wTotSalvos > wListaSelecionados.Count then
@@ -685,7 +712,7 @@ end;
 procedure TfoPrincipal.mmExpSelecaoClick(Sender: TObject);
 begin
   if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
-    fExportaLoteXML(wListaSelecionados);
+    wRotinas.fExportaLoteXML(wListaSelecionados);
 end;
 
 procedure TfoPrincipal.dbgNfebkpTitleClick(Column: TColumn);
@@ -850,6 +877,25 @@ begin
   dbgNfebkp.Refresh;
 end;
 
+procedure TfoPrincipal.DoMax(const PMax: Int64);
+begin
+  ProgressBar1.Step := 1;
+  ProgressBar1.Position := 0;
+  ProgressBar1.Max := PMax;
+  ProgressBar1.DoubleBuffered := True;
+end;
+
+procedure TfoPrincipal.DoProgress(const PText: String; const PNumber: Cardinal);
+begin
+  ProgressBar1.StepIt;
+  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
+end;
+
+procedure TfoPrincipal.DoTerminate(PSender: TObject);
+begin
+  Application.MessageBox(PChar('Feito! '),PChar(Format('Processamento concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)])),MB_ICONINFORMATION);
+end;
+
 procedure TfoPrincipal.dtpDataFiltroFinKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
@@ -923,7 +969,7 @@ begin
 
      if dlgSaveXML.Execute then
      begin
-       pDecompress(wStream, dlgSaveXML.FileName);
+       wRotinas.pDecompress(wStream, dlgSaveXML.FileName);
      end;
    end;
 end;
@@ -1059,32 +1105,31 @@ var i,k:Integer;
 
  procedure pSetaCores;
  begin
-   clCorGrid00 := StrToInt('$ffffda'); //Amarelo suave
+   clCorGrid00 := StrToInt('$D6FEE1'); //Menta suave
    clCorGrid01 := StrToInt('$ffd7e1'); //Algodão-Doce framboesa
    clCorGrid02 := StrToInt('$fdfad0'); //Laranja Cream
-   clCorGrid03 := StrToInt('$D6FEE1'); //Menta suave
+   clCorGrid03 := StrToInt('$ffffda'); //Amarelo suave
    clCorGrid04 := StrToInt('$B4D0F7'); //Azul calcinha
  end;
 
  procedure pProgressBarStyle;
 var
-
   ProgressBarStyle: integer;
-
   begin
-    statPrincipal.Panels[1].Style := psOwnerDraw;
+    statPrincipal.Panels[3].Style := psOwnerDraw;
     ProgressBar1.Parent := statPrincipal;
     ProgressBarStyle := GetWindowLong(ProgressBar1.Handle, GWL_EXSTYLE);
-    ProgressBarStyle := ProgressBarStyle - WS_EX_STATICEDGE;
+    ProgressBarStyle := (ProgressBarStyle - WS_EX_STATICEDGE);
     SetWindowLong(ProgressBar1.Handle, GWL_EXSTYLE, ProgressBarStyle);
-
   end;
 
 begin
+
+
   foPrincipal.Caption := 'SOUIS MAXXML Versão 1.2 - beta';
   pSetaCores;
   pIniciaGrid;
-  pProgressBarStyle;
+//  pProgressBarStyle;
 
   if not Assigned(DaoObjetoXML) then
     DaoObjetoXML := TDaoBkpdfe.create;
@@ -1102,9 +1147,10 @@ begin
   i:= dts.FieldByName('configsalva').AsInteger;
   dts.Free;
 
-  wVisible := fMaster(tabUsuarios);
+  wVisible := wRotinas.fMaster(tabUsuarios);
   pCarregaConfigUsuario(i);
   statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
+  statPrincipal.Panels[1].Text := '0.00%';
 
   wLoadXML := lxNone;
   wLastColunm := -1;
@@ -1132,6 +1178,9 @@ begin
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
+
+  ProgressBar1.Position := 0;
+  ProgressBar1.Max := 100;
 end;
 
 procedure TfoPrincipal.pSalveName(pFieldName: string; var wFileName: string);
@@ -1235,19 +1284,6 @@ begin
 //  dbgNfebkp.SelectedRows.Refresh;
 end;
 
-procedure TfoPrincipal.pStatusBarProgress;
-//var
-// ProgressBarStyle: integer;
-begin
-//  statPrincipal.Panels[3].Style := psOwnerDraw;
-//  ProgressBar1.Parent := statPrincipal;
-//  ProgressBarStyle := GetWindowLong(ProgressBar1.Handle,GWL_EXSTYLE);
-//  ProgressBarStyle := ProgressBarStyle - WS_EX_STATICEDGE;
-//  SetWindowLong(ProgressBar1.Handle, GWL_EXSTYLE, ProgressBarStyle);
-//  ProgressBar1.Position := 0;
-//  ProgressBar1.Max := 100;
-end;
-
 procedure TfoPrincipal.pUpdateCampoCNPJE;
 var k : Integer;
 begin
@@ -1285,13 +1321,12 @@ end;
 procedure TfoPrincipal.statPrincipalDrawPanel(StatusBar: TStatusBar;
   Panel: TStatusPanel; const Rect: TRect);
 begin
-  if Panel = StatusBar.Panels[1] then
-  with ProgressBar1 do
+  if Panel = statPrincipal.Panels[3] then
   begin
-    Top := Rect.Top;
-    Left := Rect.Left;
-    Width := Rect.Right - Rect.Left - 15;
-    Height := Rect.Bottom - Rect.Top;
+    ProgressBar1.Top := Rect.Top;
+    ProgressBar1.Left := Rect.Left;
+    ProgressBar1.Width := Rect.Right - Rect.Left - 15;
+    ProgressBar1.Height := Rect.Bottom - Rect.Top;
   end;
 end;
 
@@ -1320,7 +1355,7 @@ begin
     if jopdDirDir.Execute then
       tabConfiguracoes.NFePathProcessado := jopdDirDir.Directory;
 
-    if fLoadXMLNFeLista(wListaSelecionados)then
+    if wRotinas.fLoadXMLNFeLista(wListaSelecionados)then
     begin
       dbgNfebkp.Refresh;
       ShowMessage('Autorizações selecionadas reprocessadas!');
@@ -1334,7 +1369,6 @@ var wPathInit : TStringList;
     wI : Integer;
     wColumn : TColumn;
 begin
-
    wPathInit := TStringList.Create;
    jopdDirDir := TJvSelectDirectory.Create(Application);
    try
@@ -1355,14 +1389,15 @@ begin
     if (tabConfiguracoes.NFePathProcessado = '') OR (NOT DirectoryExists(tabConfiguracoes.NFePathProcessado)) then
       exit;
 
-    if fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
+
+    pRotinasProgress;
+    if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
     begin
       pUpdateCampoCNPJE;
       FormShow(sender);
       dbgNfebkp.Refresh;
       dbgNfebkp.DataSource.DataSet.First;
 
-      ShowMessage('Autorizações reprocessadas!');
     end;
    finally
      wPathInit.free;
@@ -1386,7 +1421,7 @@ procedure TfoPrincipal.mmSelTodosExportarClick(Sender: TObject);
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
-  fExportaLoteXML(wListaSelecionados);
+  wRotinas.fExportaLoteXML(wListaSelecionados);
 end;
 
 procedure TfoPrincipal.mniConfigBDClick(Sender: TObject);
@@ -1404,11 +1439,12 @@ end;
 procedure TfoPrincipal.mniReconectarClick(Sender: TObject);
 var statusCon : string;
 begin
-  if ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
-   statusCon := 'Conectado'
-  else
-   statusCon := 'Desconecado';
-  statPrincipal.Panels[1].text := statusCon;
+//  if ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
+//   statusCon := 'Conectado'
+//  else
+//   statusCon := 'Desconecado';
+
+//  statPrincipal.Panels[1].text := statusCon;
 end;
 
 procedure TfoPrincipal.mniTrocarUsuarioClick(Sender: TObject);
@@ -1420,7 +1456,7 @@ begin
 
     if wShowResult = mrOk then
     begin
-      wVisible := fMaster(tabUsuarios);
+      wVisible := wRotinas.fMaster(tabUsuarios);
       pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
       statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
     end
@@ -1462,7 +1498,6 @@ end;
 
 procedure TfoPrincipal.ToolButton1Click(Sender: TObject);
 begin
-   //carregarDocumetos
    ShowMessage('usuario: '+ tabUsuarios.Usuario);
 end;
 
