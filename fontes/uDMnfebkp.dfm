@@ -8,7 +8,9 @@ object DM_NFEDFE: TDM_NFEDFE
       'CharacterSet=WIN1252'
       'User_Name=sysdba'
       'Password=masterkey'
-      'Database=E:\BT\7.0\MaxWin\ZANCANARO\MAXXML\BACKUPXML.FDB'
+      
+        'Database=D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML\BACKUPXML.F' +
+        'DB'
       '|Database=D:\Programacao\DELPHI\BASE\7357\MAXXML\BACKUPXML.FDB'
       'DriverID=FBEmbed'
       'Pooled=False')

@@ -4,6 +4,7 @@ uses
   Vcl.Forms,
   Vcl.Controls,
   SysUtils,
+  System.MaskUtils,
   uDMnfebkp in 'J:\fontes\uDMnfebkp.pas' {DM_NFEDFE: TDataModule},
   uMetodosUteis in 'J:\fontes\uMetodosUteis.pas',
   uPadraoCons in 'J:\fontes\Padroes\uPadraoCons.pas' {frmPadraoCons},
@@ -60,8 +61,6 @@ begin
       Application.Terminate;
       exit;
     end;
-
-
 
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
@@ -161,8 +160,8 @@ begin
     else
       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'Conectou BD : XML Envio: ' + ParamStr(3));
 
-    tabUsuarios.Usuario := Trim(ParamStr(2));
-    tabUsuarios.Senha    := Trim(ParamStr(3));
+    tabUsuarios.Usuario         := Trim(ParamStr(2));
+    tabUsuarios.Senha           := Trim(ParamStr(3));
     Lm_bkpdfe.CNPJDOC.Documento := Trim(ParamStr(5));
     Lm_bkpdfe.CNPJDOC.Fantasia  := Trim(ParamStr(6));
     Lm_bkpdfe.CNPJDOC.Parametro := true;

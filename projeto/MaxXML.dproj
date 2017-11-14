@@ -82,7 +82,7 @@
         <DCC_DcuOutput>J:\dcu\</DCC_DcuOutput>
         <VerInfo_Locale>1046</VerInfo_Locale>
         <DCC_BplOutput>J:\projeto\</DCC_BplOutput>
-        <DCC_ExeOutput>E:\BT\7.0\MaxWin\Zancanaro\MAXXML</DCC_ExeOutput>
+        <DCC_ExeOutput>D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML</DCC_ExeOutput>
         <DCC_DcpOutput>J:\projeto\</DCC_DcpOutput>
         <VerInfo_Build>1</VerInfo_Build>
         <DCC_UnitSearchPath>J:\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -166,6 +166,16 @@
         <DCCReference Include="J:\fontes\uFoConsUsuario.pas">
             <Form>foConsUsuario</Form>
         </DCCReference>
+        <DCCReference Include="J:\fontes\Padroes\uPadraoForm.pas">
+            <Form>foPadraoForm</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="J:\fontes\ufoTamanhoArquivos.pas">
+            <Form>foTamArquivos</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="J:\fontes\uDirectoryTreeSize.pas"/>
+        <DCCReference Include="J:\fontes\uProgressThread.pas"/>
         <None Include="ModelSupport_MaxXML\default.txaPackage"/>
         <None Include="ModelSupport_MaxXML\default.txvpck"/>
         <None Include="ModelSupport_MaxXML\uPadraoEdicao\default.txvpck"/>
@@ -264,7 +274,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="D:\Programacao\DELPHI\BASE\7357\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>MaxXML.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -477,6 +487,12 @@
                 <DeployFile LocalName="ModelSupport_MaxXML\ufoLogin\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML\MaxXML.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>MaxXML.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

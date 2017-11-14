@@ -110,6 +110,9 @@ type
     mmHabiltaLogs: TMenuItem;
     lbEmp: TLabel;
     cbbEmpCNPJ: TComboBox;
+    ProgressBar1: TProgressBar;
+    reeSize1: TMenuItem;
+    mmTamanhoArquivos: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
@@ -176,6 +179,9 @@ type
     procedure mmExpPDFSelecaoClick(Sender: TObject);
     procedure mmExpPDFTodosClick(Sender: TObject);
     procedure cbbEmpCNPJChange(Sender: TObject);
+    procedure statPrincipalDrawPanel(StatusBar: TStatusBar; Panel: TStatusPanel;
+      const Rect: TRect);
+    procedure mmTamanhoArquivosClick(Sender: TObject);
   private
     { Private declarations }
     wVisible: boolean;
@@ -221,9 +227,20 @@ implementation
 
 uses
 
-uFoConsConfiguracao, uFoConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario;
+uFoConsConfiguracao, uFoConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos;
 
 {$R *.dfm}
+
+procedure TfoPrincipal.mmTamanhoArquivosClick(Sender: TObject);
+begin
+  foTamArquivos := TfoTamArquivos.Create(Application);
+  try
+    foTamArquivos.ShowModal;
+
+  finally
+    FreeAndNil(foTamArquivos);
+  end;
+end;
 
 procedure TfoPrincipal.appEventBKPNFEMinimize(Sender: TObject);
 begin
@@ -574,6 +591,7 @@ end;
 procedure TfoPrincipal.mmDeletarTodosClick(Sender: TObject);
 var wMsg : string;
 begin
+  ProgressBar1.Position := 0;
   cbbEmpCNPJChange(Sender);
   wMsg := 'Você está prestes a deletar.';
   begin
@@ -926,7 +944,7 @@ var wStream : TStream;
       wStatus := wListaEmp.IndexOf(wSTR);
 
       case wStatus of
-        000: Canvas.Brush.Color := clCream; //clCorGrid00;
+        000: Canvas.Brush.Color := clCorGrid00; //clCorGrid00;
         001: Canvas.Brush.Color := clCorGrid01;
         002: Canvas.Brush.Color := clCorGrid02;
         003: Canvas.Brush.Color := clCorGrid03;
@@ -1048,10 +1066,25 @@ var i,k:Integer;
    clCorGrid04 := StrToInt('$B4D0F7'); //Azul calcinha
  end;
 
+ procedure pProgressBarStyle;
+var
+
+  ProgressBarStyle: integer;
+
+  begin
+    statPrincipal.Panels[1].Style := psOwnerDraw;
+    ProgressBar1.Parent := statPrincipal;
+    ProgressBarStyle := GetWindowLong(ProgressBar1.Handle, GWL_EXSTYLE);
+    ProgressBarStyle := ProgressBarStyle - WS_EX_STATICEDGE;
+    SetWindowLong(ProgressBar1.Handle, GWL_EXSTYLE, ProgressBarStyle);
+
+  end;
+
 begin
   foPrincipal.Caption := 'SOUIS MAXXML Versão 1.2 - beta';
   pSetaCores;
   pIniciaGrid;
+  pProgressBarStyle;
 
   if not Assigned(DaoObjetoXML) then
     DaoObjetoXML := TDaoBkpdfe.create;
@@ -1246,6 +1279,19 @@ if Assigned(CNPJDOC) then
     else
     if fValidaCNPJ(CNPJDOC.Documento) then
        cbbEmpCNPJ.ItemIndex := cbbEmpCNPJ.Items.IndexOf('CNPJ: '+ fMascaraCNPJ(CNPJDOC.Documento));
+  end;
+end;
+
+procedure TfoPrincipal.statPrincipalDrawPanel(StatusBar: TStatusBar;
+  Panel: TStatusPanel; const Rect: TRect);
+begin
+  if Panel = StatusBar.Panels[1] then
+  with ProgressBar1 do
+  begin
+    Top := Rect.Top;
+    Left := Rect.Left;
+    Width := Rect.Right - Rect.Left - 15;
+    Height := Rect.Bottom - Rect.Top;
   end;
 end;
 

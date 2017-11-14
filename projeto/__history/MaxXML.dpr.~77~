@@ -32,7 +32,11 @@ uses
   uRotinas in 'J:\fontes\uRotinas.pas',
   uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
   uFoCadUsuario in 'J:\fontes\uFoCadUsuario.pas' {foCadUsuario},
-  uFoConsUsuario in 'J:\fontes\uFoConsUsuario.pas' {foConsUsuario};
+  uFoConsUsuario in 'J:\fontes\uFoConsUsuario.pas' {foConsUsuario},
+  uPadraoForm in 'J:\fontes\Padroes\uPadraoForm.pas' {foPadraoForm},
+  ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {ufoTamArquivos},
+  uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
+  uProgressThread in 'J:\fontes\uProgressThread.pas';
 
 var
  ShowResult : Byte;
@@ -52,6 +56,7 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
+  Application.CreateForm(TufoTamArquivos, ufoTamArquivos);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
   if (ParamCount = 0) then
@@ -160,8 +165,8 @@ begin
     else
       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'Conectou BD : XML Envio: ' + ParamStr(3));
 
-    tabUsuarios.Usuario := Trim(ParamStr(2));
-    tabUsuarios.Senha    := Trim(ParamStr(3));
+    tabUsuarios.Usuario         := Trim(ParamStr(2));
+    tabUsuarios.Senha           := Trim(ParamStr(3));
     Lm_bkpdfe.CNPJDOC.Documento := Trim(ParamStr(5));
     Lm_bkpdfe.CNPJDOC.Fantasia  := Trim(ParamStr(6));
     Lm_bkpdfe.CNPJDOC.Parametro := true;
