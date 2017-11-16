@@ -10,7 +10,7 @@ uses
  Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls, System.ZLib,uDMnfebkp,
  Xml.XMLDoc,Xml.XMLIntf, uMetodosUteis,Data.DB,System.Zip,System.DateUtils,
  Usuarios, ShellAPI, TlHelp32, Comobj,System.StrUtils,
- uProgressThread;
+ uProgressThread, MSXML;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
 
@@ -19,9 +19,14 @@ uses
     FMaximo : Int64;
     FResult : Int64;
     FResultMax : Int64;
+    FInitialDir : String;
+    FRefazAutorizacao : Boolean;
   public
     property Result: Int64 read FResult;
     property Maximo: Int64 read FMaximo write FMaximo;
+    property InitialDir: String write FInitialDir;
+    property RefazAutorizacao: Boolean read FRefazAutorizacao write FRefazAutorizacao;
+
     procedure Execute; override;//Demo
 
     procedure pLeituradaNFE;
@@ -30,8 +35,10 @@ uses
     //Métodos para importar e exportar arquivos XML
     function fExportaLoteXML(pLista: TStringList):Boolean;
     function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
-    function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
+    function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
     function fLoadXMLNFeLista(pLista : TStringList): Boolean;
+
+    function fDirectoryTreeFileCount(PInitialDir: String): Cardinal;
 
     function fExportaPDF(pLista: TStringList): Integer;
     //Métodos de Compressão
@@ -372,8 +379,8 @@ begin
         if not Assigned(ObjetoXML) then
           ObjetoXML := TLm_bkpdfe.Create;
 
-        Max := pLista.Count;
-        Maximo := pLista.Count;
+        FMaximo := pLista.Count;
+        FResultMax := pLista.Count;
         for I := 0 to pLista.Count - 1 do
         begin
           Text := pLista.Strings[i];
@@ -506,7 +513,7 @@ begin
   end;
 end;
 
-function TRotinas.fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Boolean;
+function TRotinas.fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
 var
   wDataSet   : TDataSet;
   wDaoXML    : TDaoBkpdfe;
@@ -567,7 +574,7 @@ var
       Result := xmlNTag.ChildNodes.First.Text;
   end;
 
-  procedure pXMLChave;
+  function fXMLChave: Int64;
   begin
     J := 0;
     if not pLote then
@@ -598,6 +605,10 @@ var
         SetLength(wArrayObjXML, J);
         wXMLProcessado := False;
         wStream := TMemoryStream.Create;
+
+         Text := wChaveAux;
+         Number := J;
+         DoProgress;
 
         if wChaveErro.IndexOf(wChaveAux) >= 0 then
         begin
@@ -735,6 +746,10 @@ var
         Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
         Tipo := '1';
         wStream := TMemoryStream.Create;
+
+        Text := wChaveAux;
+        Number := J;
+        DoProgress;
 
         if wChaveErro.IndexOf(wChaveAux) >= 0 then
         begin
@@ -891,6 +906,10 @@ var
           end;
         end;
 
+        Text := wChaveAux;
+        Number := J;
+        DoProgress;
+
         FileClose(wFileStream.Handle);
   //        pCompress(wFileSource, wStream,false);
   //        Xmlenvio:= wStream;
@@ -911,6 +930,8 @@ var
         end;
       end;
     end;
+
+    Result := Length(wArrayObjXML);
   end;
 
   function fCarregaPath:boolean;
@@ -943,13 +964,11 @@ var
       wPathFile := wPathAux;
   end;
 
- function fGravaXML: boolean;
+ function fGravaXML: Boolean;
  var i: Integer;
  begin
    Result := False;
    try
-//     Max    := High(wArrayObjXML);
-//     FResult := High(wArrayObjXML);
      for I := Low(wArrayObjXML) to High(wArrayObjXML) do
      begin
        if Assigned(wArrayObjXML[I]) then
@@ -957,6 +976,7 @@ var
          Text := wArrayObjXML[I].Chave;
          Number := I;
          DoProgress;
+         Inc(J,1);
          if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
            wArrayObjXML[i].Free;
        end
@@ -984,10 +1004,12 @@ begin
     fCarregaPath;
   try
     try
-      pXMLChave;
-      Result := fGravaXML;
+     fXMLChave;
+     Result := J;
+     FRefazAutorizacao := fGravaXML;
     except on E: Exception do
            begin
+             FRefazAutorizacao := False;
              if pLote then
                exit;
 
@@ -1007,11 +1029,11 @@ begin
                  fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','')
              else
                exit;
-
            end;
 
     end;
   finally
+    foPrincipal.pAtualizaGrid;
     FreeAndNil(XMLArq);
     FreeAndNil(wDaoXML);
     FreeAndNil(wDataSet);
@@ -1611,14 +1633,47 @@ end;
 
 {TRotinas}
 
-procedure TRotinas.Execute;
+function TRotinas.fDirectoryTreeFileCount(PInitialDir: String): Cardinal;
+var
+  SearchRecord: TSearchRec;
 begin
-  inherited;
-  Max := FMaximo;
-  DoMax;
-  FResult := FResultMax;
+  Result := 0;
+  if (Copy(PInitialDir,length(PInitialDir),1) <> '\') then
+    PInitialDir := PInitialDir + '\';
+
+  if FindFirst(PInitialDir + '*.*', faAnyFile, SearchRecord) = 0 then
+    try
+      repeat
+        if ((SearchRecord.Attr and faDirectory) = faDirectory) then
+        begin
+          if (SearchRecord.Name <> '.') and (SearchRecord.Name <> '..') then
+            Inc(Result,fDirectoryTreeFileCount(PInitialDir + SearchRecord.Name + '\' + ExtractFileName(PInitialDir)));
+        end
+        else
+          Inc(Result);
+      until FindNext(SearchRecord) <> 0;
+    finally
+      FindClose(SearchRecord)
+    end;
 end;
 
+procedure TRotinas.Execute;
+begin
+
+  inherited;
+  CoInitializeEx(nil,0);
+  try
+    case True of
+
+    end;
+
+    Max := 2 * fDirectoryTreeFileCount(FInitialDir);;
+    DoMax;
+    FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, True);
+  finally
+    CoInitializeEx(nil,0);
+  end;
+end;
 
 function TRotinas.fDeleteObjetoXML(pLista: TStringList; pCNPJ: string): Boolean;
 var i: integer;

@@ -82,7 +82,7 @@
         <DCC_DcuOutput>J:\dcu\</DCC_DcuOutput>
         <VerInfo_Locale>1046</VerInfo_Locale>
         <DCC_BplOutput>J:\projeto\</DCC_BplOutput>
-        <DCC_ExeOutput>V:\MaxWin\Zancanaro\MAXXML</DCC_ExeOutput>
+        <DCC_ExeOutput>D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML</DCC_ExeOutput>
         <DCC_DcpOutput>J:\projeto\</DCC_DcpOutput>
         <VerInfo_Build>1</VerInfo_Build>
         <DCC_UnitSearchPath>J:\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -364,6 +364,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_MaxXML\default.txaPackage" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="ModelSupport_MaxXML\uDMnfebkp\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -377,12 +383,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="ModelSupport_MaxXML\uFoConsultaPadrao\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_MaxXML\default.txaPackage" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -872,13 +872,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

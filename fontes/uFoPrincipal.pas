@@ -187,14 +187,16 @@ type
     wStartTime: TTime;
     wVisible: boolean;
     wFieldFiltros : TFieldFiltros;
-//    FDirectoryTreeSize: TDirectoryTreeSize;
-    procedure DoProgress (const PText: String; const PNumber: Cardinal);
-    procedure DoMax(const PMax: Int64);
-    procedure DoTerminate(PSender: TObject);
 
+    procedure DoMax(const PMax: Int64);
+    procedure DoProgress (const PText: String; const PNumber: Cardinal);
+    procedure pRotinasProgress;
+    procedure DoTerminate(PSender: TObject);
     procedure pCarregaConfigUsuario(pIDConfig: Integer);
-    procedure fFiltroEmissaoXML;
+
     procedure pDataFiltro;
+    procedure pFiltroEmissaoXML;
+    procedure pUpdateCampoCNPJE;
     procedure pSalveName(pFieldName: string; var wFileName: string);
     procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
     procedure pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
@@ -202,12 +204,12 @@ type
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
     procedure pMenuFiltroData(pFieldFiltros : TFieldFiltros);
-    procedure pUpdateCampoCNPJE;
-    procedure pRotinasProgress;
+
 
 
   public
     { Public declarations }
+    procedure pAtualizaGrid;
 
   published
     function OpenTabela:boolean;
@@ -330,7 +332,7 @@ end;
 
 procedure TfoPrincipal.btnFiltrarClick(Sender: TObject);
 begin
-  fFiltroEmissaoXML;
+  pFiltroEmissaoXML;
   dbgNfebkp.Refresh;
 end;
 
@@ -360,7 +362,7 @@ end;
 
 procedure TfoPrincipal.btnProcRetornoClick(Sender: TObject);
 begin
-  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txRet_Sai,True) then
+  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txRet_Sai,True)> 0 then
   begin
     pDataFiltro;
     DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
@@ -399,6 +401,15 @@ begin
      CNPJDOC.Documento := '*'
    else
      CNPJDOC.Documento := Copy(cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex],7,18);
+end;
+
+procedure TfoPrincipal.pAtualizaGrid;
+begin
+  pUpdateCampoCNPJE;
+  pDataFiltro;
+  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+  dbgNfebkp.Refresh;
+  dbgNfebkp.DataSource.DataSet.First;
 end;
 
 procedure TfoPrincipal.pCarregaConfigUsuario(pIDConfig: Integer);
@@ -455,7 +466,7 @@ begin
     OnMax := DoMax;
     OnProgress := DoProgress;
     OnTerminate := DoTerminate;
-    statPrincipal.Panels[1] := '0.00%';
+    statPrincipal.Panels[1].Text := '0.00%';
     wStartTime := Now;
     Resume;
   end;
@@ -637,7 +648,7 @@ begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   wRotinas.fDeleteObjetoXML(wListaSelecionados);
-  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
+  if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') > 0 then
   begin
     dbgNfebkp.Refresh;
   end;
@@ -933,7 +944,7 @@ begin
   end
 end;
 
-procedure TfoPrincipal.fFiltroEmissaoXML;
+procedure TfoPrincipal.pFiltroEmissaoXML;
 begin
  if dtpDataFiltroINI.Date > dtpDataFiltroFin.Date then
      dtpDataFiltroFin.Date := dtpDataFiltroINI.Date;
@@ -1178,9 +1189,6 @@ begin
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
-
-  ProgressBar1.Position := 0;
-  ProgressBar1.Max := 100;
 end;
 
 procedure TfoPrincipal.pSalveName(pFieldName: string; var wFileName: string);
@@ -1389,16 +1397,16 @@ begin
     if (tabConfiguracoes.NFePathProcessado = '') OR (NOT DirectoryExists(tabConfiguracoes.NFePathProcessado)) then
       exit;
 
-
+    wRotinas.InitialDir := tabConfiguracoes.NFePathProcessado;
     pRotinasProgress;
-    if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') then
-    begin
-      pUpdateCampoCNPJE;
-      FormShow(sender);
-      dbgNfebkp.Refresh;
-      dbgNfebkp.DataSource.DataSet.First;
-
-    end;
+//    if wRotinas.RefazAutorizacao then
+//    begin
+//      pUpdateCampoCNPJE;
+//      FormShow(sender);
+//      dbgNfebkp.Refresh;
+//      dbgNfebkp.DataSource.DataSet.First;
+//
+//    end;
    finally
      wPathInit.free;
      jopdDirDir.Free;

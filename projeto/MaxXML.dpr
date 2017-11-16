@@ -175,7 +175,7 @@ begin
      tabConfiguracoes.id := tabUsuarios.ConfigSalva;
      daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
 
-     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) then
+     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) > 0 then
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe XML: : ' + ParamStr(4), true);
    end;
 

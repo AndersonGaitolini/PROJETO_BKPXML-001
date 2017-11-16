@@ -174,7 +174,6 @@ begin
 
         Result := (wControle > 0);
         DM_NFEDFE.Dao.Commit;
-        Application.ProcessMessages;
       end;
     except on E: Exception do
            begin
