@@ -55,6 +55,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML)';
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 

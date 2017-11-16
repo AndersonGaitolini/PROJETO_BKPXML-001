@@ -13,7 +13,7 @@ uses
  uProgressThread, MSXML;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
- type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML);
+ type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF);
 
  type TRotinas = class(TProgressThread)
   private
@@ -32,7 +32,7 @@ uses
     property Lista: TStringList            write FLista;
     property InitialDir: String            write FInitialDir;
     property RefazAutorizacao: Boolean     read FRefazAutorizacao write FRefazAutorizacao;
-    property ExecuteMetodo: TExecuteMetodo write FExecuteMetodo;
+    property ExecuteMetodo: TExecuteMetodo read FExecuteMetodo write FExecuteMetodo;
 
     procedure Execute; override; //Demo
 
@@ -393,9 +393,6 @@ begin
         FResultMax := pLista.Count;
         for I := 0 to pLista.Count - 1 do
         begin
-          pProgress('Exportando: '+pLista.Strings[i], I);
-          Inc(Result,1);
-
           ObjetoXML:= TLm_bkpdfe.Create;
           ObjetoXML.Chave := pLista.Strings[i];
 
@@ -436,6 +433,9 @@ begin
                   DeleteFile(wDirTemp+'\'+wXMLFilename);
               end;
             end;
+
+            pProgress('Exportando: '+pLista.Strings[i], I);
+            Inc(Result,1);
           end;
         end;
         RemoveDir(wDirTemp);
@@ -1400,12 +1400,11 @@ var
   end;
 
 begin
-  Result := 0;
-  wJ := 0;
+  wJ         := 0;
+  Result     := 0;
   wDaoXML    := TDaoBkpdfe.Create;
   wObjConfig := TConfiguracoes.Create;
   wDaoConfig := TDaoConfiguracoes.Create;
-
   try
     wPathSave := fCarregaPAthPDF;
     try
@@ -1419,17 +1418,6 @@ begin
 
         if Execute then
         begin
-//          if  ofOverwritePrompt in Options then
-//          begin
-//            wOK := FileExists(foPrincipal.dlgSaveXML.FileNamE);
-//            while wOK do
-//            begin
-//              Inc(wJ,1);
-//              wPathArq := ExtractFileDir(FileNamE);
-//              FileName := 'LotePDF'+IntToStr(wJ)+'.zip';
-//              wOK := FileExists(wPathArq+'\'+FileName);
-//            end;
-//          end;
           wJ := 0;
           wTotSave := 0;
           for wI := 0 to pLista.Count - 1 do
@@ -1443,6 +1431,7 @@ begin
                 if fZipFile(FileName,wFileSource) then
                    Inc(wJ,1);
 
+              pProgress('Exportando PDF'+QuotedStr('s')+': '+wFRec.Name, wI);
               wErro := FindNext(wFRec);
               wOK := (wErro = 0);
             end;
@@ -1674,18 +1663,25 @@ end;
 
 procedure TRotinas.Execute;
 
-  procedure pExeuteLoadXMLNFe;
+  procedure pExecuteLoadXMLNFe;
   begin
     Max := 2 * fDirectoryTreeFileCount(FInitialDir);;
     DoMax;
     FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, True);
   end;
 
-  procedure pExeuteExportaLoteXML;
+  procedure pExecuteExportaLoteXML;
   begin
     Max := FLista.Count;
     DoMax;
     FResult := fExportaLoteXML(FLista);
+  end;
+
+  procedure pExecuteExportaPDF;
+  begin
+    Max := FLista.Count;
+    DoMax;
+    FResult := fExportaPDF(FLista);
   end;
 
 begin
@@ -1694,8 +1690,11 @@ begin
   CoInitializeEx(nil,0);
   try
     case FExecuteMetodo of
-       emLoadXMLNFe : pExeuteLoadXMLNFe;
-       emExportaLoteXML : pExeuteExportaLoteXML;
+           emExportaPDF : pExecuteExportaPDF;
+           emLoadXMLNFe : pExecuteLoadXMLNFe;
+       emExportaLoteXML : pExecuteExportaLoteXML;
+
+
     end;
   finally
     CoInitializeEx(nil,0);

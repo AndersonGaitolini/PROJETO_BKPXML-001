@@ -4,7 +4,7 @@ object foPrincipal: TfoPrincipal
   Anchors = [akLeft, akTop, akRight, akBottom]
   BorderWidth = 1
   Caption = 'SOUIS MAX XML'
-  ClientHeight = 452
+  ClientHeight = 472
   ClientWidth = 825
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -148,6 +148,7 @@ object foPrincipal: TfoPrincipal
     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
     FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
   KeyPreview = True
+  Menu = mmMaxxml
   OldCreateOrder = False
   Position = poDesktopCenter
   OnClose = FormClose
@@ -156,7 +157,7 @@ object foPrincipal: TfoPrincipal
   OnShow = FormShow
   DesignSize = (
     825
-    452)
+    472)
   PixelsPerInch = 96
   TextHeight = 12
   object pnlControles: TPanel
@@ -439,16 +440,17 @@ object foPrincipal: TfoPrincipal
     Left = 0
     Top = 54
     Width = 825
-    Height = 398
+    Height = 418
     Align = alClient
     Alignment = taLeftJustify
     Caption = 'pnl1'
     TabOrder = 2
+    ExplicitHeight = 398
     object dbgNfebkp: TDBGrid
       Left = 1
       Top = 1
       Width = 823
-      Height = 357
+      Height = 377
       Align = alClient
       Color = clBtnFace
       DataSource = DM_NFEDFE.dsBkpdfe
@@ -489,7 +491,7 @@ object foPrincipal: TfoPrincipal
         item
           Expanded = False
           FieldName = 'CHAVE'
-          Width = 300
+          Width = 250
           Visible = True
         end
         item
@@ -515,20 +517,20 @@ object foPrincipal: TfoPrincipal
           Expanded = False
           FieldName = 'PROTOCOLOAUT'
           Title.Caption = 'PROT. AUTORIZA'#199#195'O'
-          Width = 180
+          Width = 150
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'PROTOCOLOCANC'
           Title.Caption = 'PROT. CANCELAMENTO'
-          Width = 180
+          Width = 150
           Visible = True
         end
         item
           Expanded = False
           FieldName = 'MOTIVO'
-          Width = 64
+          Width = 80
           Visible = True
         end
         item
@@ -542,7 +544,7 @@ object foPrincipal: TfoPrincipal
           Expanded = False
           FieldName = 'TIPOAMBIENTE'
           Title.Caption = 'AMBIENTE'
-          Width = 64
+          Width = 60
           Visible = True
         end
         item
@@ -604,7 +606,7 @@ object foPrincipal: TfoPrincipal
     end
     object statPrincipal: TStatusBar
       Left = 1
-      Top = 375
+      Top = 395
       Width = 823
       Height = 22
       Margins.Left = 2
@@ -618,11 +620,11 @@ object foPrincipal: TfoPrincipal
         end
         item
           Text = '0.00%'
-          Width = 125
+          Width = 100
         end
         item
           Text = 'Progresso'
-          Width = 60
+          Width = 100
         end
         item
           Text = 'Status'
@@ -630,14 +632,16 @@ object foPrincipal: TfoPrincipal
         end>
       SizeGrip = False
       OnDrawPanel = statPrincipalDrawPanel
+      ExplicitTop = 375
     end
     object ProgressBar1: TProgressBar
       Left = 1
-      Top = 358
+      Top = 378
       Width = 823
       Height = 17
       Align = alBottom
       TabOrder = 2
+      ExplicitTop = 358
     end
   end
   object pnlMenu: TPanel
@@ -7093,130 +7097,129 @@ object foPrincipal: TfoPrincipal
   end
   object pmExportar: TPopupMenu
     OnPopup = pmExportaPopup
-    Left = 446
-    Top = 162
-    object mmAcoes: TMenuItem
+    Left = 445
+    Top = 161
+    object pmAcoes: TMenuItem
       Caption = '&A'#231#245'es'
-      object mmExpTodos: TMenuItem
+      object pmExpTodos: TMenuItem
         Caption = 'Exporta  XML'#39's (todos)'
-        OnClick = mmExpTodosClick
+        OnClick = pmExpTodosClick
       end
-      object mmExpSelecao: TMenuItem
-        Caption = 'Exporta XML'#39' (sele'#231#227'o) '
-        OnClick = mmExpSelecaoClick
+      object pmExpSelecao: TMenuItem
+        Caption = 'Exporta XML'#39's (sele'#231#227'o) '
+        OnClick = pmExpSelecaoClick
       end
-      object mmLinhaGrupoExpPDF: TMenuItem
+      object pmLinhaGrupoExpPDF: TMenuItem
         Tag = 3
         Caption = '-'
       end
-      object mmExpPDFTodos: TMenuItem
+      object pmExpPDFTodos: TMenuItem
         Tag = 3
         Caption = 'Exporta PDF'#39's (todos)'
-        OnClick = mmExpPDFTodosClick
+        OnClick = pmExpPDFTodosClick
       end
-      object mmExpPDFSelecao: TMenuItem
+      object pmExpPDFSelecao: TMenuItem
         Tag = 3
         Caption = 'Exporta PDF'#39's (sele'#231#227'o) '
-        OnClick = mmExpPDFSelecaoClick
+        OnClick = pmExpPDFSelecaoClick
       end
-      object mmExpXMLPDFTodos: TMenuItem
-        Tag = 3
+      object pmExpXMLPDFTodos: TMenuItem
+        Tag = 5
         Caption = 'Exporta XML'#39's + PDF'#39's (todos) '
         Visible = False
       end
-      object mmExpXMLPDFSelecao: TMenuItem
-        Tag = 3
+      object pmExpXMLPDFSelecao: TMenuItem
+        Tag = 5
         Caption = 'Exporta XML'#39's + PDF'#39's (sele'#231#227'o)  '
         Visible = False
       end
-      object mmLinhaGrupoDel: TMenuItem
+      object pmLinhaGrupoDel: TMenuItem
         Tag = 2
         Caption = '-'
         Visible = False
       end
-      object mmDeletarTodos: TMenuItem
+      object pmDeletarTodos: TMenuItem
         Tag = 2
         Caption = '&Deletar (todos)'
         Enabled = False
         Visible = False
-        OnClick = mmDeletarTodosClick
+        OnClick = pmDeletarTodosClick
       end
-      object mmDelTodosSelecionados: TMenuItem
+      object pmDelTodosSelecionados: TMenuItem
         Tag = 2
         Caption = 'D&eletar (sele'#231#227'o)'
         Enabled = False
         Visible = False
-        OnClick = mmDelTodosSelecionadosClick
+        OnClick = pmDelTodosSelecionadosClick
       end
-      object mmLinhaGrupoRefaz: TMenuItem
+      object pmLinhaGrupoRefaz: TMenuItem
         Tag = 2
         Caption = '-'
       end
-      object mmRefazAutorizacaoSelecao: TMenuItem
+      object pmRefazAutorizacaoSelecao: TMenuItem
         Tag = 2
         Caption = 'Refazer autoriza'#231#245'es (Sele'#231#227'o)'
         Enabled = False
         Visible = False
-        OnClick = mmRefazAutorizacaoSelecaoClick
+        OnClick = pmRefazAutorizacaoSelecaoClick
       end
-      object mmRefazAutorizacaoTodos: TMenuItem
+      object pmRefazAutorizacaoTodos: TMenuItem
         Caption = 'Refazer autoriza'#231#245'es (Todos)'
-        OnClick = mmRefazAutorizacaoTodosClick
+        OnClick = pmRefazAutorizacaoTodosClick
       end
-      object mmDelRefazAutTodos: TMenuItem
+      object pmDelRefazAutTodos: TMenuItem
         Tag = 2
         Caption = 'Deleta e refaz autoriza'#231#245'es (todos)'
         Enabled = False
         Visible = False
-        OnClick = mmDelRefazAutTodosClick
+        OnClick = pmDelRefazAutTodosClick
       end
-      object mmN3: TMenuItem
+      object pmN3: TMenuItem
         Tag = 2
         Caption = '-'
       end
     end
-    object mmDescmarcarSelTodos: TMenuItem
+    object pmDescmarcarSelTodos: TMenuItem
       Caption = '&Desmarcar'
-      OnClick = mmDescmarcarSelTodosClick
+      OnClick = pmDescmarcarSelTodosClick
     end
-    object mmMarcarTodos: TMenuItem
+    object pmMarcarTodos: TMenuItem
       Caption = '&Marcar (todos)'
-      OnClick = mmMarcarTodosClick
+      OnClick = pmMarcarTodosClick
     end
-    object mniN1: TMenuItem
+    object pmN2: TMenuItem
       Caption = '-'
     end
-    object mniTrocarUsuario: TMenuItem
-      Caption = 'Trocar usu'#225'rio'
-      OnClick = mniTrocarUsuarioClick
+    object pmTrocarUsuario: TMenuItem
+      Caption = '&Trocar usu'#225'rio'
+      OnClick = pmTrocarUsuarioClick
     end
-    object mmN1: TMenuItem
+    object pmN1: TMenuItem
       Tag = 2
       Caption = '-'
     end
-    object mmConfigurar: TMenuItem
+    object pmConfigurar: TMenuItem
       Tag = 2
-      Caption = 'Configurar'
+      Caption = '&Configurar'
       Enabled = False
       Visible = False
       object mmConfgDiretorios: TMenuItem
         Caption = 'Confg. diret'#243'rios'
         OnClick = mmConfgDiretoriosClick
       end
-      object mmConfigUsaurios: TMenuItem
+      object pmConfigUsaurios: TMenuItem
         Caption = 'Config. Usu'#225'rios'
-        OnClick = mmConfigUsauriosClick
+        OnClick = pmConfigUsauriosClick
       end
-      object mmHabiltaLogs: TMenuItem
+      object pmHabiltaLogs: TMenuItem
         AutoCheck = True
         Caption = 'Habilta Logs'
+        Enabled = False
+        Visible = False
       end
-      object reeSize1: TMenuItem
-        Caption = 'Uteis'
-        object mmTamanhoArquivos: TMenuItem
-          Caption = 'Tamanho de arquivos'
-          OnClick = mmTamanhoArquivosClick
-        end
+      object pmTamArquivos: TMenuItem
+        Caption = 'Tamanho de arquivos'
+        OnClick = pmTamArquivosClick
       end
     end
   end
@@ -7567,11 +7570,144 @@ object foPrincipal: TfoPrincipal
     end
   end
   object jopdDirDir: TJvSelectDirectory
-    Left = 670
-    Top = 244
+    Left = 666
+    Top = 241
   end
   object dlgOpenPrinc: TOpenDialog
     Left = 673
     Top = 160
+  end
+  object mmMaxxml: TMainMenu
+    Left = 446
+    Top = 115
+    object mmFiltrosMenu: TMenuItem
+      Caption = '&Filtros'
+    end
+    object mmFerramentas: TMenuItem
+      Caption = 'F&erramentas'
+      OnClick = mmFerramentasClick
+      object mmAcoes: TMenuItem
+        Caption = '&A'#231#245'es'
+        object mmExpTodos: TMenuItem
+          Caption = 'Exporta  XML'#39's (todos)'
+          OnClick = pmExpTodosClick
+        end
+        object mmExpSelecao: TMenuItem
+          Caption = 'Exporta  XML'#39's (todos)'
+          OnClick = pmExpSelecaoClick
+        end
+        object mmN3: TMenuItem
+          Tag = 3
+          Caption = '-'
+        end
+        object mmExpPDFTodos: TMenuItem
+          Tag = 3
+          Caption = 'Exporta PDF'#39's (todos)'
+          OnClick = pmExpPDFTodosClick
+        end
+        object mmExpPDFSelecao: TMenuItem
+          Tag = 3
+          Caption = 'Exporta PDF'#39's (sele'#231#227'o) '
+          OnClick = pmExpPDFSelecaoClick
+        end
+        object mmExpXMLPDFTodos: TMenuItem
+          Tag = 5
+          Caption = 'Exporta XML'#39's + PDF'#39's (todos) '
+          Enabled = False
+          Visible = False
+        end
+        object mmExpXMLPDFSelecao: TMenuItem
+          Tag = 5
+          Caption = 'Exporta XML'#39's + PDF'#39's (sele'#231#227'o)  '
+          Enabled = False
+          Visible = False
+        end
+        object mmN4: TMenuItem
+          Tag = 2
+          Caption = '-'
+          Enabled = False
+          Visible = False
+        end
+        object mmDeletarTodos: TMenuItem
+          Tag = 2
+          Caption = '&Deletar (todos)'
+          Enabled = False
+          Visible = False
+          OnClick = pmDeletarTodosClick
+        end
+        object mmDelTodosSelecionados: TMenuItem
+          Tag = 2
+          Caption = 'D&eletar (sele'#231#227'o)'
+          Enabled = False
+          Visible = False
+          OnClick = pmDelTodosSelecionadosClick
+        end
+        object mmN5: TMenuItem
+          Tag = 2
+          Caption = '-'
+          Enabled = False
+          Visible = False
+        end
+        object mmRefazAutorizacaoSelecao: TMenuItem
+          Tag = 2
+          Caption = 'Refazer autoriza'#231#245'es (Sele'#231#227'o)'
+          Enabled = False
+          Visible = False
+          OnClick = pmRefazAutorizacaoSelecaoClick
+        end
+        object mmRefazAutorizacaoTodos: TMenuItem
+          Caption = 'Refazer autoriza'#231#245'es (Todos)'
+          OnClick = pmRefazAutorizacaoTodosClick
+        end
+        object mmDelRefazAutTodos: TMenuItem
+          Tag = 2
+          Caption = 'Deleta e refaz autoriza'#231#245'es (todos)'
+          Enabled = False
+          Visible = False
+          OnClick = pmDelRefazAutTodosClick
+        end
+      end
+      object mmDescmarcarSelTodos: TMenuItem
+        Caption = '&Desmarcar'
+        OnClick = pmDescmarcarSelTodosClick
+      end
+      object mmMarcarTodos: TMenuItem
+        Caption = '&Marcar (todos)'
+        OnClick = pmMarcarTodosClick
+      end
+      object mmN1: TMenuItem
+        Caption = '-'
+      end
+      object mmTrocarUsuario: TMenuItem
+        Caption = '&Trocar usu'#225'rio'
+        OnClick = pmTrocarUsuarioClick
+      end
+      object mmN2: TMenuItem
+        Caption = '-'
+      end
+      object mmConfigurar: TMenuItem
+        Tag = 2
+        Caption = '&Configurar'
+        Enabled = False
+        Visible = False
+        object mmConfgdiretrios1: TMenuItem
+          Caption = 'Confg. diret'#243'rios'
+          OnClick = mmConfgDiretoriosClick
+        end
+        object mmConfigUsaurios: TMenuItem
+          Caption = 'Config. Usu'#225'rios'
+          OnClick = pmConfigUsauriosClick
+        end
+        object objectpmHabiltaLogsTMenuItem1: TMenuItem
+          Caption = 'Habilta Logs'
+          Enabled = False
+          Visible = False
+        end
+        object mmTamArquivos: TMenuItem
+          Caption = 'Tamanho de arquivos'
+          OnClick = pmTamArquivosClick
+        end
+      end
+    end
   end
 end
