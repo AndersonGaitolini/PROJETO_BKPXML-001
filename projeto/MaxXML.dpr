@@ -174,9 +174,14 @@ begin
    begin
      tabConfiguracoes.id := tabUsuarios.ConfigSalva;
      daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
+     try
+     wRotinas := TRotinas.Create;
 
      if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) > 0 then
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe XML: : ' + ParamStr(4), true);
+     except
+       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
+     end;
    end;
 
    Application.Terminate;

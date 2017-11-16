@@ -190,7 +190,7 @@ type
 
     procedure DoMax(const PMax: Int64);
     procedure DoProgress (const PText: String; const PNumber: Cardinal);
-    procedure pRotinasProgress;
+    procedure pRotinasProgress(pNomeMetodo: TExecuteMetodo);
     procedure DoTerminate(PSender: TObject);
     procedure pCarregaConfigUsuario(pIDConfig: Integer);
 
@@ -389,7 +389,6 @@ begin
   wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExtLote, True);
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
-
 end;
 
 procedure TfoPrincipal.cbbEmpCNPJChange(Sender: TObject);
@@ -456,19 +455,31 @@ begin
   end;
 end;
 
-procedure TfoPrincipal.pRotinasProgress;
+procedure TfoPrincipal.pRotinasProgress(pNomeMetodo: TExecuteMetodo);
 begin
-  if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
 
   with wRotinas do
   begin
+    ExecuteMetodo := pNomeMetodo;
+
+    case pNomeMetodo of
+      emLoadXMLNFe: begin
+                      InitialDir := tabConfiguracoes.NFePathProcessado;
+                      statPrincipal.Panels[1].Text := '0.00%';
+                    end;
+
+      emExportaLoteXML: begin
+                          Lista := wListaSelecionados;
+                          statPrincipal.Panels[1].Text := '0.00%';
+                        end;
+    end;
+
     OnMax := DoMax;
     OnProgress := DoProgress;
     OnTerminate := DoTerminate;
-    statPrincipal.Panels[1].Text := '0.00%';
     wStartTime := Now;
-    Resume;
+    start;
   end;
 end;
 
@@ -680,11 +691,10 @@ procedure TfoPrincipal.mmExpTodosClick(Sender: TObject);
 begin
   pSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
-  pRotinasProgress;
 
   if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
   begin
-    wRotinas.fExportaLoteXML(wListaSelecionados);
+    pRotinasProgress(emExportaLoteXML);
   end;
 
 end;
@@ -900,11 +910,16 @@ procedure TfoPrincipal.DoProgress(const PText: String; const PNumber: Cardinal);
 begin
   ProgressBar1.StepIt;
   statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
+  statPrincipal.Panels[3].Text := Inttostr(PNumber)+' - '+ PText;
 end;
 
 procedure TfoPrincipal.DoTerminate(PSender: TObject);
 begin
-  Application.MessageBox(PChar('Feito! '),PChar(Format('Processamento concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)])),MB_ICONINFORMATION);
+//  Application.MessageBox(PChar('Feito! '),PChar(Format('Processamento concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)])),MB_ICONINFORMATION);
+  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
+  statPrincipal.Panels[3].Text := 'Feito! '+ Format('Processo concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+  ProgressBar1.Step := 1;
+  ProgressBar1.Position := 0;
 end;
 
 procedure TfoPrincipal.dtpDataFiltroFinKeyUp(Sender: TObject; var Key: Word;
@@ -1135,8 +1150,6 @@ var
   end;
 
 begin
-
-
   foPrincipal.Caption := 'SOUIS MAXXML Versão 1.2 - beta';
   pSetaCores;
   pIniciaGrid;
@@ -1162,6 +1175,7 @@ begin
   pCarregaConfigUsuario(i);
   statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
   statPrincipal.Panels[1].Text := '0.00%';
+  statPrincipal.Panels[3].Text := 'MAXXML';
 
   wLoadXML := lxNone;
   wLastColunm := -1;
@@ -1299,7 +1313,7 @@ if Assigned(CNPJDOC) then
   begin
     wLastField := 'CNPJ';
     cbbEmpCNPJ.Clear;
-    wListaEmp := Lm_bkpdfe.CNPJDOC.fListaEmpresas;
+w    wListaEmp := Lm_bkpdfe.CNPJDOC.fListaEmpresas;
 
     if wListaEmp.IndexOf(CNPJDOC.Documento) < 0 then
       if fValidaCNPJ(CNPJDOC.Documento) then
@@ -1397,16 +1411,8 @@ begin
     if (tabConfiguracoes.NFePathProcessado = '') OR (NOT DirectoryExists(tabConfiguracoes.NFePathProcessado)) then
       exit;
 
-    wRotinas.InitialDir := tabConfiguracoes.NFePathProcessado;
-    pRotinasProgress;
-//    if wRotinas.RefazAutorizacao then
-//    begin
-//      pUpdateCampoCNPJE;
-//      FormShow(sender);
-//      dbgNfebkp.Refresh;
-//      dbgNfebkp.DataSource.DataSet.First;
-//
-//    end;
+    pRotinasProgress(emLoadXMLNFe);
+
    finally
      wPathInit.free;
      jopdDirDir.Free;

@@ -652,6 +652,7 @@ end;
 function TCNPJDOC.fListaEmpresas: TStringList;
 var wDataSet : TDataSet;
     wI: Integer;
+    wCNPJ: string;
 begin
   wDataSet := TDataSet.Create(Application);
   Result := TStringList.Create;
@@ -662,7 +663,10 @@ begin
     wDataSet := DM_NFEDFE.Dao.ConsultaSql('select cnpj, count(*) FROM lm_bkpdfe group by cnpj');
     for wI := 0 to wDataSet.RecordCount-1 do
     begin
-      Result.Add(wDataSet.FieldByName('CNPJ').AsString);
+      wCNPJ := wDataSet.FieldByName('CNPJ').AsString;
+      if Trim(wCNPJ) <> ''  then
+        Result.Add(Trim(wCNPJ));
+
       wDataSet.Next;
     end;
 

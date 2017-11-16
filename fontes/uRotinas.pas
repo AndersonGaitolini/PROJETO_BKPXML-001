@@ -13,30 +13,39 @@ uses
  uProgressThread, MSXML;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
+ type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML);
 
  type TRotinas = class(TProgressThread)
   private
     FMaximo : Int64;
     FResult : Int64;
     FResultMax : Int64;
+    FLista : TStringList;
     FInitialDir : String;
     FRefazAutorizacao : Boolean;
-  public
-    property Result: Int64 read FResult;
-    property Maximo: Int64 read FMaximo write FMaximo;
-    property InitialDir: String write FInitialDir;
-    property RefazAutorizacao: Boolean read FRefazAutorizacao write FRefazAutorizacao;
+    FExecuteMetodo : TExecuteMetodo;
+    procedure pProgress(pText : string; pNumber: cardinal);
 
-    procedure Execute; override;//Demo
+  public
+    property Result: Int64                 read FResult;
+    property Maximo: Int64                 read FMaximo write FMaximo;
+    property Lista: TStringList            write FLista;
+    property InitialDir: String            write FInitialDir;
+    property RefazAutorizacao: Boolean     read FRefazAutorizacao write FRefazAutorizacao;
+    property ExecuteMetodo: TExecuteMetodo write FExecuteMetodo;
+
+    procedure Execute; override; //Demo
 
     procedure pLeituradaNFE;
     function fGetIdf_DocPelaChave(pChave: string):Integer;
     function fGetCNPJPelaChave(pChave: string):string;
     //Métodos para importar e exportar arquivos XML
-    function fExportaLoteXML(pLista: TStringList):Boolean;
+    function fExportaLoteXML(pLista: TStringList):Int64;
     function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
-    function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
+    function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pParametro: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
     function fLoadXMLNFeLista(pLista : TStringList): Boolean;
+
+    function fMaster(pObjUsuario: TUsuarios): boolean;
 
     function fDirectoryTreeFileCount(PInitialDir: String): Cardinal;
 
@@ -58,7 +67,7 @@ uses
     procedure pDecompressFiles(const Filename, DestDirectory : String);
     procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
       Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
-    function fMaster(pObjUsuario: TUsuarios): boolean;
+
 
   end;
 
@@ -349,13 +358,14 @@ begin
   end;
 end;
 
-function TRotinas.fExportaLoteXML(pLista: TStringList):Boolean;
+function TRotinas.fExportaLoteXML(pLista: TStringList): Int64;
 var
   I : Integer;
   wStream : TStream;
   wSLFiles: TStringList;
   wDir, wDirTemp, wPathZIP, wXMLFilename, wZipFilename : string;
 begin
+  Result := 0;
   wStream := TMemoryStream.Create;
   try
     wDirTemp := ExtractFileDir(GetCurrentDir);
@@ -383,9 +393,9 @@ begin
         FResultMax := pLista.Count;
         for I := 0 to pLista.Count - 1 do
         begin
-          Text := pLista.Strings[i];
-          Number := I;
-          DoProgress;
+          pProgress('Exportando: '+pLista.Strings[i], I);
+          Inc(Result,1);
+
           ObjetoXML:= TLm_bkpdfe.Create;
           ObjetoXML.Chave := pLista.Strings[i];
 
@@ -513,7 +523,7 @@ begin
   end;
 end;
 
-function TRotinas.fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pLote: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
+function TRotinas.fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pParametro: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
 var
   wDataSet   : TDataSet;
   wDaoXML    : TDaoBkpdfe;
@@ -577,7 +587,7 @@ var
   function fXMLChave: Int64;
   begin
     J := 0;
-    if not pLote then
+    if not pParametro then
     begin
       wOK := True;
       wFileSource := pChave;
@@ -606,9 +616,8 @@ var
         wXMLProcessado := False;
         wStream := TMemoryStream.Create;
 
-         Text := wChaveAux;
-         Number := J;
-         DoProgress;
+        if pParametro then
+          pProgress('Importando '+wXmlName, J);
 
         if wChaveErro.IndexOf(wChaveAux) >= 0 then
         begin
@@ -711,7 +720,7 @@ var
         Dataalteracao := Today;
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pLote then
+        if pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -726,7 +735,7 @@ var
       end;
     end;
 
-    if pLote then
+    if pParametro then
     begin
       wErro := FindFirst(wPathFile+'\'+ cCan_, faAnyFile, wFRec);
       wOK := wErro = 0;
@@ -747,9 +756,8 @@ var
         Tipo := '1';
         wStream := TMemoryStream.Create;
 
-        Text := wChaveAux;
-        Number := J;
-        DoProgress;
+        if pParametro then
+          pProgress('Importando '+ wXmlName, J);
 
         if wChaveErro.IndexOf(wChaveAux) >= 0 then
         begin
@@ -839,7 +847,7 @@ var
 
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pLote then
+        if pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -854,7 +862,7 @@ var
       end;
     end;
 
-    if not pLote then
+    if not pParametro then
     begin
       wOK := True;
       wFileSource := pChave;
@@ -876,10 +884,11 @@ var
         ObjetoXML := TLm_bkpdfe.Create;
         Tipo := '1';
         Status := cAguardando;
-        Chave := fGetChaveFilename(wXmlName);
         CNPJ  := fGetCNPJPelaChave(Chave);
         wStream := TMemoryStream.Create;
         wFileStream := TFileStream.Create(wFileSource,0);
+        wXmlName := ExtractFileName(wFileSource);
+        Chave := fGetChaveFilename(wXmlName);
         XMLArq.LoadFromStream(wFileStream,xetUTF_8);
         wNodeXML := XMLArq.documentElement;
 
@@ -906,9 +915,8 @@ var
           end;
         end;
 
-        Text := wChaveAux;
-        Number := J;
-        DoProgress;
+        if pParametro then
+          pProgress('Importando '+wXmlName, J);
 
         FileClose(wFileStream.Handle);
   //        pCompress(wFileSource, wStream,false);
@@ -916,7 +924,7 @@ var
 
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pLote then
+        if pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -973,9 +981,9 @@ var
      begin
        if Assigned(wArrayObjXML[I]) then
        begin
-         Text := wArrayObjXML[I].Chave;
-         Number := I;
-         DoProgress;
+         if pParametro then
+           pProgress('Processando a base dados '+wArrayObjXML[I].Chave, J);
+
          Inc(J,1);
          if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
            wArrayObjXML[i].Free;
@@ -1000,7 +1008,7 @@ begin
   wDaoXML    := TDaoBkpdfe.Create;
   wDataSet   := TDataSet.Create(Application);
 
-  if pLote then
+  if pParametro then
     fCarregaPath;
   try
     try
@@ -1010,7 +1018,7 @@ begin
     except on E: Exception do
            begin
              FRefazAutorizacao := False;
-             if pLote then
+             if pParametro then
                exit;
 
               if wChaveErro.IndexOf(wChaveAux) < 0 then
@@ -1631,6 +1639,13 @@ begin
 
 end;
 
+procedure TRotinas.pProgress(pText: string; pNumber: cardinal);
+begin
+  Text := Trim(pText);
+  Number := pNumber;
+  DoProgress;
+end;
+
 {TRotinas}
 
 function TRotinas.fDirectoryTreeFileCount(PInitialDir: String): Cardinal;
@@ -1658,18 +1673,30 @@ begin
 end;
 
 procedure TRotinas.Execute;
+
+  procedure pExeuteLoadXMLNFe;
+  begin
+    Max := 2 * fDirectoryTreeFileCount(FInitialDir);;
+    DoMax;
+    FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, True);
+  end;
+
+  procedure pExeuteExportaLoteXML;
+  begin
+    Max := FLista.Count;
+    DoMax;
+    FResult := fExportaLoteXML(FLista);
+  end;
+
 begin
 
   inherited;
   CoInitializeEx(nil,0);
   try
-    case True of
-
+    case FExecuteMetodo of
+       emLoadXMLNFe : pExeuteLoadXMLNFe;
+       emExportaLoteXML : pExeuteExportaLoteXML;
     end;
-
-    Max := 2 * fDirectoryTreeFileCount(FInitialDir);;
-    DoMax;
-    FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, True);
   finally
     CoInitializeEx(nil,0);
   end;

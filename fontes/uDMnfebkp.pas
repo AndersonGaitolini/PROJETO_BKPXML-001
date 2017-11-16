@@ -167,7 +167,7 @@ begin
   DaoObjetoXML := TDaoBkpdfe.Create;
 
   CNPJDOC := TCNPJDOC.Create;
-  wRotinas := TRotinas.Create;
+
 end;
 
 procedure TDM_NFEDFE.sqlBkpDfeAfterOpen(DataSet: TDataSet);
