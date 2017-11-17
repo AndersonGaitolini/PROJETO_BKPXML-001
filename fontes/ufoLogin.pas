@@ -12,11 +12,15 @@ type
   TfoLogin = class(TfoLoginPadrao)
     btnCancelar: TBitBtn;
     statMsg: TStatusBar;
+    lbSenha: TLabel;
+    lbMAXXML: TLabel;
     procedure btnAcessarClick(Sender: TObject);
     procedure edSenhaExit(Sender: TObject);
     procedure edUsuarioExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
+    procedure edUsuarioChange(Sender: TObject);
+    procedure edSenhaChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -66,7 +70,7 @@ begin
       if wDataSet.FieldByName('senha').AsString <> wSenhaAtual then
       begin
         tabUsuarios.Senha := wSenhaAtual;
-        DM_NFEDFE.dao.Salvar(tabUsuarios);
+        DM_NFEDFE.dao.Salvar(tabUsuarios, ['Senha','usuario']);
       end;
     end;
   end;
@@ -79,13 +83,25 @@ begin
   else
   begin
     edUsuario.SetFocus;
-    ModalResult := mrNone; //mrCancel;
+    ModalResult := mrNone;
   end;
+end;
+
+procedure TfoLogin.edSenhaChange(Sender: TObject);
+begin
+  inherited;
+//  tabUsuarios.Usuario := Trim(edUsuario.Text);
 end;
 
 procedure TfoLogin.edSenhaExit(Sender: TObject);
 begin;
    tabUsuarios.senha := Trim(edSenha.Text);
+end;
+
+procedure TfoLogin.edUsuarioChange(Sender: TObject);
+begin
+  inherited;
+//  tabUsuarios.Usuario := Trim(edUsuario.Text);
 end;
 
 procedure TfoLogin.edUsuarioExit(Sender: TObject);
@@ -97,23 +113,14 @@ procedure TfoLogin.FormCreate(Sender: TObject);
 var
  statusCon : string;
 begin
-//  if ConexaoBD(DM_NFEDFE.conConexaoFD) then
-//  begin
-//    statusCon := 'Conectado';
-//  end
-//  else
-//   statusCon := 'Desconecado';
-
   edUsuario.Clear;
   edSenha.Clear;
-
   statMsg.Panels[1].Text := statusCon;
   if not Assigned(tabUsuarios) then
     tabUsuarios := TUsuarios.Create;
 
   if not Assigned(daoLogin) then
     daoLogin := TDaoLogin.Create;
-
 end;
 
 initialization

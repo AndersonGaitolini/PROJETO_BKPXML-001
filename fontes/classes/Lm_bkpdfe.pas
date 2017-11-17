@@ -146,7 +146,7 @@ type
 implementation
 
 uses
-  uMetodosUteis, uRotinas, Usuarios;
+  uMetodosUteis, uRotinas, Usuarios, uFoPrincipal;
 
 { TDaoBkpdfe }
 
@@ -446,7 +446,6 @@ begin
   finally
     FreeAndNil(wDataSet);
   end;
-
 end;
 
 function TDaoBkpdfe.fNextId(pObjXML: TLm_bkpdfe): integer;
@@ -501,9 +500,6 @@ const cAsc = 'Asc'; cdesc = 'desc';
         begin
           str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
         end;
-
-
-
       end;
     except on E: Exception do
                ShowMessage('Método: pFiltroData!'+#10#13+
@@ -521,9 +517,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
   begin
     auxFF := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldOrder);
     wOrdData := ((auxFF = ffDATARECTO) or (auxFF = ffDATAALTERACAO) or (auxFF = ffDATAEMISSAO));
-    //    wOrdData := ((pFieldOrder = 'DATARECTO') or (pFieldOrder = 'DATAALTERACAO') or (pFieldOrder = 'DATAEMISSAO)'));
     try
-      wFetchAll := True;
       DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
       data1STR := QuotedStr(data1STR);
       DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
@@ -533,8 +527,8 @@ const cAsc = 'Asc'; cdesc = 'desc';
 
       if (pCNPJ <> '*') and (fValidaCNPJ(pCNPJ)) then
       begin
-        wFetchAll := False;
-        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and ',[pFieldName, pCnpj]);
+//        wFetchAll := False;
+        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and ',['CNPJ', pCnpj]);
       end;
 
       if wOrdData then
@@ -546,7 +540,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
         str1 := str1 + Format('order by %s %s',[pFieldOrder, wUpDown]);
 
 //        ShowMessage('SQL '+str1);
-      DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, wFetchAll);
+      DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
 
     except on E: Exception do
            begin
@@ -559,9 +553,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
     end;
   end;
 
-
 begin
-
    if Length(pCNPJ) = 18 then
     pCNPJ := fTiraMascaraCNPJ(pCNPJ);
 

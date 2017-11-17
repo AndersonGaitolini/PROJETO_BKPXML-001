@@ -265,8 +265,8 @@ object foPrincipal: TfoPrincipal
         220
         48)
       object Shape1: TShape
-        Left = -173
-        Top = -192
+        Left = -177
+        Top = -196
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -276,8 +276,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -56
-        Top = -164
+        Left = -60
+        Top = -168
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -287,8 +287,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -173
-        Top = -164
+        Left = -177
+        Top = -168
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -298,8 +298,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -56
-        Top = -150
+        Left = -60
+        Top = -154
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -310,8 +310,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -173
-        Top = -150
+        Left = -177
+        Top = -154
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -321,8 +321,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -56
-        Top = -191
+        Left = -60
+        Top = -195
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -332,8 +332,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -173
-        Top = -178
+        Left = -177
+        Top = -182
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -343,8 +343,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -157
-        Top = -192
+        Left = -161
+        Top = -196
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -353,8 +353,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -42
-        Top = -165
+        Left = -46
+        Top = -169
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -363,8 +363,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -157
-        Top = -164
+        Left = -161
+        Top = -168
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -373,8 +373,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -42
-        Top = -151
+        Left = -46
+        Top = -155
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -384,8 +384,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -157
-        Top = -150
+        Left = -161
+        Top = -154
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -394,8 +394,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -157
-        Top = -178
+        Left = -161
+        Top = -182
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -404,8 +404,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -42
-        Top = -192
+        Left = -46
+        Top = -196
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -414,8 +414,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -56
-        Top = -178
+        Left = -60
+        Top = -182
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -425,8 +425,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -42
-        Top = -179
+        Left = -46
+        Top = -183
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -639,6 +639,8 @@ object foPrincipal: TfoPrincipal
       Height = 17
       Align = alBottom
       TabOrder = 2
+      ExplicitLeft = -11
+      ExplicitTop = 369
     end
   end
   object pnlMenu: TPanel
@@ -650,8 +652,8 @@ object foPrincipal: TfoPrincipal
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 0
     object btnCarregaConfig: TSpeedButton
-      Left = 798
-      Top = 34
+      Left = 774
+      Top = 4
       Width = 21
       Height = 18
       Margins.Left = 2
@@ -677,8 +679,8 @@ object foPrincipal: TfoPrincipal
       Caption = 'Fim'
     end
     object lbConfig: TLabel
-      Left = 520
-      Top = 38
+      Left = 496
+      Top = 7
       Width = 65
       Height = 12
       Caption = 'Configura'#231#245'es'
@@ -691,8 +693,8 @@ object foPrincipal: TfoPrincipal
       Caption = 'Empresa'
     end
     object edConfiguracao: TEdit
-      Left = 591
-      Top = 29
+      Left = 567
+      Top = 3
       Width = 202
       Height = 20
       AutoSelect = False
@@ -725,7 +727,7 @@ object foPrincipal: TfoPrincipal
       Left = 295
       Top = 2
       Width = 75
-      Height = 46
+      Height = 47
       Caption = '&Filtrar'
       PopupMenu = pmFiltroData
       TabOrder = 2
@@ -738,15 +740,16 @@ object foPrincipal: TfoPrincipal
       Height = 20
       TabOrder = 4
       OnChange = cbbEmpCNPJChange
+      OnDrawItem = cbbEmpCNPJDrawItem
     end
   end
   object ilPrincipal: TImageList
     Height = 32
     Width = 32
-    Left = 300
-    Top = 233
+    Left = 212
+    Top = 201
     Bitmap = {
-      494C01012C003C00880220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C008C0220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7090,13 +7093,13 @@ object foPrincipal: TfoPrincipal
       000000000000}
   end
   object tmrHora: TTimer
-    Left = 528
-    Top = 233
+    Left = 212
+    Top = 353
   end
   object pmExportar: TPopupMenu
     OnPopup = pmExportaPopup
-    Left = 445
-    Top = 161
+    Left = 41
+    Top = 352
     object pmAcoes: TMenuItem
       Caption = '&A'#231#245'es'
       object pmExpTodos: TMenuItem
@@ -7219,13 +7222,18 @@ object foPrincipal: TfoPrincipal
         Caption = 'Tamanho de arquivos'
         OnClick = pmTamArquivosClick
       end
+      object mmFetchAll: TMenuItem
+        Caption = '&Fetch All'
+        Checked = True
+        OnClick = mmFetchAllClick
+      end
     end
   end
   object ilMenu: TImageList
-    Left = 376
-    Top = 157
+    Left = 212
+    Top = 277
     Bitmap = {
-      494C010103000C00300210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00340210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF
@@ -7365,26 +7373,26 @@ object foPrincipal: TfoPrincipal
       000000000000}
   end
   object EvaAlertas: TFDEventAlerter
-    Left = 224
-    Top = 233
+    Left = 124
+    Top = 200
   end
   object tiTryIcon: TJvTrayIcon
     IconIndex = 0
-    Left = 376
-    Top = 233
+    Left = 124
+    Top = 276
   end
   object dlgSaveXML: TSaveDialog
     DefaultExt = '*.*'
     Filter = 'zip|*.zip'
     Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
     Title = 'Salvando oXML zipado'
-    Left = 528
-    Top = 156
+    Left = 293
+    Top = 276
   end
   object pmSelecionar: TPopupMenu
     OnPopup = pmSelecionarPopup
-    Left = 452
-    Top = 233
+    Left = 40
+    Top = 276
     object mmSelTodos: TMenuItem
       Caption = 'Selecionar &todos'
       OnClick = mmSelTodosClick
@@ -7533,53 +7541,65 @@ object foPrincipal: TfoPrincipal
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     OnDblClick = TrayIconBkpNfeDblClick
-    Left = 604
-    Top = 157
+    Left = 124
+    Top = 352
   end
   object appEventBKPNFE: TApplicationEvents
     OnMinimize = appEventBKPNFEMinimize
-    Left = 224
-    Top = 157
+    Left = 124
+    Top = 124
   end
   object FDEventAlerter1: TFDEventAlerter
     Connection = DM_NFEDFE.conConexaoFD
     Names.Strings = (
       'NOVO_XML')
     OnAlert = FDEventAlerter1Alert
-    Left = 300
-    Top = 157
+    Left = 212
+    Top = 125
   end
   object pmFiltroData: TPopupMenu
     OnPopup = pmFiltroDataPopup
-    Left = 605
-    Top = 235
-    object mmDataEmissao: TMenuItem
+    Left = 41
+    Top = 200
+    object pmDataEmissao: TMenuItem
       Caption = 'Data &Emiss'#227'o'
       Checked = True
-      OnClick = mmDataEmissaoClick
+      OnClick = pmDataEmissaoClick
     end
-    object mmDataAlteracao: TMenuItem
+    object pmDataAlteracao: TMenuItem
       Caption = 'Data &Altera'#231#227'o'
-      OnClick = mmDataAlteracaoClick
+      OnClick = pmDataAlteracaoClick
     end
-    object mmDataRecebimento: TMenuItem
+    object pmDataRecebimento: TMenuItem
       Caption = 'Data &Recebimento'
-      OnClick = mmDataRecebimentoClick
+      OnClick = pmDataRecebimentoClick
     end
   end
   object jopdDirDir: TJvSelectDirectory
-    Left = 666
-    Top = 241
+    Left = 293
+    Top = 124
   end
   object dlgOpenPrinc: TOpenDialog
-    Left = 673
-    Top = 160
+    Left = 293
+    Top = 200
   end
   object mmMaxxml: TMainMenu
-    Left = 446
-    Top = 115
+    Left = 41
+    Top = 124
     object mmFiltrosMenu: TMenuItem
       Caption = '&Filtros'
+      object mmDataEmissao: TMenuItem
+        Caption = 'Data &Emiss'#227'o'
+        OnClick = pmDataEmissaoClick
+      end
+      object mmDataAlteracao: TMenuItem
+        Caption = 'Data &Altera'#231#227'o'
+        OnClick = pmDataAlteracaoClick
+      end
+      object mmDataRecebimento: TMenuItem
+        Caption = 'Data &Recebimento'
+        OnClick = pmDataRecebimentoClick
+      end
     end
     object mmFerramentas: TMenuItem
       Caption = 'F&erramentas'
@@ -7707,5 +7727,10 @@ object foPrincipal: TfoPrincipal
         end
       end
     end
+  end
+  object pmFiltroColunas: TPopupMenu
+    OnPopup = pmFiltroColunasPopup
+    Left = 295
+    Top = 351
   end
 end

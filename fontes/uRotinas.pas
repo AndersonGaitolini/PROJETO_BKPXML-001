@@ -633,8 +633,12 @@ var
         end;
         wFileStream := TFileStream.Create(wFileSource,0);
         XMLArq.LoadFromStream(wFileStream,xetUTF_8);
-
-        wNodeXML := XMLArq.documentElement;
+        try
+          wNodeXML := XMLArq.documentElement;
+        EXCEPT
+           on E: Exception do
+              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+        end;
         //Nesse momento verifica se o xml é autorizado (nfeProc = Autorizado) (NFe = XML de Envio)
         if Assigned(wNodeXML) and (wNodeXML.NodeName = 'nfeProc') or (wNodeXML.NodeName = 'NFe') then
         begin
@@ -1692,7 +1696,6 @@ procedure TRotinas.Execute;
   end;
 
 begin
-
   inherited;
   CoInitializeEx(nil,0);
   try
@@ -1701,8 +1704,6 @@ begin
            emLoadXMLNFe : pExecuteLoadXMLNFe;
        emExportaLoteXML : pExecuteExportaLoteXML;
         emSelecionaRows : pExecuteSelecionaLinhaGrid
-
-
     end;
   finally
     CoInitializeEx(nil,0);

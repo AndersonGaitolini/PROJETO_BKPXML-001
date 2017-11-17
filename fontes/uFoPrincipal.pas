@@ -102,9 +102,9 @@ type
     dbgNfebkp: TDBGrid;
     statPrincipal: TStatusBar;
     pmFiltroData: TPopupMenu;
-    mmDataEmissao: TMenuItem;
-    mmDataAlteracao: TMenuItem;
-    mmDataRecebimento: TMenuItem;
+    pmDataEmissao: TMenuItem;
+    pmDataAlteracao: TMenuItem;
+    pmDataRecebimento: TMenuItem;
     jopdDirDir: TJvSelectDirectory;
     dlgOpenPrinc: TOpenDialog;
     pmHabiltaLogs: TMenuItem;
@@ -140,6 +140,11 @@ type
     mmRefazAutorizacaoTodos: TMenuItem;
     mmDelRefazAutTodos: TMenuItem;
     mmExpXMLPDFSelecao: TMenuItem;
+    mmFetchAll: TMenuItem;
+    mmDataEmissao: TMenuItem;
+    mmDataAlteracao: TMenuItem;
+    mmDataRecebimento: TMenuItem;
+    pmFiltroColunas: TPopupMenu;
     procedure FormCreate(Sender: TObject);
     procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
@@ -200,9 +205,9 @@ type
     procedure dtpDataFiltroFinKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure pmFiltroDataPopup(Sender: TObject);
-    procedure mmDataEmissaoClick(Sender: TObject);
-    procedure mmDataAlteracaoClick(Sender: TObject);
-    procedure mmDataRecebimentoClick(Sender: TObject);
+    procedure pmDataEmissaoClick(Sender: TObject);
+    procedure pmDataAlteracaoClick(Sender: TObject);
+    procedure pmDataRecebimentoClick(Sender: TObject);
     procedure pmExpPDFSelecaoClick(Sender: TObject);
     procedure pmExpPDFTodosClick(Sender: TObject);
     procedure cbbEmpCNPJChange(Sender: TObject);
@@ -210,11 +215,16 @@ type
       const Rect: TRect);
     procedure pmTamArquivosClick(Sender: TObject);
     procedure mmFerramentasClick(Sender: TObject);
+    procedure cbbEmpCNPJDrawItem(Control: TWinControl; Index: Integer;
+      Rect: TRect; State: TOwnerDrawState);
+    procedure mmFetchAllClick(Sender: TObject);
+    procedure pmFiltroColunasPopup(Sender: TObject);
   private
     { Private declarations }
     wStartTime: TTime;
     wVisible: boolean;
     wFieldFiltros : TFieldFiltros;
+    wFetchALL :Boolean;
     {Métodos da barra de progresso em threds}
     procedure DoMax(const PMax: Int64);
     procedure DoProgress (const PText: String; const PNumber: Cardinal);
@@ -239,6 +249,7 @@ type
     { Public declarations }
     procedure pAtualizaGrid;
     function fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
+    property FetchALL : Boolean read wFetchALL;
   published
     function OpenTabela:boolean;
   end;
@@ -433,6 +444,53 @@ begin
      CNPJDOC.Documento := Copy(cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex],7,18);
 end;
 
+procedure TfoPrincipal.cbbEmpCNPJDrawItem(Control: TWinControl; Index: Integer;
+  Rect: TRect; State: TOwnerDrawState);
+begin
+  with Control as TComboBox do
+  begin
+    case Index of
+      000: begin
+             Canvas.Brush.Color := clWhite; //clCorGrid00;
+           end;
+
+      001: begin
+             Canvas.Brush.Color := clCorGrid01;
+           end;
+
+      002: begin
+             Canvas.Brush.Color := clCorGrid02;
+           end;
+
+      003: begin
+             Canvas.Brush.Color := clCorGrid03;
+           end;
+
+      004: begin
+             Canvas.Brush.Color := clCorGrid04;
+           end;
+
+      005: begin
+             Canvas.Brush.Color := clPurple;
+           end;
+
+      006: begin
+            Canvas.Brush.Color := clAqua;
+           end;
+
+      007: begin
+             Canvas.Brush.Color := clOlive;
+           end;
+    end;
+    //pintar a barra
+//    Canvas.Brush.Color := TColor(Colors[Index]) ;
+    //pintar a fonte
+//    Canvas.Font.Color := TColor(Colors[Index]);
+    Canvas.FillRect(Rect) ;
+    Canvas.TextOut(Rect.Left,Rect.Top,cbbEmpCNPJ.Items[Index]);
+  end;
+end;
+
 procedure TfoPrincipal.pAtualizaGrid;
 begin
   pUpdateCampoCNPJE;
@@ -541,6 +599,10 @@ procedure TfoPrincipal.pMenuFiltroData(pFieldFiltros: TFieldFiltros);
   mmDataEmissao.Checked     := pEmissao;
   mmDataAlteracao.Checked   := pAlterecao;
   mmDataRecebimento.Checked := pReceb;
+
+  pmDataEmissao.Checked     := pEmissao;
+  pmDataAlteracao.Checked   := pAlterecao;
+  pmDataRecebimento.Checked := pReceb;
  end;
 begin
 
@@ -648,6 +710,29 @@ begin
   pPopupMenuMaster(wVisible);
 end;
 
+procedure TfoPrincipal.pmFiltroColunasPopup(Sender: TObject);
+
+  procedure pCriaPopupMenuColunas;
+  begin
+    for I := 0 to dbgNfebkp.Columns.Count-1 do
+    begin
+      with pmFiltroColunas do
+      begin
+
+
+
+      end;
+
+    end;
+
+  end;
+
+begin
+  pCriaPopupMenuColunas;
+
+
+end;
+
 procedure TfoPrincipal.pmFiltroDataPopup(Sender: TObject);
 var i, j, k: integer;
 begin
@@ -699,17 +784,17 @@ begin
   end;
 end;
 
-procedure TfoPrincipal.mmDataAlteracaoClick(Sender: TObject);
+procedure TfoPrincipal.pmDataAlteracaoClick(Sender: TObject);
 begin
   pMenuFiltroData(ffDATAALTERACAO);
 end;
 
-procedure TfoPrincipal.mmDataEmissaoClick(Sender: TObject);
+procedure TfoPrincipal.pmDataEmissaoClick(Sender: TObject);
 begin
   pMenuFiltroData(ffDATAEMISSAO);
 end;
 
-procedure TfoPrincipal.mmDataRecebimentoClick(Sender: TObject);
+procedure TfoPrincipal.pmDataRecebimentoClick(Sender: TObject);
 begin
   pMenuFiltroData(ffDATARECTO);
 end;
@@ -717,6 +802,13 @@ end;
 procedure TfoPrincipal.mmFerramentasClick(Sender: TObject);
 begin
   pMenuMaster(wVisible);
+end;
+
+procedure TfoPrincipal.mmFetchAllClick(Sender: TObject);
+begin
+
+  mmFetchAll.Checked := not mmFetchAll.Checked;
+  wFetchALL := mmFetchAll.Checked;
 end;
 
 procedure TfoPrincipal.pmDeletarTodosClick(Sender: TObject);
@@ -1145,14 +1237,37 @@ var wStream : TStream;
       wStatus := wListaEmp.IndexOf(wSTR);
 
       case wStatus of
-        000: Canvas.Brush.Color := clCorGrid00; //clCorGrid00;
-        001: Canvas.Brush.Color := clCorGrid01;
-        002: Canvas.Brush.Color := clCorGrid02;
-        003: Canvas.Brush.Color := clCorGrid03;
-        004: Canvas.Brush.Color := clCorGrid04;
-        005: Canvas.Brush.Color := clPurple;
-        006: Canvas.Brush.Color := clAqua;
-        007: Canvas.Brush.Color := clOlive;
+        000: begin
+               Canvas.Brush.Color := clCorGrid00;
+             end;
+
+        001: begin
+               Canvas.Brush.Color := clCorGrid01;
+             end;
+
+        002: begin
+               Canvas.Brush.Color := clCorGrid02;
+             end;
+
+        003: begin
+               Canvas.Brush.Color := clCorGrid03;
+             end;
+
+        004: begin
+               Canvas.Brush.Color := clCorGrid04;
+             end;
+
+        005: begin
+               Canvas.Brush.Color := clPurple;
+             end;
+
+        006: begin
+              Canvas.Brush.Color := clAqua;
+             end;
+
+        007: begin
+               Canvas.Brush.Color := clOlive;
+             end;
       end;
     end;
   end;
@@ -1175,19 +1290,6 @@ begin
     else
       Canvas.Font.Color := clNavy;
     end;
-
-
-//    if (not (gdSelected in State) and
-//        not (gdRowSelected in State) and
-//        not (gdFocused in State) and
-//        not (gdFixed in State) and
-//        not (gdHotTrack in State) and
-//        not (gdPressed in State)) and not Focused then
-//    begin
-//      if  (cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos') then
-//        pSetColorLinhas;
-//    end
-//    else
 
     if ((gdSelected in State) or (gdRowSelected in State)) or SelectedRows.CurrentRowSelected then
     begin
@@ -1335,6 +1437,7 @@ begin
   pDataFiltro;
   DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
+  wFetchALL := mmFetchAll.Checked;
 end;
 
 procedure TfoPrincipal.pSalveName(pFieldName: string; var wFileName: string);
