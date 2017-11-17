@@ -46,8 +46,7 @@ type
     FDataSet: TDataSet;
     FParams: IQueryParams;
 
-    Function DbToTabela<T: TTabela>(ATabela: TTabela; ADataSet: TDataSet)
-      : TObjectList<T>;
+    Function DbToTabela<T: TTabela>(ATabela: TTabela; ADataSet: TDataSet): TObjectList<T>;
 
     procedure SetDataSet(const Value: TDataSet);
   protected
@@ -63,6 +62,7 @@ type
     function SelectAll(ATabela: TTabela; AOrderBy: string = ''): TDataSet;
 
     function ConsultaSql(ASql: string): TDataSet; overload;
+    function ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet; overload;
     function ConsultaSql(ASql: string; const ParamList: Array of Variant): TDataSet; overload;
     function ConsultaSql(ATabela: string; AWhere: string): TDataSet; overload;
     function ConsultaSqlExecute(ASql: string): TDataSet;
@@ -459,6 +459,23 @@ begin
   end;
 end;
 
+function TDaoFD.ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet;
+var
+  AQry: TFDQuery;
+begin
+  AQry := TFDQuery.Create(Application);
+  with AQry do
+  begin
+    Connection := FConexao;
+    sql.Clear;
+    sql.Add(ASql);
+    Open;
+    if pFetchAll then
+      FetchAll;
+  end;
+  Result := AQry;
+end;
+
 function TDaoFD.ConsultaSql(ASql: string): TDataSet;
 var
   AQry: TFDQuery;
@@ -471,7 +488,7 @@ begin
     sql.Add(ASql);
     Open;
   end;
-  Result := AQry;
+  Result := AQry
 end;
 
 function TDaoFD.ConsultaSqlExecute(ASql: string): TDataSet;
@@ -485,8 +502,9 @@ begin
     sql.Clear;
     sql.Add(ASql);
     Execute();
-  end;
+
   Result := AQry;
+end;
 end;
 
 function TDaoFD.ConsultaSql(ASql: string; const ParamList: array of Variant): TDataSet;
@@ -509,6 +527,7 @@ begin
              Params[i].AsDateTime := VarToDateTime(ParamList[i])
            else
              Params[i].Value := ParamList[i];
+
       Open;
     end;
     Result := AQry;

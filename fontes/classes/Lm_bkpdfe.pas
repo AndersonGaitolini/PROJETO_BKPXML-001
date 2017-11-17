@@ -112,7 +112,8 @@ type
     function fConsDeleteObjXML(var pObjXML  : TLm_bkpdfe; pCampos: array of string): Boolean;
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
-    procedure pFiltraOrdena (pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ; pValue1: string = '';pValue2: string = '');
+    procedure pFiltraOrdena (pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
+     pValue1: string = '';pValue2: string = '');
 
   end;
 
@@ -476,6 +477,7 @@ end;
 procedure TDaoBkpdfe.pFiltraOrdena(pFieldNameOrder: TFieldFiltros;
   pUpDown: TOrdenaBy; pCNPJ, pFieldName: string; pDtINI, pDtFin: TDate; pValue1,
   pValue2: string);
+
 var data1STR, data2STR, str1, str2: string;
     wDataSet : TDataSet;
     wUpDown: string;
@@ -510,7 +512,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
   end;
 
   procedure pFiltro(pFieldOrder:string);
-  var wOrdData: Boolean;
+  var wOrdData, wFetchAll: Boolean;
       auxFF : TFieldFiltros;
       wList : TList;
       i:Integer;
@@ -521,29 +523,31 @@ const cAsc = 'Asc'; cdesc = 'desc';
     wOrdData := ((auxFF = ffDATARECTO) or (auxFF = ffDATAALTERACAO) or (auxFF = ffDATAEMISSAO));
     //    wOrdData := ((pFieldOrder = 'DATARECTO') or (pFieldOrder = 'DATAALTERACAO') or (pFieldOrder = 'DATAEMISSAO)'));
     try
-      with DM_NFEDFE do
+      wFetchAll := True;
+      DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
+      data1STR := QuotedStr(data1STR);
+      DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
+      data2STR := QuotedStr(data2STR);
+
+      str1 := str1 + 'Select * from lm_bkpdfe where ';
+
+      if (pCNPJ <> '*') and (fValidaCNPJ(pCNPJ)) then
       begin
-        DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
-        data1STR := QuotedStr(data1STR);
-        DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
-        data2STR := QuotedStr(data2STR);
+        wFetchAll := False;
+        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and ',[pFieldName, pCnpj]);
+      end;
 
-        str1 := str1 + 'Select * from lm_bkpdfe where ';
+      if wOrdData then
+        str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
+      else
+        str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
 
-        if (pCNPJ <> '*') and (fValidaCNPJ(pCNPJ)) then
-          str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and ',[pFieldName, pCnpj]);
-
-        if wOrdData then
-          str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
-        else
-          str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
-
-        if pUpDown <> obyNone then
-          str1 := str1 + Format('order by %s %s',[pFieldOrder, wUpDown]);
+      if pUpDown <> obyNone then
+        str1 := str1 + Format('order by %s %s',[pFieldOrder, wUpDown]);
 
 //        ShowMessage('SQL '+str1);
-        dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1);
-      end;
+      DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, wFetchAll);
+
     except on E: Exception do
            begin
              ShowMessage('Método: pFiltro!'+#10#13+

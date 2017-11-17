@@ -13,7 +13,7 @@ uses
  uProgressThread, MSXML;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
- type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF);
+ type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF, emSelecionaRows);
 
  type TRotinas = class(TProgressThread)
   private
@@ -24,7 +24,6 @@ uses
     FInitialDir : String;
     FRefazAutorizacao : Boolean;
     FExecuteMetodo : TExecuteMetodo;
-    procedure pProgress(pText : string; pNumber: cardinal);
 
   public
     property Result: Int64                 read FResult;
@@ -36,6 +35,7 @@ uses
 
     procedure Execute; override; //Demo
 
+    procedure pProgress(pText : string; pNumber: cardinal);
     procedure pLeituradaNFE;
     function fGetIdf_DocPelaChave(pChave: string):Integer;
     function fGetCNPJPelaChave(pChave: string):string;
@@ -1684,6 +1684,13 @@ procedure TRotinas.Execute;
     FResult := fExportaPDF(FLista);
   end;
 
+  procedure pExecuteSelecionaLinhaGrid;
+  begin
+    Max := foPrincipal.dbgNfebkp.DataSource.DataSet.RecordCount;
+    DoMax;
+    FResult :=foPrincipal.fSelecionaLinhaGrid(sgFiltro);
+  end;
+
 begin
 
   inherited;
@@ -1693,6 +1700,7 @@ begin
            emExportaPDF : pExecuteExportaPDF;
            emLoadXMLNFe : pExecuteLoadXMLNFe;
        emExportaLoteXML : pExecuteExportaLoteXML;
+        emSelecionaRows : pExecuteSelecionaLinhaGrid
 
 
     end;

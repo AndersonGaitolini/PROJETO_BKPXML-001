@@ -23,6 +23,7 @@ type
     procedure SetParamBoolean(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
     procedure SetParamVariant(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
     procedure SetParamFileStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
+    procedure SetParamStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
 
     // métodos para setar os variados tipos de campos
     procedure SetCamposInteger(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
@@ -32,6 +33,7 @@ type
     procedure SetCamposCurrency(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
     procedure SetCamposBoolean(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
     procedure SetCamposFileStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
+    procedure SetCamposStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
   end;
 
   TDaoFD = class(TInterfacedObject, IDaoBase)
@@ -60,9 +62,10 @@ type
     function ConsultaAll(ATabela: TTabela; AOrderBy: string = ''): TDataSet;
     function SelectAll(ATabela: TTabela; AOrderBy: string = ''): TDataSet;
 
-    function ConsultaSql(ASql: string): TDataSet; overload;
+    function ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet; overload;
     function ConsultaSql(ASql: string; const ParamList: Array of Variant): TDataSet; overload;
     function ConsultaSql(ATabela: string; AWhere: string): TDataSet; overload;
+    function ConsultaSqlExecute(ASql: string): TDataSet;
 
     function ConsultaTab(ATabela: TTabela; ACamposWhere: array of string)
       : TDataSet; overload;
@@ -94,10 +97,9 @@ type
 
     // crud
     function Inserir(ATabela: TTabela): Integer; overload;
+    function Inserir(ATabela: TTabela; ACampos: array of string; AFlag: TFlagCampos = fcIgnore): Integer; overload;
     function Inserir(ATabela: TTabela; ACampos: array of string;
-      AFlag: TFlagCampos = fcIgnore): Integer; overload;
-    function Inserir(ATabela: TTabela; ACampos: array of string;
-      AFlag: TFlagCampos = fcIgnore; ACamposRequiredFalse: array of string): Integer; overload;
+    ACamposRequiredFalse: array of string; AFlag: TFlagCampos = fcIgnore): Integer; overload;
 
     function Salvar(ATabela: TTabela): Integer; overload;
     function Salvar(ATabela: TTabela; ACampos: array of string;
@@ -127,16 +129,28 @@ uses dialogs, system.TypInfo, System.Variants,
 { TQueryFireDac }
 procedure TQueryFireDac.SetParamFileStream(AProp: TRttiProperty; ACampo: string;
   ATabela: TTabela; AQry: TObject);
-var stream: TFilestream;
+var stream: TFileStream;
 begin
-  if Assigned(TFIleStream(AProp.GetValue(ATabela).AsObject)) then
+  if Assigned(TFileStream(AProp.GetValue(ATabela).AsObject)) then
   begin
     stream := TFileStream(AProp.GetValue(ATabela).AsObject);
     TFDQuery(AQry).ParamByName(ACampo).LoadFromStream(stream, ftBlob);
   end
   else
   TFDQuery(AQry).ParamByName(ACampo).AsBlob := '';
-//  stream.Free;
+end;
+
+procedure TQueryFireDac.SetParamStream(AProp: TRttiProperty; ACampo: string;
+  ATabela: TTabela; AQry: TObject);
+var stream: Tstream;
+begin
+  if Assigned(TStream(AProp.GetValue(ATabela).AsObject)) then
+  begin
+    stream := TStream(AProp.GetValue(ATabela).AsObject);
+    TFDQuery(AQry).ParamByName(ACampo).LoadFromStream(stream, ftBlob);
+  end
+  else
+  TFDQuery(AQry).ParamByName(ACampo).AsBlob := '';
 end;
 
 procedure TQueryFireDac.SetParamBoolean(AProp: TRttiProperty; ACampo: string;
@@ -223,6 +237,12 @@ procedure TQueryFireDac.SetCamposInteger(AProp: TRttiProperty;
   ACampo: string; ATabela: TTabela; AQry: TObject);
 begin
   AProp.SetValue(ATabela, TFDQuery(AQry).FieldByName(ACampo).AsInteger);
+end;
+
+procedure TQueryFireDac.SetCamposStream(AProp: TRttiProperty; ACampo: string;
+  ATabela: TTabela; AQry: TObject);
+begin
+  AProp.SetValue(ATabela, TFDQuery(AQry).CreateBlobStream(TFDQuery(AQry).FieldByName(ACampo),bmWrite));
 end;
 
 procedure TQueryFireDac.SetCamposString(AProp: TRttiProperty;
@@ -416,7 +436,6 @@ begin
     end;
     Result := AQry;
   finally
-    AQry.Free;
   end;
 end;
 
@@ -440,7 +459,7 @@ begin
   end;
 end;
 
-function TDaoFD.ConsultaSql(ASql: string): TDataSet;
+function TDaoFD.ConsultaSql(ASql: string; pFetchAll: Boolean)): TDataSet;
 var
   AQry: TFDQuery;
 begin
@@ -451,8 +470,26 @@ begin
     sql.Clear;
     sql.Add(ASql);
     Open;
+    if pFetchAll then
+      FetchAll;
   end;
   Result := AQry;
+end;
+
+function TDaoFD.ConsultaSqlExecute(ASql: string): TDataSet;
+var
+  AQry: TFDQuery;
+begin
+  AQry := TFDQuery.Create(Application);
+  with AQry do
+  begin
+    Connection := FConexao;
+    sql.Clear;
+    sql.Add(ASql);
+    Execute();
+
+  Result := AQry;
+end;
 end;
 
 function TDaoFD.ConsultaSql(ASql: string; const ParamList: array of Variant): TDataSet;
@@ -475,6 +512,7 @@ begin
              Params[i].AsDateTime := VarToDateTime(ParamList[i])
            else
              Params[i].Value := ParamList[i];
+
       Open;
     end;
     Result := AQry;
@@ -649,28 +687,31 @@ begin
   Contexto := TRttiContext.Create;
   try
     TipoRtti := Contexto.GetType(ATabela.ClassType);
-
-    with Dados do
-    begin
-      Connection := FConexao;
-      sql.Text := FSql.GerarSqlSelect(ATabela, ACamposWhere);
-
-      if Length(ACamposWhere)>0 then
+    try
+      with Dados do
       begin
-        for Campo in ACamposWhere do
-        begin
-          // setando os parâmetros
-          for PropRtti in TipoRtti.GetProperties do
-            if CompareText(PropRtti.Name, Campo) = 0 then
-            begin
-              TAtributos.Get.ConfiguraParametro(PropRtti, Campo, ATabela, Dados, FParams);
-              Break;
-            end;
-        end;
-      end;
-      Open;
+        Connection := FConexao;
+        sql.Text := FSql.GerarSqlSelect(ATabela, ACamposWhere);
 
-      Result := Dados;
+        if Length(ACamposWhere)>0 then
+        begin
+          for Campo in ACamposWhere do
+          begin
+            // setando os parâmetros
+            for PropRtti in TipoRtti.GetProperties do
+              if CompareText(PropRtti.Name, Campo) = 0 then
+              begin
+                TAtributos.Get.ConfiguraParametro(PropRtti, Campo, ATabela, Dados, FParams);
+                Break;
+              end;
+          end;
+        end;
+        Open;
+
+        Result := Dados;
+      end;
+    except
+      FreeAndNil(Dados);
     end;
   finally
     Contexto.Free;
@@ -951,7 +992,7 @@ begin
 end;
 
 function TDaoFD.Inserir(ATabela: TTabela; ACampos: array of string;
-  AFlag: TFlagCampos; ACamposRequiredFalse: array of string): Integer;
+  ACamposRequiredFalse: array of string;AFlag: TFlagCampos): Integer;
 var
   Atributos: IAtributos;
   Campo, CampoReq: string;
@@ -969,11 +1010,11 @@ begin
       sql.Clear;
       sql.Text := FSql.GerarSqlInsert(ATabela, RttiType, ACampos, AFlag);
       //Campos requeiridos False
-      for CampoReq in ACamposRequiredFalse do
-      begin
-        if (Length(Trim(CampoReq)) > 0) then
-         FieldByName(CampoReq).Required := False
-      end;
+//      for CampoReq in ACamposRequiredFalse do
+//      begin
+//        if (Length(Trim(CampoReq)) > 0) then
+//         FieldByName(CampoReq).Required := False
+//      end;
 
       // valor dos parâmetros
       for PropRtti in RttiType.GetProperties do

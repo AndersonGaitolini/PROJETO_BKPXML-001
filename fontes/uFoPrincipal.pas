@@ -16,7 +16,7 @@ uses
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
-  TSelectRowsGrid = (sgTodos, sgNenhum, sgVarios);
+  TSelectRowsGrid = (sgTodos, sgNenhum, sgVarios, sgFiltro);
 
 //type
 //  TDBGrid = class(Vcl.DBGrids.TDBGrid)
@@ -228,7 +228,6 @@ type
     procedure pUpdateCampoCNPJE;
     procedure pSalveName(pFieldName: string; var wFileName: string);
     procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
-    procedure pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
     procedure pDeleteRowsSelectGrid;
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
@@ -239,7 +238,7 @@ type
   public
     { Public declarations }
     procedure pAtualizaGrid;
-
+    function fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
   published
     function OpenTabela:boolean;
   end;
@@ -496,20 +495,23 @@ begin
     ExecuteMetodo := pNomeMetodo;
 
     case pNomeMetodo of
-      emLoadXMLNFe: begin
-                      InitialDir := tabConfiguracoes.NFePathProcessado;
-                      statPrincipal.Panels[1].Text := '0.00%';
-                    end;
+          emLoadXMLNFe: begin
+                          InitialDir := tabConfiguracoes.NFePathProcessado;
+                          statPrincipal.Panels[1].Text := '0.00%';
+                        end;
 
       emExportaLoteXML: begin
                           Lista := wListaSelecionados;
                           statPrincipal.Panels[1].Text := '0.00%';
                         end;
 
-      emExportaPDF:begin
-                     Lista := wListaSelecionados;
+          emExportaPDF: begin
+                         Lista := wListaSelecionados;
+                        end;
 
-                   end;
+       emSelecionaRows: begin
+
+                        end;
 
     end;
 
@@ -740,7 +742,7 @@ end;
 
 procedure TfoPrincipal.pmDelRefazAutTodosClick(Sender: TObject);
 begin
-  pSelecionaLinhaGrid;
+  fSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   wRotinas.fDeleteObjetoXML(wListaSelecionados);
   if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') > 0 then
@@ -773,7 +775,7 @@ end;
 
 procedure TfoPrincipal.pmExpTodosClick(Sender: TObject);
 begin
-  pSelecionaLinhaGrid;
+  fSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
 
   if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
@@ -802,7 +804,7 @@ end;
 procedure TfoPrincipal.pmExpPDFTodosClick(Sender: TObject);
 var wTotSalvos: integer;
 begin
-  pSelecionaLinhaGrid;
+  fSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   pRotinasProgress(emExportaPDF);
 
@@ -1012,6 +1014,9 @@ begin
         emLoadXMLNFe: wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
         emExportaPDF: wMSG := Format('Total %d de %d Arquivos exportados - Tempo total: %s',[ProgressBar1.Position, ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
     emExportaLoteXML: wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+     emSelecionaRows: begin
+                        wMSG := Format('%d / %d Linhas selecionadas - Tempo total: %s',[ProgressBar1.Position,ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+                      end;
   end;
 
   statPrincipal.Panels[3].Text := wMSG;
@@ -1067,6 +1072,7 @@ begin
   end;
 
 end;
+
 
 procedure TfoPrincipal.FDEventAlerter1Alert(ASender: TFDCustomEventAlerter;
   const AEventName: string; const AArgument: Variant);
@@ -1378,24 +1384,45 @@ begin
   end;
 end;
 
-procedure TfoPrincipal.pSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*');
+function TfoPrincipal.fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
 var
  wDataSet : TDataSet;
 
   procedure pSelectRows;
   var wLinha: Integer;
   begin
-    with dbgNfebkp.DataSource.DataSet do
+
+    with wDataSet do
     begin
-      First;
-      for wLinha := 0 to RecordCount - 1 do
+      Last;
+      for wLinha := 0 to RecordCount-1 do
       begin
+        wRotinas.pProgress('Linha',wLinha);
         dbgNfebkp.SelectedRows.CurrentRowSelected := True;
         Next;
       end;
-      First;
     end;
   end;
+
+
+  procedure pSelectRowsFiltro;
+    var wLinha: Integer;
+  begin
+    Result :=0;
+
+    with dbgNfebkp.Datasource.DataSet do
+    begin
+      Last;
+      for wLinha := RecordCount  downto 1 do
+      begin
+        wRotinas.pProgress('Linha',wLinha);
+        Inc(Result,1);
+        dbgNfebkp.SelectedRows.CurrentRowSelected := True;
+        Prior;
+      end;
+    end;
+  end;
+
 
 begin
   try
@@ -1408,9 +1435,14 @@ begin
     sgNenhum : begin
                  pRemoveSelTodasLinhas;
                end;
+
+
+    sgFiltro : begin
+                 pSelectRowsFiltro;
+               end;
   end;
   finally
-    wDataSet.Free;
+//    wDataSet.Free;
   end;
 end;
 
@@ -1489,7 +1521,7 @@ end;
 
 procedure TfoPrincipal.pmMarcarTodosClick(Sender: TObject);
 begin
-  pSelecionaLinhaGrid;
+  pRotinasProgress(emSelecionaRows);
 end;
 
 procedure TfoPrincipal.pmRefazAutorizacaoSelecaoClick(Sender: TObject);
@@ -1553,12 +1585,12 @@ end;
 procedure TfoPrincipal.mmSelTodosClick(Sender: TObject);
 var wI: Integer;
 begin
-  pSelecionaLinhaGrid;
+  fSelecionaLinhaGrid;
 end;
 
 procedure TfoPrincipal.mmSelTodosExportarClick(Sender: TObject);
 begin
-  pSelecionaLinhaGrid;
+  fSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   wRotinas.fExportaLoteXML(wListaSelecionados);
 end;
