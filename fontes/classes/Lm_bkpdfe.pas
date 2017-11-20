@@ -18,8 +18,6 @@ type
   private
     FId: Integer;
     FStatus : Integer;
-//    FEmpresa: SmallInt;
-//    FFilial :SmallInt;
     FCNPJ : string;
     FChave: string;
     FIdf_documento: Integer;
@@ -38,7 +36,7 @@ type
     FXmlenviocanc: TStream;
     FXmlextendcanc: TStream;
     FProtocoloaut: string;
-    FCampoStream : TStream;
+    FXmlerro : TStream;
     FSelecao: string;
     FCheckBox: SmallInt;
 
@@ -64,7 +62,7 @@ type
     property Xmlenviocanc: TStream read FXmlenviocanc write FXmlenviocanc;
     property Xmlextendcanc: TStream read FXmlextendcanc write FXmlextendcanc;
     property Protocoloaut: string read FProtocoloaut write FProtocoloaut;
-    property CampoStream : TStream read FCampoStream write FCampoStream;
+    property Xmlerro : TStream read FXmlerro write FXmlerro;
     property Selecao: string read FSelecao write FSelecao;
     property CheckBox: SmallInt read FCheckBox write FCheckBox;
   end;
@@ -92,9 +90,10 @@ type
                     ffXMLENVIOCANC,
                     ffXMLEXTENDCANC,
                     ffPROTOCOLOAUT,
-                    ffCAMPOSTREAM,
+                    ffXMLERRO,
                     ffSELECAO,
-                    ffCHECKBOX);
+                    ffCHECKBOX,
+                    ffFILTRODETALHADO);
 
   TOrdenaBy = (obyASCENDENTE, obyDESCEDENTE, obyNone);
 
@@ -321,11 +320,11 @@ var wDataSet : TDataSet;
       if pObjXML.CheckBox = -1 then
       pObjXML.CheckBox := FieldByName('CheckBox').AsInteger;
 
-      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('CAMPOSTREAM'),bmReadWrite);
+      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
       begin
-      if not Assigned(pObjXML.CampoStream) then
-        pObjXML.CampoStream :=  wStream;
+        if not Assigned(pObjXML.FXmlerro) then
+          pObjXML.FXmlerro :=  wStream;
       end
       else
       wStream := nil;
@@ -619,8 +618,6 @@ begin
   begin
     id := 0;
     Status := 999;
-//    Empresa := 0;
-//    Filial := 0;
     CNPJ := '';
     Chave := '';
     Idf_documento := 0;
@@ -639,7 +636,7 @@ begin
     Xmlenviocanc := nil;
     Xmlextendcanc := nil;
     Protocoloaut := '';
-    CampoStream  := nil;
+    XMLERRO  := nil;
     Selecao := '';
   end;
 end;

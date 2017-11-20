@@ -4,7 +4,7 @@ object foPrincipal: TfoPrincipal
   Anchors = [akLeft, akTop, akRight, akBottom]
   BorderWidth = 1
   Caption = 'SOUIS MAX XML'
-  ClientHeight = 472
+  ClientHeight = 492
   ClientWidth = 825
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -157,7 +157,7 @@ object foPrincipal: TfoPrincipal
   OnShow = FormShow
   DesignSize = (
     825
-    472)
+    492)
   PixelsPerInch = 96
   TextHeight = 12
   object pnlControles: TPanel
@@ -265,8 +265,8 @@ object foPrincipal: TfoPrincipal
         220
         48)
       object Shape1: TShape
-        Left = -177
-        Top = -196
+        Left = -181
+        Top = -200
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -276,8 +276,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -60
-        Top = -168
+        Left = -64
+        Top = -172
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -287,8 +287,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -177
-        Top = -168
+        Left = -181
+        Top = -172
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -298,8 +298,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -60
-        Top = -154
+        Left = -64
+        Top = -158
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -310,8 +310,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -177
-        Top = -154
+        Left = -181
+        Top = -158
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -321,8 +321,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -60
-        Top = -195
+        Left = -64
+        Top = -199
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -332,8 +332,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -177
-        Top = -182
+        Left = -181
+        Top = -186
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -343,8 +343,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -161
-        Top = -196
+        Left = -165
+        Top = -200
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -353,8 +353,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -46
-        Top = -169
+        Left = -50
+        Top = -173
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -363,8 +363,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -161
-        Top = -168
+        Left = -165
+        Top = -172
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -373,8 +373,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -46
-        Top = -155
+        Left = -50
+        Top = -159
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -384,8 +384,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -161
-        Top = -154
+        Left = -165
+        Top = -158
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -394,8 +394,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -161
-        Top = -182
+        Left = -165
+        Top = -186
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -404,8 +404,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -46
-        Top = -196
+        Left = -50
+        Top = -200
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -414,8 +414,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -60
-        Top = -182
+        Left = -64
+        Top = -186
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -425,8 +425,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -46
-        Top = -183
+        Left = -50
+        Top = -187
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -438,18 +438,20 @@ object foPrincipal: TfoPrincipal
   end
   object pnl1: TPanel
     Left = 0
-    Top = 54
+    Top = 65
     Width = 825
-    Height = 418
+    Height = 427
     Align = alClient
     Alignment = taLeftJustify
     Caption = 'pnl1'
     TabOrder = 2
+    ExplicitTop = 54
+    ExplicitHeight = 418
     object dbgNfebkp: TDBGrid
       Left = 1
       Top = 1
       Width = 823
-      Height = 377
+      Height = 386
       Align = alClient
       Color = clBtnFace
       DataSource = DM_NFEDFE.dsBkpdfe
@@ -605,7 +607,7 @@ object foPrincipal: TfoPrincipal
     end
     object statPrincipal: TStatusBar
       Left = 1
-      Top = 395
+      Top = 404
       Width = 823
       Height = 22
       Margins.Left = 2
@@ -631,29 +633,29 @@ object foPrincipal: TfoPrincipal
         end>
       SizeGrip = False
       OnDrawPanel = statPrincipalDrawPanel
+      ExplicitTop = 395
     end
     object ProgressBar1: TProgressBar
       Left = 1
-      Top = 378
+      Top = 387
       Width = 823
       Height = 17
       Align = alBottom
       TabOrder = 2
-      ExplicitLeft = -11
-      ExplicitTop = 369
+      ExplicitTop = 378
     end
   end
   object pnlMenu: TPanel
     Left = 0
     Top = 0
     Width = 825
-    Height = 54
+    Height = 65
     Align = alTop
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 0
     object btnCarregaConfig: TSpeedButton
-      Left = 774
-      Top = 4
+      Left = 802
+      Top = -1
       Width = 21
       Height = 18
       Margins.Left = 2
@@ -665,37 +667,142 @@ object foPrincipal: TfoPrincipal
       OnClick = btnCarregaConfigClick
     end
     object lbDataIni: TLabel
-      Left = 20
-      Top = 7
+      Left = 24
+      Top = 5
       Width = 25
       Height = 12
       Caption = 'Inicio'
     end
     object lbDataFIm: TLabel
-      Left = 162
-      Top = 6
+      Left = 166
+      Top = 4
       Width = 16
       Height = 12
       Caption = 'Fim'
     end
     object lbConfig: TLabel
-      Left = 496
-      Top = 7
+      Left = 608
+      Top = 6
       Width = 65
       Height = 12
       Caption = 'Configura'#231#245'es'
     end
     object lbEmp: TLabel
-      Left = 7
-      Top = 32
+      Left = 11
+      Top = 30
       Width = 38
       Height = 12
       Caption = 'Empresa'
     end
+    object shpNormal: TShape
+      Left = 395
+      Top = 1
+      Width = 10
+      Height = 10
+      Brush.Color = clBlack
+      Pen.Color = clGray
+    end
+    object lb1: TLabel
+      Left = 518
+      Top = 30
+      Width = 69
+      Height = 12
+      Caption = 'XML Danificado'
+    end
+    object shpCancelada: TShape
+      Left = 395
+      Top = 27
+      Width = 10
+      Height = 10
+      Brush.Color = clRed
+      Pen.Color = clGray
+    end
+    object lb2: TLabel
+      Left = 411
+      Top = 0
+      Width = 32
+      Height = 12
+      Caption = 'Normal'
+    end
+    object shpCancAguard: TShape
+      Left = 395
+      Top = 41
+      Width = 10
+      Height = 10
+      Brush.Color = clPurple
+      Pen.Color = clGray
+    end
+    object lb3: TLabel
+      Left = 411
+      Top = 40
+      Width = 84
+      Height = 12
+      Caption = 'Aguard. ret. Canc.'
+    end
+    object lb4: TLabel
+      Left = 411
+      Top = 12
+      Width = 55
+      Height = 12
+      Caption = 'Aguard. ret.'
+    end
+    object shp4: TShape
+      Left = 502
+      Top = 18
+      Width = 10
+      Height = 10
+      Brush.Color = clFuchsia
+      Pen.Color = clGray
+    end
+    object shp5: TShape
+      Left = 502
+      Top = 32
+      Width = 10
+      Height = 10
+      Brush.Color = clLime
+      Pen.Color = clGray
+    end
+    object lb5: TLabel
+      Left = 411
+      Top = 25
+      Width = 46
+      Height = 12
+      Caption = 'Cancelada'
+    end
+    object lb6: TLabel
+      Left = 518
+      Top = 16
+      Width = 45
+      Height = 12
+      Caption = 'Inutilizada'
+    end
+    object shpAguardando: TShape
+      Left = 395
+      Top = 14
+      Width = 10
+      Height = 10
+      Brush.Color = clGreen
+      Pen.Color = clGray
+    end
+    object lb7: TLabel
+      Left = 518
+      Top = 2
+      Width = 45
+      Height = 12
+      Caption = 'Denegada'
+    end
+    object shp7: TShape
+      Left = 502
+      Top = 4
+      Width = 10
+      Height = 10
+      Brush.Color = clGray
+      Pen.Color = clGray
+    end
     object edConfiguracao: TEdit
-      Left = 567
-      Top = 3
-      Width = 202
+      Left = 679
+      Top = 2
+      Width = 122
       Height = 20
       AutoSelect = False
       AutoSize = False
@@ -703,8 +810,8 @@ object foPrincipal: TfoPrincipal
       TabOrder = 3
     end
     object dtpDataFiltroINI: TDateTimePicker
-      Left = 51
-      Top = 3
+      Left = 55
+      Top = 1
       Width = 105
       Height = 20
       Date = 43006.636531076380000000
@@ -714,8 +821,8 @@ object foPrincipal: TfoPrincipal
       OnKeyUp = dtpDataFiltroINIKeyUp
     end
     object dtpDataFiltroFin: TDateTimePicker
-      Left = 184
-      Top = 3
+      Left = 188
+      Top = 1
       Width = 105
       Height = 20
       Date = 43006.636531076380000000
@@ -724,7 +831,7 @@ object foPrincipal: TfoPrincipal
       OnKeyUp = dtpDataFiltroFinKeyUp
     end
     object btnFiltrar: TButton
-      Left = 295
+      Left = 299
       Top = 2
       Width = 75
       Height = 47
@@ -734,8 +841,8 @@ object foPrincipal: TfoPrincipal
       OnClick = btnFiltrarClick
     end
     object cbbEmpCNPJ: TComboBox
-      Left = 51
-      Top = 29
+      Left = 55
+      Top = 27
       Width = 238
       Height = 20
       TabOrder = 4
@@ -749,7 +856,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 201
     Bitmap = {
-      494C01012C003C008C0220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C00900220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7098,8 +7205,8 @@ object foPrincipal: TfoPrincipal
   end
   object pmExportar: TPopupMenu
     OnPopup = pmExportaPopup
-    Left = 41
-    Top = 352
+    Left = 42
+    Top = 351
     object pmAcoes: TMenuItem
       Caption = '&A'#231#245'es'
       object pmExpTodos: TMenuItem
@@ -7168,6 +7275,10 @@ object foPrincipal: TfoPrincipal
         Caption = 'Refazer autoriza'#231#245'es (Todos)'
         OnClick = pmRefazAutorizacaoTodosClick
       end
+      object pmRefazXML: TMenuItem
+        Caption = 'Refaz (XML)'
+        OnClick = pmRefazXMLClick
+      end
       object pmDelRefazAutTodos: TMenuItem
         Tag = 2
         Caption = 'Deleta e refaz autoriza'#231#245'es (todos)'
@@ -7233,7 +7344,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 277
     Bitmap = {
-      494C010103000C00340210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00380210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF
@@ -7574,6 +7685,10 @@ object foPrincipal: TfoPrincipal
       Caption = 'Data &Recebimento'
       OnClick = pmDataRecebimentoClick
     end
+    object pmFiltrodetalhado: TMenuItem
+      Caption = '&Filtro detalhado'
+      OnClick = pmFiltrodetalhadoClick
+    end
   end
   object jopdDirDir: TJvSelectDirectory
     Left = 293
@@ -7599,6 +7714,10 @@ object foPrincipal: TfoPrincipal
       object mmDataRecebimento: TMenuItem
         Caption = 'Data &Recebimento'
         OnClick = pmDataRecebimentoClick
+      end
+      object mmFiltroDetalhado: TMenuItem
+        Caption = '&FiltroDetalhado'
+        OnClick = pmFiltrodetalhadoClick
       end
     end
     object mmFerramentas: TMenuItem
@@ -7676,6 +7795,10 @@ object foPrincipal: TfoPrincipal
         object mmRefazAutorizacaoTodos: TMenuItem
           Caption = 'Refazer autoriza'#231#245'es (Todos)'
           OnClick = pmRefazAutorizacaoTodosClick
+        end
+        object mmRefazXML: TMenuItem
+          Caption = 'Refaz (XML)'
+          OnClick = pmRefazXMLClick
         end
         object mmDelRefazAutTodos: TMenuItem
           Tag = 2

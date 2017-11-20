@@ -39,6 +39,8 @@ uses
     procedure pLeituradaNFE;
     function fGetIdf_DocPelaChave(pChave: string):Integer;
     function fGetCNPJPelaChave(pChave: string):string;
+    function fGetDataXMLPelaChave(pChave: string): TDate;
+
     //Métodos para importar e exportar arquivos XML
     function fExportaLoteXML(pLista: TStringList):Int64;
     function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
@@ -86,6 +88,7 @@ const
   cRetsai_ = 'Retsai_*.xml';
   cRetEven = 'RetEven_*.xml';
 
+  cXMLErro    = -999;
   cAguardando = 1;
   cCancAguard = 4;
 
@@ -530,6 +533,7 @@ var
   ObjetoXML, ObjXMLAux : TLm_bkpdfe;
   wStream    : TStream;
   wFileStream : TFileStream;
+  wMemoStream : TMemoryStream;
   wFRec      : TSearchRec;
   wErro, j: integer;
   XMLArq     : TXMLDocument;
@@ -575,7 +579,6 @@ var
       Result := Copy(Result,11,44);
       Exit;
     end;
-
   end;
 
   function funcvarXML(xmlNTag : IXMLNode): WideString;
@@ -587,7 +590,7 @@ var
   function fXMLChave: Int64;
   begin
     J := 0;
-    if not pParametro then
+    if pParametro then
     begin
       wOK := True;
       wFileSource := pChave;
@@ -602,7 +605,6 @@ var
     with ObjetoXML do
     if Pos('Env_NFe',wFileSource) > 0 then
     begin
-
       while wOK do
       begin
         ObjetoXML := TLm_bkpdfe.Create;
@@ -616,30 +618,40 @@ var
         wXMLProcessado := False;
         wStream := TMemoryStream.Create;
 
-        if pParametro then
+        if not pParametro then
           pProgress('Importando '+wXmlName, J);
 
-        if wChaveErro.IndexOf(wChaveAux) >= 0 then
-        begin
-          pCopyFiles(wFileSource, tabConfiguracoes.NFePathRejeitado,false);
-          FileClose(FindWindow( 0,pWideChar(wFileSource)));
-          if DeleteFile(wFileSource) then
-            AddLog('LOGMAXXML',GetCurrentDir,'ErroXML: ['+ wXmlName+']', true);
-
-          wErro := FindNext(wFRec);
-          wFileSource := wPathFile+'\'+wFRec.Name;
-          wOK := (wErro = 0);
-          Continue;
-        end;
         wFileStream := TFileStream.Create(wFileSource,0);
-        XMLArq.LoadFromStream(wFileStream,xetUTF_8);
         try
+          XMLArq.LoadFromStream(wFileStream,xetUTF_8);
           wNodeXML := XMLArq.documentElement;
         EXCEPT
            on E: Exception do
-              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+           begin
+//             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+             FileClose(wFileStream.Handle);
+             pCompress(wFileSource, wStream,false);
+             Xmlerro := wStream;
+             Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
+             Dataemissao := fGetDataXMLPelaChave(wChaveAux);
+             chave := wChaveAux;
+             wArrayObjXML[j-1] := ObjetoXML;
+             status := cXMLErro;
+             if not pParametro then
+             begin
+               wErro := FindNext(wFRec);
+               wFileSource := wPathFile+'\'+wFRec.Name;
+               wOK := (wErro = 0);
+               Continue;
+             end
+             else
+             begin
+               wOK := False;
+               break;
+             end;
+           end;
         end;
-        //Nesse momento verifica se o xml é autorizado (nfeProc = Autorizado) (NFe = XML de Envio)
+
         if Assigned(wNodeXML) and (wNodeXML.NodeName = 'nfeProc') or (wNodeXML.NodeName = 'NFe') then
         begin
           if (wNodeXML.NodeName = 'nfeProc') then
@@ -682,7 +694,6 @@ var
 
             if (wXMLProcessado) and (Assigned(wNodeNfeProc)) then
             begin
-
               wNodeNfeProc := wNodeNfeProc.ChildNodes.First.NextSibling;
               if Assigned(wNodeNfeProc) and (wNodeNfeProc.NodeName = 'protNFe') or (wNodeNfeProc.NodeName = 'infProt') then
               begin
@@ -724,7 +735,7 @@ var
         Dataalteracao := Today;
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pParametro then
+        if not pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -763,18 +774,6 @@ var
         if pParametro then
           pProgress('Importando '+ wXmlName, J);
 
-        if wChaveErro.IndexOf(wChaveAux) >= 0 then
-        begin
-          pCopyFiles(wFileSource, tabConfiguracoes.NFePathRejeitado,false);
-          FileClose(FindWindow( 0,pWideChar(wFileSource)));
-          if DeleteFile(wFileSource) then
-            AddLog('LOGMAXXML', GetCurrentDir,'ErroXML: ['+ wXmlName+']');
-
-          wErro := FindNext(wFRec);
-          wFileSource := wPathFile+'\'+wFRec.Name;
-          wOK := (wErro = 0);
-          Continue;
-        end;
         wFileStream := TFileStream.Create(wFileSource,0);
         XMLArq.LoadFromStream(wFileStream);
         wNodeXML := XMLArq.documentElement;
@@ -851,7 +850,7 @@ var
 
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pParametro then
+        if not pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -923,12 +922,10 @@ var
           pProgress('Importando '+wXmlName, J);
 
         FileClose(wFileStream.Handle);
-  //        pCompress(wFileSource, wStream,false);
-  //        Xmlenvio:= wStream;
 
         wArrayObjXML[j-1] := ObjetoXML;
 
-        if pParametro then
+        if not pParametro then
         begin
           wErro := FindNext(wFRec);
           wFileSource := wPathFile+'\'+wFRec.Name;
@@ -985,8 +982,8 @@ var
      begin
        if Assigned(wArrayObjXML[I]) then
        begin
-         if pParametro then
-           pProgress('Processando a base dados '+wArrayObjXML[I].Chave, J);
+         if not pParametro then
+           pProgress('Gravando arquivo: '+wArrayObjXML[I].Chave, J);
 
          Inc(J,1);
          if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
@@ -1012,8 +1009,9 @@ begin
   wDaoXML    := TDaoBkpdfe.Create;
   wDataSet   := TDataSet.Create(Application);
 
-  if pParametro then
+  if not pParametro then
     fCarregaPath;
+
   try
     try
      fXMLChave;
@@ -1021,28 +1019,8 @@ begin
      FRefazAutorizacao := fGravaXML;
     except on E: Exception do
            begin
-             FRefazAutorizacao := False;
-             if pParametro then
-               exit;
-
-              if wChaveErro.IndexOf(wChaveAux) < 0 then
-                 wChaveErro.Add(wChaveAux);
-
-             if (not wYesAll) then
-             begin
-               wYesAll :=  MessageDlg('Erro na leitura do arquivo: '+ wChaveAux+ #10#13+
-                                      'Deseja refazer o processo? '+#10#13+
-                                      E.Message, mtError, [mbYes, mbYesToAll, mbNo],0) = mrYesToAll;
-
-                fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','');
-             end;
-
-             if wYesAll then
-                 fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','')
-             else
-               exit;
+             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
            end;
-
     end;
   finally
     foPrincipal.pAtualizaGrid;
@@ -1050,7 +1028,6 @@ begin
     FreeAndNil(wDaoXML);
     FreeAndNil(wDataSet);
   end;
-
 end;
 
 function TRotinas.fLoadXMLNFeLista(pLista : TStringList): Boolean;
@@ -1537,6 +1514,66 @@ begin
   end;
 end;
 
+function TRotinas.fGetDataXMLPelaChave(pChave: string): TDate;
+var wLen: Integer;
+    wAA, wMM, wDD: string;
+begin
+  Result := 0;
+
+  if pChave= '' then
+    exit;
+  wLen := Length(pChave);
+
+  if (wLen = 44) then
+  begin
+    wAA := Copy(pChave,03,02);
+    wMM := Copy(pChave,05,02);
+    try
+      Result := StrToDate('01/'+wMM+'/20'+wAA);
+    except on E: Exception do
+      Result :=0;
+    end;
+    exit;
+  end;
+
+  if (wLen = 52) and (pos('Can_',pChave)>0 ) then
+  begin
+    wAA := Copy(pChave,07,02);
+    wMM := Copy(pChave,09,02);
+    try
+      Result := StrToDate('01/'+wMM+'/20'+wAA);
+    except on E: Exception do
+      Result :=0;
+    end;
+    exit;
+  end;
+
+
+  if (wLen = 53) and (pos('Inut_',pChave)>0 ) then
+  begin
+    wAA := Copy(pChave,08,02);
+    wMM := Copy(pChave,10,02);
+    try
+      Result := StrToDate('01/'+wMM+'/20'+wAA);
+    except on E: Exception do
+      Result :=0;
+    end;
+    exit;
+  end;
+
+  if (wLen = 55) and (pos('Env_NFe',pChave)>0 ) then
+  begin
+    wAA := Copy(pChave,11,02);
+    wMM := Copy(pChave,13,02);
+    try
+      Result := StrToDate('01/'+wMM+'/20'+wAA);
+    except on E: Exception do
+      Result :=0;
+    end;
+    exit;
+  end;
+end;
+
 procedure TRotinas.pLeituradaNFE;
 var
   xmlNCab, xmlNItm : IXMLNode;
@@ -1671,7 +1708,7 @@ procedure TRotinas.Execute;
   begin
     Max := 2 * fDirectoryTreeFileCount(FInitialDir);;
     DoMax;
-    FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, True);
+    FResult := fLoadXMLNFe(tabConfiguracoes, txNFe_EnvExtLote, false);
   end;
 
   procedure pExecuteExportaLoteXML;

@@ -180,6 +180,10 @@
         </DCCReference>
         <DCCReference Include="J:\fontes\uDirectoryTreeSize.pas"/>
         <DCCReference Include="J:\fontes\uProgressThread.pas"/>
+        <DCCReference Include="J:\fontes\uFoFiltroDetalhe.pas">
+            <Form>foFiltroDetalahado</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <None Include="ModelSupport_MaxXML\default.txaPackage"/>
         <None Include="ModelSupport_MaxXML\default.txvpck"/>
         <None Include="ModelSupport_MaxXML\uPadraoEdicao\default.txvpck"/>
@@ -374,6 +378,12 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
+                <DeployFile LocalName="ModelSupport_MaxXML\Base\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                    <Platform Name="Win32">
+                        <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="ModelSupport_MaxXML\uDMnfebkp\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
@@ -381,12 +391,6 @@
                     </Platform>
                 </DeployFile>
                 <DeployFile LocalName="ModelSupport_MaxXML\uFoConsultaPadrao\default.txvpck" Configuration="Debug" Class="ProjectFile">
-                    <Platform Name="Win32">
-                        <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="ModelSupport_MaxXML\Base\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -464,7 +468,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="V:\MAXWIN\Zancanaro\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>MaxXML.exe</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -494,7 +498,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="D:\Programacao\DELPHI\BASE\Zancanaro\MAXXML\MaxXML.rsm" Configuration="Debug" Class="DebugSymbols">
+                <DeployFile LocalName="V:\MAXWIN\Zancanaro\MAXXML\MaxXML.rsm" Configuration="Debug" Class="DebugSymbols">
                     <Platform Name="Win32">
                         <RemoteName>MaxXML.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -876,13 +880,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

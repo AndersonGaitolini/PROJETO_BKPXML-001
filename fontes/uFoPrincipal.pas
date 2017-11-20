@@ -145,6 +145,24 @@ type
     mmDataAlteracao: TMenuItem;
     mmDataRecebimento: TMenuItem;
     pmFiltroColunas: TPopupMenu;
+    pmRefazXML: TMenuItem;
+    mmRefazXML: TMenuItem;
+    pmFiltrodetalhado: TMenuItem;
+    mmFiltroDetalhado: TMenuItem;
+    shpNormal: TShape;
+    lb1: TLabel;
+    shpCancelada: TShape;
+    lb2: TLabel;
+    shpCancAguard: TShape;
+    lb3: TLabel;
+    lb4: TLabel;
+    shp4: TShape;
+    shp5: TShape;
+    lb5: TLabel;
+    lb6: TLabel;
+    shpAguardando: TShape;
+    lb7: TLabel;
+    shp7: TShape;
     procedure FormCreate(Sender: TObject);
     procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
@@ -219,6 +237,8 @@ type
       Rect: TRect; State: TOwnerDrawState);
     procedure mmFetchAllClick(Sender: TObject);
     procedure pmFiltroColunasPopup(Sender: TObject);
+    procedure pmRefazXMLClick(Sender: TObject);
+    procedure pmFiltrodetalhadoClick(Sender: TObject);
   private
     { Private declarations }
     wStartTime: TTime;
@@ -278,7 +298,7 @@ implementation
 
 uses
 
-uFoConsConfiguracao, uFoConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos;
+uFoConsConfiguracao, uFoConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos, uFoFiltroDetalhe;
 
 {$R *.dfm}
 
@@ -594,24 +614,28 @@ begin
 end;
 
 procedure TfoPrincipal.pMenuFiltroData(pFieldFiltros: TFieldFiltros);
- procedure pCheck(pEmissao, pAlterecao, pReceb: boolean);
+
+ procedure pCheck(pEmissao, pAlterecao, pReceb, pFiltroDetalhado: boolean);
  begin
   mmDataEmissao.Checked     := pEmissao;
   mmDataAlteracao.Checked   := pAlterecao;
   mmDataRecebimento.Checked := pReceb;
+  mmFiltroDetalhado.Checked := pFiltroDetalhado;
 
   pmDataEmissao.Checked     := pEmissao;
   pmDataAlteracao.Checked   := pAlterecao;
   pmDataRecebimento.Checked := pReceb;
+  pmFiltrodetalhado.Checked := pFiltroDetalhado;
  end;
 begin
 
   wFieldFiltros := pFieldFiltros;
   case pFieldFiltros of
 
-       ffDATARECTO: pCheck(false, false, True);
-     ffDATAEMISSAO: pCheck(true, false, false);
-   ffDATAALTERACAO: pCheck(false, true, false);
+       ffDATARECTO   : pCheck(false, false, True, false);
+     ffDATAEMISSAO   : pCheck(true, false, false, false);
+   ffDATAALTERACAO   : pCheck(false, true, false, false);
+   ffFILTRODETALHADO : pCheck(false, false, false, true);
   end;
 end;
 
@@ -738,6 +762,20 @@ var i, j, k: integer;
 begin
   if True then
 
+
+end;
+
+procedure TfoPrincipal.pmFiltrodetalhadoClick(Sender: TObject);
+begin
+  pMenuFiltroData(ffFILTRODETALHADO);
+  try
+    foFiltroDetalahado := TfoFiltroDetalahado.Create(Application);
+    foFiltroDetalahado.ShowModal;
+
+
+  finally
+    FreeAndNil(foFiltroDetalahado);
+  end;
 
 end;
 
@@ -1277,6 +1315,7 @@ begin
   begin
     wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
     case wStatus of
+     -999: Canvas.Font.Color := clLime;
       001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
       004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
       100: Canvas.Font.Color := clBlack;    //XML Envio Processado
@@ -1678,6 +1717,31 @@ begin
      jopdDirDir.Free;
    end;
 
+end;
+
+procedure TfoPrincipal.pmRefazXMLClick(Sender: TObject);
+var wFileName: string;
+begin
+  wFileName := ExtractFileDir(ParamStr(0));
+  wFileName := Copy(wFileName, 1, LastDelimiter('\', wFileName));
+  if FileExists(wFileName+'Maxwin.exe') or (FileExists(wFileName+'Maxecv.exe')) then
+  begin
+    wFileName := wFileName + 'DFE\XML\Envio\Processado';
+  end;
+
+  dlgOpenPrinc.Title := 'Escolha o Arquivo XML';
+  dlgOpenPrinc.InitialDir := wFileName;
+  dlgOpenPrinc.Filter := '*.*XML';
+
+  if dlgOpenPrinc.Execute then
+  begin
+    tabConfiguracoes.NFePathProcessado := dlgOpenPrinc.FileName;
+  end;
+
+  if not Assigned(wRotinas) then
+     wRotinas := TRotinas.Create;
+
+ wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFE_Env,true,dlgOpenPrinc.FileName);
 end;
 
 procedure TfoPrincipal.pmDescmarcarSelTodosClick(Sender: TObject);

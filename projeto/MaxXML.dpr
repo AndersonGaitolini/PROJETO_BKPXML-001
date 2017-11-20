@@ -36,7 +36,8 @@ uses
   uPadraoForm in 'J:\fontes\Padroes\uPadraoForm.pas' {foPadraoForm},
   ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
   uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
-  uProgressThread in 'J:\fontes\uProgressThread.pas';
+  uProgressThread in 'J:\fontes\uProgressThread.pas',
+  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado};
 
 var
  ShowResult : Byte;
