@@ -628,7 +628,7 @@ var
         EXCEPT
            on E: Exception do
            begin
-//             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
              FileClose(wFileStream.Handle);
              pCompress(wFileSource, wStream,false);
              Xmlerro := wStream;
@@ -681,12 +681,25 @@ var
                   Tipoambiente := 'Homologação';
               end;
 
-              wNodeDest := wNodeXML.NextSibling;
-              if Assigned(wNodeDest) and (wNodeDest.NodeName = 'emit') then
+              wNodeEmit := wNodeXML.NextSibling;
+              if Assigned(wNodeEmit) and (wNodeEmit.NodeName = 'emit') then
               begin
-                CNPJ := funcvarXML(wNodeDest.ChildNodes['CNPJ']);
+                CNPJ := funcvarXML(wNodeEmit.ChildNodes['CNPJ']);
                 if wCNPJAux <> CNPJ then
-                  ShowMessage('CNPJ da Chave difere da tag <CNPJ> do Desitinatário');
+                begin
+                  AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: [CNPJ da Chave: '+ wXmlName +' difere da tag <emit><CNPJ>'+ CNPJ +'<CNPJ></emit>]', true);
+                end;
+              end;
+
+              wNodeDest := wNodeXML.NextSibling.NextSibling;
+              if Assigned(wNodeDest) and (wNodeDest.NodeName = 'dest') then
+              begin
+                wNodeDest := wNodeDest.ChildNodes.First;
+                if (wNodeDest.NodeName = 'CPF') then
+                  CNPJDest := funcvarXML(wNodeDest.ChildNodes['CPF'])
+                else
+                if (wNodeDest.NodeName = 'CNPJ') then
+                  CNPJDest := funcvarXML(wNodeDest.ChildNodes['CNPJ'])
               end;
 
               Status := cAguardando;
@@ -725,11 +738,18 @@ var
         end;
 
         FileClose(wFileStream.Handle);
+
         pCompress(wFileSource, wStream,false);
-        Xmlenvio := wStream;
-        if wXMLProcessado then
+        if wCNPJAux <> CNPJ then
         begin
-          Xmlextend := wStream;
+          status := cXMLErro;
+          Xmlerro := wStream;
+        end
+        else
+        begin
+          Xmlenvio := wStream;
+          if wXMLProcessado then
+            Xmlextend := wStream;
         end;
 
         Dataalteracao := Today;
@@ -745,12 +765,12 @@ var
         else
         begin
           wOK := False;
-          exit;
+          break;
         end;
       end;
     end;
 
-    if pParametro then
+    if not pParametro then
     begin
       wErro := FindFirst(wPathFile+'\'+ cCan_, faAnyFile, wFRec);
       wOK := wErro = 0;
@@ -771,16 +791,42 @@ var
         Tipo := '1';
         wStream := TMemoryStream.Create;
 
-        if pParametro then
+        if not pParametro then
           pProgress('Importando '+ wXmlName, J);
 
         wFileStream := TFileStream.Create(wFileSource,0);
-        XMLArq.LoadFromStream(wFileStream);
-        wNodeXML := XMLArq.documentElement;
+        try
+          XMLArq.LoadFromStream(wFileStream,xetUTF_8);
+          wNodeXML := XMLArq.documentElement;
+        EXCEPT
+           on E: Exception do
+           begin
+             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+             FileClose(wFileStream.Handle);
+             pCompress(wFileSource, wStream,false);
+             Xmlerro := wStream;
+             Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
+             Dataemissao := fGetDataXMLPelaChave(wChaveAux);
+             chave := wChaveAux;
+             wArrayObjXML[j-1] := ObjetoXML;
+             status := cXMLErro;
+             if not pParametro then
+             begin
+               wErro := FindNext(wFRec);
+               wFileSource := wPathFile+'\'+wFRec.Name;
+               wOK := (wErro = 0);
+               Continue;
+             end
+             else
+             begin
+               wOK := False;
+               break;
+             end;
+           end;
+        end;
 
         if Assigned(wNodeXML) then
         begin  //CAN_ Envio
-
           if (wNodeXML.NodeName = 'cancNFe') then
           begin
             wNodeXML := wNodeXML.ChildNodes.First;
@@ -860,7 +906,7 @@ var
         else
         begin
           wOK := False;
-          exit;
+          break;
         end;
       end;
     end;
@@ -889,11 +935,39 @@ var
         Status := cAguardando;
         CNPJ  := fGetCNPJPelaChave(Chave);
         wStream := TMemoryStream.Create;
-        wFileStream := TFileStream.Create(wFileSource,0);
         wXmlName := ExtractFileName(wFileSource);
         Chave := fGetChaveFilename(wXmlName);
-        XMLArq.LoadFromStream(wFileStream,xetUTF_8);
-        wNodeXML := XMLArq.documentElement;
+
+        wFileStream := TFileStream.Create(wFileSource,0);
+        try
+          XMLArq.LoadFromStream(wFileStream,xetUTF_8);
+          wNodeXML := XMLArq.documentElement;
+        EXCEPT
+           on E: Exception do
+           begin
+             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+             FileClose(wFileStream.Handle);
+             pCompress(wFileSource, wStream,false);
+             Xmlerro := wStream;
+             Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
+             Dataemissao := fGetDataXMLPelaChave(wChaveAux);
+             chave := wChaveAux;
+             wArrayObjXML[j-1] := ObjetoXML;
+             status := cXMLErro;
+             if not pParametro then
+             begin
+               wErro := FindNext(wFRec);
+               wFileSource := wPathFile+'\'+wFRec.Name;
+               wOK := (wErro = 0);
+               Continue;
+             end
+             else
+             begin
+               wOK := False;
+               break;
+             end;
+           end;
+        end;
 
         if Assigned(wNodeXML) then
         begin
@@ -918,7 +992,7 @@ var
           end;
         end;
 
-        if pParametro then
+        if not pParametro then
           pProgress('Importando '+wXmlName, J);
 
         FileClose(wFileStream.Handle);

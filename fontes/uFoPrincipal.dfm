@@ -5,7 +5,7 @@ object foPrincipal: TfoPrincipal
   BorderWidth = 1
   Caption = 'SOUIS MAX XML'
   ClientHeight = 492
-  ClientWidth = 825
+  ClientWidth = 942
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -156,19 +156,20 @@ object foPrincipal: TfoPrincipal
   OnKeyUp = FormKeyUp
   OnShow = FormShow
   DesignSize = (
-    825
+    942
     492)
   PixelsPerInch = 96
   TextHeight = 12
   object pnlControles: TPanel
     Left = 24
     Top = 356
-    Width = 826
+    Width = 943
     Height = 54
     Anchors = [akLeft, akTop, akRight]
     Enabled = False
     TabOrder = 1
     Visible = False
+    ExplicitWidth = 826
     object btnEnvioArq: TButton
       Left = 9
       Top = 7
@@ -252,7 +253,7 @@ object foPrincipal: TfoPrincipal
       OnClick = btnSIMULACAOClick
     end
     object pnlLegenda: TPanel
-      Left = 601
+      Left = 718
       Top = 1
       Width = 224
       Height = 52
@@ -261,6 +262,7 @@ object foPrincipal: TfoPrincipal
       BevelInner = bvRaised
       BevelKind = bkFlat
       TabOrder = 9
+      ExplicitLeft = 601
       DesignSize = (
         220
         48)
@@ -439,18 +441,19 @@ object foPrincipal: TfoPrincipal
   object pnl1: TPanel
     Left = 0
     Top = 65
-    Width = 825
+    Width = 942
     Height = 427
     Align = alClient
     Alignment = taLeftJustify
     Caption = 'pnl1'
     TabOrder = 2
     ExplicitTop = 54
+    ExplicitWidth = 825
     ExplicitHeight = 418
     object dbgNfebkp: TDBGrid
       Left = 1
       Top = 1
-      Width = 823
+      Width = 940
       Height = 386
       Align = alClient
       Color = clBtnFace
@@ -603,12 +606,19 @@ object foPrincipal: TfoPrincipal
           Expanded = False
           FieldName = 'CHECKBOX'
           Visible = False
+        end
+        item
+          Expanded = False
+          FieldName = 'CNPJDEST'
+          Title.Caption = 'CNPJ  / CPF Cliente'
+          Width = 96
+          Visible = True
         end>
     end
     object statPrincipal: TStatusBar
       Left = 1
       Top = 404
-      Width = 823
+      Width = 940
       Height = 22
       Margins.Left = 2
       Margins.Top = 2
@@ -634,28 +644,31 @@ object foPrincipal: TfoPrincipal
       SizeGrip = False
       OnDrawPanel = statPrincipalDrawPanel
       ExplicitTop = 395
+      ExplicitWidth = 823
     end
     object ProgressBar1: TProgressBar
       Left = 1
       Top = 387
-      Width = 823
+      Width = 940
       Height = 17
       Align = alBottom
       TabOrder = 2
       ExplicitTop = 378
+      ExplicitWidth = 823
     end
   end
   object pnlMenu: TPanel
     Left = 0
     Top = 0
-    Width = 825
+    Width = 942
     Height = 65
     Align = alTop
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 0
+    ExplicitWidth = 825
     object btnCarregaConfig: TSpeedButton
-      Left = 802
-      Top = -1
+      Left = 796
+      Top = 6
       Width = 21
       Height = 18
       Margins.Left = 2
@@ -681,11 +694,11 @@ object foPrincipal: TfoPrincipal
       Caption = 'Fim'
     end
     object lbConfig: TLabel
-      Left = 608
-      Top = 6
-      Width = 65
+      Left = 596
+      Top = 9
+      Width = 69
       Height = 12
-      Caption = 'Configura'#231#245'es'
+      Caption = 'Configura'#231#245'es:'
     end
     object lbEmp: TLabel
       Left = 11
@@ -796,18 +809,25 @@ object foPrincipal: TfoPrincipal
       Top = 4
       Width = 10
       Height = 10
-      Brush.Color = clGray
+      Brush.Color = clSilver
       Pen.Color = clGray
     end
+    object lbConsultas: TLabel
+      Left = 596
+      Top = 44
+      Width = 47
+      Height = 12
+      Caption = 'Consultas:'
+    end
     object edConfiguracao: TEdit
-      Left = 679
-      Top = 2
+      Left = 671
+      Top = 6
       Width = 122
       Height = 20
       AutoSelect = False
       AutoSize = False
       ReadOnly = True
-      TabOrder = 3
+      TabOrder = 4
     end
     object dtpDataFiltroINI: TDateTimePicker
       Left = 55
@@ -837,7 +857,7 @@ object foPrincipal: TfoPrincipal
       Height = 47
       Caption = '&Filtrar'
       PopupMenu = pmFiltroData
-      TabOrder = 2
+      TabOrder = 3
       OnClick = btnFiltrarClick
     end
     object cbbEmpCNPJ: TComboBox
@@ -845,9 +865,27 @@ object foPrincipal: TfoPrincipal
       Top = 27
       Width = 238
       Height = 20
-      TabOrder = 4
+      TabOrder = 2
       OnChange = cbbEmpCNPJChange
       OnDrawItem = cbbEmpCNPJDrawItem
+    end
+    object edConsultaSQL: TEdit
+      Left = 649
+      Top = 40
+      Width = 260
+      Height = 20
+      AutoSelect = False
+      AutoSize = False
+      TabOrder = 5
+    end
+    object btnFIltroSQL: TBitBtn
+      Left = 915
+      Top = 40
+      Width = 25
+      Height = 20
+      Caption = '...'
+      TabOrder = 6
+      OnClick = btnFIltroSQLClick
     end
   end
   object ilPrincipal: TImageList
@@ -7502,7 +7540,7 @@ object foPrincipal: TfoPrincipal
   end
   object pmSelecionar: TPopupMenu
     OnPopup = pmSelecionarPopup
-    Left = 40
+    Left = 41
     Top = 276
     object mmSelTodos: TMenuItem
       Caption = 'Selecionar &todos'

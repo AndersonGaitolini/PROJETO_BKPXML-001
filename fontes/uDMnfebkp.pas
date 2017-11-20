@@ -79,6 +79,8 @@ type
     cdsUsuariosCONFIGSALVA: TIntegerField;
     sqlConfiguracoes: TFDQuery;
     cdsBkpdfeCNPJ: TStringField;
+    cdsBkpdfeXMLERRO: TMemoField;
+    cdsBkpdfeCNPJDEST: TStringField;
 
     procedure DataModuleCreate(Sender: TObject);
     procedure cdsBkpdfeAfterOpen(DataSet: TDataSet);

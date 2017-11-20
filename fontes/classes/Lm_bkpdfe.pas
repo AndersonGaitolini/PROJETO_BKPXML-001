@@ -39,6 +39,7 @@ type
     FXmlerro : TStream;
     FSelecao: string;
     FCheckBox: SmallInt;
+    FCNPJDest: string;
 
   public
     [attPK]
@@ -65,6 +66,7 @@ type
     property Xmlerro : TStream read FXmlerro write FXmlerro;
     property Selecao: string read FSelecao write FSelecao;
     property CheckBox: SmallInt read FCheckBox write FCheckBox;
+    property CNPJDest: string read FCNPJDest write FCNPJDest;
   end;
 
 type
@@ -93,6 +95,7 @@ type
                     ffXMLERRO,
                     ffSELECAO,
                     ffCHECKBOX,
+                    ffCNPJDEST,
                     ffFILTRODETALHADO);
 
   TOrdenaBy = (obyASCENDENTE, obyDESCEDENTE, obyNone);
@@ -320,6 +323,9 @@ var wDataSet : TDataSet;
       if pObjXML.CheckBox = -1 then
       pObjXML.CheckBox := FieldByName('CheckBox').AsInteger;
 
+      if pObjXML.CNPJDEST = '' then
+      pObjXML.CNPJDEST := FieldByName('CNPJDEST').AsString;
+
       wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
       begin
@@ -527,16 +533,19 @@ const cAsc = 'Asc'; cdesc = 'desc';
       if (pCNPJ <> '*') and (fValidaCNPJ(pCNPJ)) then
       begin
 //        wFetchAll := False;
-        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and ',['CNPJ', pCnpj]);
+        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and',['CNPJ', pCnpj]);
       end;
 
       if wOrdData then
         str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
       else
         str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
-
+      
+      if not (wV1Empty) and (pFieldName = 'CNPJDEST') then
+         str1 := str1 + Format(' and (%s like '+QuotedStr('%s')+')',[pFieldName, pValue1]);
+         
       if pUpDown <> obyNone then
-        str1 := str1 + Format('order by %s %s',[pFieldOrder, wUpDown]);
+        str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
 
 //        ShowMessage('SQL '+str1);
       DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
@@ -553,6 +562,9 @@ const cAsc = 'Asc'; cdesc = 'desc';
   end;
 
 begin
+
+  pFieldName := UpperCase(Trim(pFieldName));
+  
    if Length(pCNPJ) = 18 then
     pCNPJ := fTiraMascaraCNPJ(pCNPJ);
 
@@ -586,6 +598,7 @@ begin
     ffXMLENVIOCANC: begin pFiltro('ID') end;
     ffXMLEXTENDCANC: begin pFiltro('ID') end;
     ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
+    ffCNPJDEST : begin pFiltro('CNPJDEST') end;
 //      ffSELECAO:begin Filtro('SELECAO') end;
   end;
 
@@ -638,6 +651,7 @@ begin
     Protocoloaut := '';
     XMLERRO  := nil;
     Selecao := '';
+    CNPJDest := '';
   end;
 end;
 

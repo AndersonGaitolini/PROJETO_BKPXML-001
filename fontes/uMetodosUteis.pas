@@ -38,6 +38,7 @@ Const
      end;
 
   function fValidaCNPJ(pCNPJ: string): boolean;
+  function fValidCPF(pCPF : string) : Boolean;
   function fIsNumeric(pStr : String) : Boolean;
   procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
   procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
@@ -116,6 +117,55 @@ implementation
 //  end;
 
 
+function fValidCPF(pCPF : string) : Boolean;
+var
+  v: array[0..1] of Word;
+  wCPF: array[0..10] of Byte;
+  I: Byte;
+  wRetorno: boolean;
+begin
+
+  if Length(pCPF) = 14 then
+    if (Copy(pCPF,4,1) + Copy(pCPF,8,1) + Copy(pCPF,12,1) = '..-') then
+    begin
+      pCPF:=Copy(pCPF,1,3) + Copy(pCPF,4,3) + Copy(pCPF,8,3) + Copy(pCPF,12,4) + Copy(pCPF,17,2);
+      wRetorno:=True;
+    end;
+
+  if Length(pCPF) = 11 then
+  begin
+    wRetorno:=True;
+  end;
+
+  if wRetorno then
+  begin
+    try
+      for I := 1 to 11 do
+        wCPF[i-1] := StrToInt(pCPF[i]);
+      //Nota: Calcula o primeiro dígito de verificação.
+      v[0] := 10*wCPF[0] + 9*wCPF[1] + 8*wCPF[2];
+      v[0] := v[0] + 7*wCPF[3] + 6*wCPF[4] + 5*wCPF[5];
+      v[0] := v[0] + 4*wCPF[6] + 3*wCPF[7] + 2*wCPF[8];
+      v[0] := 11 - v[0] mod 11;
+      if (v[0] >= 10) then
+        v[0] := 0;
+//      v[0] := IfThen(v[0] >= 10, 0, v[0]);
+      //Nota: Calcula o segundo dígito de verificação.
+      v[1] := 11*wCPF[0] + 10*wCPF[1] + 9*wCPF[2];
+      v[1] := v[1] + 8*wCPF[3] +  7*wCPF[4] + 6*wCPF[5];
+      v[1] := v[1] + 5*wCPF[6] +  4*wCPF[7] + 3*wCPF[8];
+      v[1] := v[1] + 2*v[0];
+      v[1] := 11 - v[1] mod 11;
+      if (v[1] >= 10) then
+        v[1] := 0;
+//      v[1] := IfThen(v[1] >= 10, 0, v[1]);
+      //Nota: Verdadeiro se os dígitos de verificação são os esperados.
+      Result :=  ((v[0] = wCPF[9]) and (v[1] = wCPF[10]));
+    except on E: Exception do
+      Result := False;
+    end;
+  end;
+end;
 
 function fValidaCNPJ(pCNPJ: string): boolean;
 var
@@ -129,16 +179,16 @@ begin
 //Analisa os formatos
   if Length(pCNPJ) = 18 then
     if (Copy(pCNPJ,3,1) + Copy(pCNPJ,7,1) + Copy(pCNPJ,11,1) + Copy(pCNPJ,16,1) = '../-') then
-        begin
-        wCNPJ:=Copy(pCNPJ,1,2) + Copy(pCNPJ,4,3) + Copy(pCNPJ,8,3) + Copy(pCNPJ,12,4) + Copy(pCNPJ,17,2);
-        wRetorno:=True;
-        end;
+    begin
+      wCNPJ:=Copy(pCNPJ,1,2) + Copy(pCNPJ,4,3) + Copy(pCNPJ,8,3) + Copy(pCNPJ,12,4) + Copy(pCNPJ,17,2);
+      wRetorno:=True;
+    end;
 
   if Length(pCNPJ) = 14 then
-    begin
+  begin
     wCNPJ:=pCNPJ;
     wRetorno:=True;
-    end;
+  end;
 //Verifica
   if wRetorno then
   begin
@@ -578,6 +628,7 @@ end;
 
 procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
 var
+ wIndex: Integer;
  ArqLog: string;
  F :TStringList;
   begin
@@ -587,12 +638,20 @@ var
     F := TStringList.Create;
     try
       try
-        ArqLog := pDirLog+'\'+pNameLog+'.log';
+        ArqLog := pDirLog+'\'+pNameLog+FormatDateTime('_dd-mm-aaaa',now)+'.log';
+//        ArqLog := pDirLog+'\'+pNameLog+'.log';
 
         if FileExists(ArqLog) then
          f.LoadFromFile(ArqLog);
 
-        f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]));
+//        wIndex := F.IndexOf(aStr);
+//        if wIndex > -1 then
+//        begin
+//          f.Delete(wIndex);
+//          f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]))
+//        end
+//        else
+          f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]));
 
         f.SaveToFile(ArqLog);
       except on E: Exception do

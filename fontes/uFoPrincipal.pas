@@ -163,6 +163,9 @@ type
     shpAguardando: TShape;
     lb7: TLabel;
     shp7: TShape;
+    edConsultaSQL: TEdit;
+    lbConsultas: TLabel;
+    btnFIltroSQL: TBitBtn;
     procedure FormCreate(Sender: TObject);
     procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
@@ -239,11 +242,12 @@ type
     procedure pmFiltroColunasPopup(Sender: TObject);
     procedure pmRefazXMLClick(Sender: TObject);
     procedure pmFiltrodetalhadoClick(Sender: TObject);
+    procedure btnFIltroSQLClick(Sender: TObject);
   private
     { Private declarations }
     wStartTime: TTime;
     wVisible: boolean;
-    wFieldFiltros : TFieldFiltros;
+    wLastFieldFiltros : TFieldFiltros;
     wFetchALL :Boolean;
     {Métodos da barra de progresso em threds}
     procedure DoMax(const PMax: Int64);
@@ -396,6 +400,15 @@ procedure TfoPrincipal.btnFiltrarClick(Sender: TObject);
 begin
   pFiltroEmissaoXML;
   dbgNfebkp.Refresh;
+end;
+
+procedure TfoPrincipal.btnFIltroSQLClick(Sender: TObject);
+var wValue: String;
+begin
+  wValue := Trim(LowerCase(edConsultaSQL.Text));
+
+  if fValidaCNPJ(wValue) or fValidCPF(wValue) then
+    DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, 0{dtpDataFiltroINI.Date}, 0{dtpDataFiltroFin.Date}, wValue);
 end;
 
 procedure TfoPrincipal.btnInserirClick(Sender: TObject);
@@ -629,7 +642,7 @@ procedure TfoPrincipal.pMenuFiltroData(pFieldFiltros: TFieldFiltros);
  end;
 begin
 
-  wFieldFiltros := pFieldFiltros;
+  wLastFieldFiltros := pFieldFiltros;
   case pFieldFiltros of
 
        ffDATARECTO   : pCheck(false, false, True, false);
@@ -770,6 +783,21 @@ begin
   pMenuFiltroData(ffFILTRODETALHADO);
   try
     foFiltroDetalahado := TfoFiltroDetalahado.Create(Application);
+    with wFiltroDetalhado do
+    begin
+      if cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex] = 'Todos' then
+        CnpjEmi := 'Todos'
+      else
+        CnpjEmi := Copy(cbbEmpCNPJ.Items[cbbEmpCNPJ.ItemIndex],7,18);
+
+      DataIni := dtpDataFiltroINI.Date;
+      DataFin := dtpDataFiltroFin.Date;
+
+      if  fValidaCNPJ(dbgNfebkp.DataSource.DataSet.FieldByName('cnpjdest').AsString) then
+        CnpjDest := dbgNfebkp.DataSource.DataSet.FieldByName('cnpjdest').AsString
+      else
+        CnpjDest := 'Todos';
+    end;
     foFiltroDetalahado.ShowModal;
 
 
@@ -844,7 +872,6 @@ end;
 
 procedure TfoPrincipal.mmFetchAllClick(Sender: TObject);
 begin
-
   mmFetchAll.Checked := not mmFetchAll.Checked;
   wFetchALL := mmFetchAll.Checked;
 end;
@@ -879,7 +906,6 @@ begin
   begin
     dbgNfebkp.Refresh;
   end;
-
 end;
 
 procedure TfoPrincipal.pmDelTodosSelecionadosClick(Sender: TObject);
@@ -1224,7 +1250,7 @@ begin
      dtpDataFiltroFin.Date := dtpDataFiltroINI.Date;
 
   if dtpDataFiltroINI.Date <= dtpDataFiltroFin.Date then
-    DaoObjetoXML.pFiltraOrdena(wFieldFiltros, wLastOrderBy, CNPJDOC.Documento,wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+    DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento,wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
 end;
 
 procedure TfoPrincipal.dbgNfebkpColExit(Sender: TObject);
@@ -1457,8 +1483,8 @@ begin
   wListaSelecionados := TStringList.Create;
   pUpdateCampoCNPJE;
   wLastField := 'CNPJ';
-  wFieldFiltros := ffDATAEMISSAO;
-  pMenuFiltroData(wFieldFiltros);
+  wLastFieldFiltros := ffDATAEMISSAO;
+  pMenuFiltroData(wLastFieldFiltros);
 end;
 
 procedure TfoPrincipal.FormKeyUp(Sender: TObject; var Key: Word;

@@ -14,6 +14,7 @@ object DM_NFEDFE: TDM_NFEDFE
         'FDB'
       'DriverID=FBEmbed'
       'Pooled=False')
+    Connected = True
     LoginPrompt = False
     AfterConnect = conConexaoFDAfterConnect
     Left = 24
@@ -58,14 +59,6 @@ object DM_NFEDFE: TDM_NFEDFE
       end
       item
         Name = 'STATUS'
-        DataType = ftSmallint
-      end
-      item
-        Name = 'EMPRESA'
-        DataType = ftSmallint
-      end
-      item
-        Name = 'FILIAL'
         DataType = ftSmallint
       end
       item
@@ -152,7 +145,7 @@ object DM_NFEDFE: TDM_NFEDFE
         Size = 50
       end
       item
-        Name = 'CAMPOSTREAM'
+        Name = 'XMLERRO'
         DataType = ftMemo
       end
       item
@@ -164,6 +157,11 @@ object DM_NFEDFE: TDM_NFEDFE
       item
         Name = 'CHECKBOX'
         DataType = ftSmallint
+      end
+      item
+        Name = 'CNPJDEST'
+        DataType = ftString
+        Size = 14
       end>
     IndexDefs = <>
     Params = <>
@@ -270,6 +268,14 @@ object DM_NFEDFE: TDM_NFEDFE
     object cdsBkpdfeCHECKBOX: TSmallintField
       FieldName = 'CHECKBOX'
       Origin = 'CHECKBOX'
+    end
+    object cdsBkpdfeXMLERRO: TMemoField
+      FieldName = 'XMLERRO'
+      BlobType = ftMemo
+    end
+    object cdsBkpdfeCNPJDEST: TStringField
+      FieldName = 'CNPJDEST'
+      Size = 14
     end
   end
   object provBkpdfe: TDataSetProvider
