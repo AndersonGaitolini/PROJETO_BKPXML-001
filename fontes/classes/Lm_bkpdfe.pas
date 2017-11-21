@@ -114,8 +114,8 @@ type
     function fConsDeleteObjXML(var pObjXML  : TLm_bkpdfe; pCampos: array of string): Boolean;
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
-    procedure pFiltraOrdena (pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
-     pValue1: string = '';pValue2: string = '');
+    function pFiltraOrdena (pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
+     pValue1: string = '';pValue2: string = ''): TDataSet;
 
   end;
 
@@ -387,7 +387,6 @@ begin
         if (wDataSet.RecordCount = 1) then
         begin
           pReplaceIfNecessario;
-
           Result := true;
         end
         else
@@ -478,9 +477,9 @@ begin
   end;
 end;
 
-procedure TDaoBkpdfe.pFiltraOrdena(pFieldNameOrder: TFieldFiltros;
+function TDaoBkpdfe.pFiltraOrdena(pFieldNameOrder: TFieldFiltros;
   pUpDown: TOrdenaBy; pCNPJ, pFieldName: string; pDtINI, pDtFin: TDate; pValue1,
-  pValue2: string);
+  pValue2: string): TDataset;
 
 var data1STR, data2STR, str1, str2: string;
     wDataSet : TDataSet;
@@ -513,7 +512,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
   end;
 
   procedure pFiltro(pFieldOrder:string);
-  var wOrdData, wFetchAll: Boolean;
+  var wOrdData,wDataVal, wFetchAll, wAnd: Boolean;
       auxFF : TFieldFiltros;
       wList : TList;
       i:Integer;
@@ -523,11 +522,13 @@ const cAsc = 'Asc'; cdesc = 'desc';
     auxFF := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldOrder);
     wOrdData := ((auxFF = ffDATARECTO) or (auxFF = ffDATAALTERACAO) or (auxFF = ffDATAEMISSAO));
     try
+      wDataVal := (pDtINI > 0) or (pDtFin > 0);
       DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
       data1STR := QuotedStr(data1STR);
       DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
       data2STR := QuotedStr(data2STR);
 
+      wAnd := false;
       str1 := str1 + 'Select * from lm_bkpdfe where ';
 
       if (pCNPJ <> '*') and (fValidaCNPJ(pCNPJ)) then
@@ -536,18 +537,23 @@ const cAsc = 'Asc'; cdesc = 'desc';
         str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and',['CNPJ', pCnpj]);
       end;
 
-      if wOrdData then
-        str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
-      else
-        str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
+      if wDataVal then
+        if wOrdData then
+          str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
+        else
+          str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
       
-      if not (wV1Empty) and (pFieldName = 'CNPJDEST') then
-         str1 := str1 + Format(' and (%s like '+QuotedStr('%s')+')',[pFieldName, pValue1]);
-         
+      if not (wV1Empty) and (pFieldName = 'CNPJDEST') and wDataVal then
+         str1 := str1 + Format(' and (%s like '+QuotedStr('%s')+')',[pFieldName, '%'+pValue1+'%'])
+      else
+      if not (wV1Empty) and (pFieldName = 'CNPJDEST') and not wDataVal then
+         str1 := str1 + Format(' (%s like '+QuotedStr('%s')+')',[pFieldName, '%'+pValue1+'%']);
+
       if pUpDown <> obyNone then
         str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
 
 //        ShowMessage('SQL '+str1);
+      Result := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
       DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
 
     except on E: Exception do
@@ -562,7 +568,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
   end;
 
 begin
-
+  Result := nil;
   pFieldName := UpperCase(Trim(pFieldName));
   
    if Length(pCNPJ) = 18 then
@@ -685,7 +691,7 @@ end;
 
 procedure TCNPJDOC.setDocumento(const Value: string);
 begin
-  if (Value = '*') or (fValidaCNPJ(Value)) then
+  if (Value = '*') or (fValidaCNPJ2(Value)) then
    FDocumento := Value
   else
    FDocumento := ''   ;

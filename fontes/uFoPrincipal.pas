@@ -166,6 +166,7 @@ type
     edConsultaSQL: TEdit;
     lbConsultas: TLabel;
     btnFIltroSQL: TBitBtn;
+    bvl1: TBevel;
     procedure FormCreate(Sender: TObject);
     procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
@@ -243,12 +244,17 @@ type
     procedure pmRefazXMLClick(Sender: TObject);
     procedure pmFiltrodetalhadoClick(Sender: TObject);
     procedure btnFIltroSQLClick(Sender: TObject);
+    procedure edConsultaSQLChange(Sender: TObject);
+    procedure edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
+    wValue: String;
     wStartTime: TTime;
     wVisible: boolean;
     wLastFieldFiltros : TFieldFiltros;
     wFetchALL :Boolean;
+
     {Métodos da barra de progresso em threds}
     procedure DoMax(const PMax: Int64);
     procedure DoProgress (const PText: String; const PNumber: Cardinal);
@@ -403,12 +409,21 @@ begin
 end;
 
 procedure TfoPrincipal.btnFIltroSQLClick(Sender: TObject);
-var wValue: String;
 begin
-  wValue := Trim(LowerCase(edConsultaSQL.Text));
-
-  if fValidaCNPJ(wValue) or fValidCPF(wValue) then
-    DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, 0{dtpDataFiltroINI.Date}, 0{dtpDataFiltroFin.Date}, wValue);
+  if Trim(LowerCase(wValue)) = '' then
+  begin
+    if edConsultaSQL.CanFocus then
+    begin
+     edConsultaSQL.SetFocus;
+     edConsultaSQL.SelStart := 1;
+    end;
+  end
+  else  
+  begin
+   DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
+   if dbgNfebkp.DataSource.DataSet.RecordCount > 0 then
+     edConsultaSQL.Clear;
+  end;
 end;
 
 procedure TfoPrincipal.btnInserirClick(Sender: TObject);
@@ -779,6 +794,7 @@ begin
 end;
 
 procedure TfoPrincipal.pmFiltrodetalhadoClick(Sender: TObject);
+var wDocDest: string;
 begin
   pMenuFiltroData(ffFILTRODETALHADO);
   try
@@ -792,9 +808,9 @@ begin
 
       DataIni := dtpDataFiltroINI.Date;
       DataFin := dtpDataFiltroFin.Date;
-
-      if  fValidaCNPJ(dbgNfebkp.DataSource.DataSet.FieldByName('cnpjdest').AsString) then
-        CnpjDest := dbgNfebkp.DataSource.DataSet.FieldByName('cnpjdest').AsString
+      wDocDest := dbgNfebkp.DataSource.DataSet.FieldByName('cnpjdest').AsString;
+      if fValidaCNPJ(wDocDest, true) or fValidCPF(wDocDest, true) then
+        CnpjDest := wDocDest
       else
         CnpjDest := 'Todos';
     end;
@@ -877,16 +893,17 @@ begin
 end;
 
 procedure TfoPrincipal.pmDeletarTodosClick(Sender: TObject);
-var wMsg : string;
+var wMsg, wCNPJEmit : string;
 begin
   cbbEmpCNPJChange(Sender);
   wMsg := 'Você está prestes a deletar.';
+  wCNPJEmit := CNPJDOC.Documento;
   begin
-    if CNPJDOC.Documento  = '*' then
+    if wCNPJEmit = '*' then
       wMsg := 'Você está prestes a deletar todos os arquivos.'
     else
-    if fValidaCNPJ(CNPJDOC.Documento) then
-     wMsg := 'Você está prestes a deletar todos os arquivos do CNPJ '+ fMascaraCNPJ(CNPJDOC.Documento)+'.';
+    if fValidaCNPJ(wCNPJEmit, true)then
+     wMsg := 'Você está prestes a deletar todos os arquivos do CNPJ '+ wCNPJEmit+'.';
 
     if MessageDlg(wMsg, mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
      if wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
@@ -1229,6 +1246,30 @@ begin
 
 end;
 
+procedure TfoPrincipal.edConsultaSQLChange(Sender: TObject);
+begin
+  wValue := Trim(LowerCase(edConsultaSQL.Text));
+  if (Length(wValue) = 14) and (fValidaCNPJ(wValue, true)) then
+  begin
+    edConsultaSQL.Text := wValue;
+    edConsultaSQL.SelStart := Length( edConsultaSQL.Text);
+  end;
+
+  if (Length(wValue) = 9) and (fValidCPF(wValue, true)) then
+  begin
+    edConsultaSQL.Text := wValue;
+    edConsultaSQL.SelStart := Length( edConsultaSQL.Text);
+  end;
+end;
+
+procedure TfoPrincipal.edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if key = vk_Return then
+  begin
+    btnFIltroSQLClick(Sender);
+  end
+end;
 
 procedure TfoPrincipal.FDEventAlerter1Alert(ASender: TFDCustomEventAlerter;
   const AEventName: string; const AArgument: Variant);
@@ -1361,7 +1402,7 @@ begin
       if SelectedRows.CurrentRowSelected then
         Canvas.Brush.Color := clDkGray
       else
-          Canvas.Brush.Color := clGray;
+        Canvas.Brush.Color := clGray;
 
       Canvas.Font.Style := [];
       Canvas.FillRect(Rect);
@@ -1446,7 +1487,7 @@ var
   end;
 
 begin
-  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.3';
+  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.4';
   pSetaCores;
   pIniciaGrid;
 //  pProgressBarStyle;
@@ -1633,35 +1674,46 @@ end;
 
 procedure TfoPrincipal.pUpdateCampoCNPJE;
 var k : Integer;
+    wCNPJ: string;
 begin
 if Assigned(CNPJDOC) then
   begin
     wLastField := 'CNPJ';
     cbbEmpCNPJ.Clear;
     wListaEmp := Lm_bkpdfe.CNPJDOC.fListaEmpresas;
+    wCNPJ := CNPJDOC.Documento;
 
-    if wListaEmp.IndexOf(CNPJDOC.Documento) < 0 then
-      if fValidaCNPJ(CNPJDOC.Documento) then
-         wListaEmp.Add(CNPJDOC.Documento);
+    if wListaEmp.IndexOf(wCNPJ) < 0 then
+      if fValidaCNPJ(wCNPJ) then
+         wListaEmp.Add(wCNPJ);
 
     if wListaEmp.Count = 0 then
       cbbEmpCNPJ.Items.Add('Não há registros!')
     else
     if wListaEmp.Count = 1 then
-      cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[0]))
+    begin
+      wCNPJ := wListaEmp.Strings[0];
+      if fValidaCNPJ(wCNPJ,true) then
+        cbbEmpCNPJ.Items.Add('CNPJ: '+ wCNPJ);
+    end
     else
     if wListaEmp.Count > 1 then
     begin
       cbbEmpCNPJ.Items.Add('Todos');
       for K := 0 to wListaEmp.Count-1 do
-        cbbEmpCNPJ.Items.Add('CNPJ: '+ fMascaraCNPJ(wListaEmp.Strings[k]));
+      begin
+        wCNPJ := wListaEmp.Strings[K];
+        if (fValidaCNPJ(wCNPJ,true)) then
+          cbbEmpCNPJ.Items.Add('CNPJ: '+ wCNPJ);
+      end;
     end;
 
-    if CNPJDOC.Documento = '*' then
+
+    if wCNPJ = '*' then
        cbbEmpCNPJ.ItemIndex := 0
     else
-    if fValidaCNPJ(CNPJDOC.Documento) then
-       cbbEmpCNPJ.ItemIndex := cbbEmpCNPJ.Items.IndexOf('CNPJ: '+ fMascaraCNPJ(CNPJDOC.Documento));
+    if fValidaCNPJ(wCNPJ, true) then
+      cbbEmpCNPJ.ItemIndex := cbbEmpCNPJ.Items.IndexOf('CNPJ: '+ wCNPJ);
   end;
 end;
 

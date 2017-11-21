@@ -37,8 +37,9 @@ Const
        class function EnumConvertStr(const eEnum:T):string;
      end;
 
-  function fValidaCNPJ(pCNPJ: string): boolean;
-  function fValidCPF(pCPF : string) : Boolean;
+  function fValidaCNPJ(var pCNPJ: string; pMascara: boolean=false): boolean;
+  function fValidaCNPJ2(pCNPJDoc: string; pMascara: boolean=false): boolean;
+  function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
   function fIsNumeric(pStr : String) : Boolean;
   procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
   procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
@@ -117,14 +118,22 @@ implementation
 //  end;
 
 
-function fValidCPF(pCPF : string) : Boolean;
+function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
 var
   v: array[0..1] of Word;
   wCPF: array[0..10] of Byte;
   I: Byte;
   wRetorno: boolean;
-begin
 
+  function fFormatCPF: string;
+  begin
+    Result := pCPF;
+    Insert('.',Result,04);
+    Insert('.',Result,08);
+    Insert('-',Result,12);
+  end;
+
+begin
   if Length(pCPF) = 14 then
     if (Copy(pCPF,4,1) + Copy(pCPF,8,1) + Copy(pCPF,12,1) = '..-') then
     begin
@@ -133,9 +142,7 @@ begin
     end;
 
   if Length(pCPF) = 11 then
-  begin
     wRetorno:=True;
-  end;
 
   if wRetorno then
   begin
@@ -161,18 +168,33 @@ begin
 //      v[1] := IfThen(v[1] >= 10, 0, v[1]);
       //Nota: Verdadeiro se os dígitos de verificação são os esperados.
       Result :=  ((v[0] = wCPF[9]) and (v[1] = wCPF[10]));
+
+      if (Result) and (pMascara) then
+        pCPF := fFormatCPF
+
     except on E: Exception do
       Result := False;
     end;
   end;
 end;
 
-function fValidaCNPJ(pCNPJ: string): boolean;
+function fValidaCNPJ(var pCNPJ: string; pMascara: boolean=false): boolean;
 var
+  wFormatCNPJ,
   wCNPJ: string;
   wDig1, wDig2: integer;
   x, total: integer;
   wRetorno: boolean;
+
+  function fFormatCNPJ: string;
+  begin
+    Result := wCNPJ;
+    Insert('.',Result,03);
+    Insert('.',Result,07);
+    Insert('/',Result,11);
+    Insert('-',Result,16);
+  end;
+
 begin
   wRetorno:=False;
   wCNPJ:='';
@@ -234,7 +256,20 @@ begin
     end;
   end;
 
-Result := wRetorno;
+  Result := wRetorno;
+  if (Result) and (pMascara) then
+    pCNPJ := fFormatCNPJ
+  else
+  if Result then
+    pCNPJ := wCNPJ
+end;
+
+
+function fValidaCNPJ2(pCNPJDoc: string; pMascara: boolean=false): boolean;
+var wCNPJ: string;
+begin
+  wCNPJ := pCNPJDoc;
+  Result:= fValidaCNPJ(wCNPJ, pMascara);
 end;
 
 function fIsNumeric(pStr: String) : Boolean;
@@ -638,7 +673,7 @@ var
     F := TStringList.Create;
     try
       try
-        ArqLog := pDirLog+'\'+pNameLog+FormatDateTime('_dd-mm-aaaa',now)+'.log';
+        ArqLog := pDirLog+'\'+pNameLog+FormatDateTime('-dd-mm-aaaa',now)+'.log';
 //        ArqLog := pDirLog+'\'+pNameLog+'.log';
 
         if FileExists(ArqLog) then
@@ -879,7 +914,7 @@ wDataBase: string;
 wFBClient,wFBClient1  : string;
 wUser : string;
 wSenha: string;
-wOk :Boolean;
+wOk, wLog :Boolean;
 wHandle : THandle;
 
   procedure pIniArquivo(pSource: string);
@@ -904,32 +939,31 @@ wHandle : THandle;
     end;
   end;
 
-begin
+ begin
+  wLog := false;
   try
     try
       Result := False;
       prCon.Connected := Result;
       prCon.Close;
-//      AddLog('LOGMAXXML',GetCurrentDir,'conexaoBD: [INI: '+fArqIni+'] ['+wDataBase+'] ['+wFBClient +'] ['+wFBClient1+']');
+
+      AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
 
       wFBClient := GetCurrentDir;
       wDataBase := wFBClient;
       if (ParamCount = 0) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
       begin
-        AddLog('LOGMAXXML',GetCurrentDir,'1 ParamStr(0) = ['+ LowerCase(ExtractFileName(ParamStr(0))) + ']');
         wFBClient := wFBClient + '\fb\fbembed.dll';
         wDataBase := wDataBase + '\BACKUPXML.FDB';
       end
       else
       if (ParamCount >= 2) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
       begin
-        AddLog('LOGMAXXML',GetCurrentDir,'2 ParamStr(0) = ['+ ParamStr(0) + ']');
         wDataBase := wDataBase + '\MAXXML\BACKUPXML.FDB';
         wFBClient := wFBClient + '\MAXXML\fb\fbembed.dll';
       end
       else
       begin
-        AddLog('LOGMAXXML',GetCurrentDir,'3 ParamStr(0) = ['+ LowerCase(ExtractFileName(ParamStr(0))) + ']');
         Application.Terminate;
       end;
 
@@ -945,6 +979,8 @@ begin
       prCon.Params.Values['Password']   := 'masterkey';//wSenha;
       prCon.Params.Values['SQLDialect'] := '3';
 
+       AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wDataBase = ['+ wDataBase + ']',wLog);
+       AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wFBClient = ['+ wFBClient+ ']',wLog);
       prCon.Open;
       Result := prCon.Connected;
 
@@ -954,8 +990,8 @@ begin
     except
       on E: Exception do
          begin
-           AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] wDataBase: ['+ wDataBase + ']: Erro:'+
-           #10#13+ E.Message);
+           AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
+           #10#13+ E.Message,wLog);
          end;
     end;
   finally
@@ -998,8 +1034,6 @@ begin
 
   if not FileExists(Result) then
     setINI(Result,'','','');
-
-//  AddLog('LOGMAXXML',GetCurrentDir,'fArqIni: [INI: '+Result+']' );
 end;
 
 { TConvert }

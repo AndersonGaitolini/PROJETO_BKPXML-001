@@ -62,7 +62,7 @@ begin
 
   if (ParamCount = 0) then
   begin
-    if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
+    if not DM_NFEDFE.Conectado then
     begin
       Application.Terminate;
       exit;
@@ -98,7 +98,7 @@ begin
     for I := 0 to ParamCount do
       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: '+ ParamStr(i),true);
 
-    if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver, false) then
+    if not DM_NFEDFE.Conectado then
     begin
       Application.Terminate;
       exit;
@@ -154,17 +154,17 @@ begin
   else
   if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio]) then
   begin
-    if ParamCount > 0 then
-    for I := 0 to ParamCount do
-      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
+//    if ParamCount > 0 then
+//    for I := 0 to ParamCount do
+//      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
 
-    if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver, false) then
+    if not DM_NFEDFE.Conectado then
     begin
       Application.Terminate;
       exit;
-    end
-    else
-      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'Conectou BD : XML Envio: ' + ParamStr(3));
+    end;
+//    else
+//      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'Conectou BD : XML Envio: ' + ParamStr(3));
 
     tabUsuarios.Usuario         := Trim(ParamStr(2));
     tabUsuarios.Senha           := Trim(ParamStr(3));
@@ -174,12 +174,13 @@ begin
 
    if (daoLogin.fLogar(tabUsuarios)) then
    begin
-     tabConfiguracoes.id := tabUsuarios.ConfigSalva;
-     daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
-     try
-     wRotinas := TRotinas.Create;
 
-     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, false,ParamStr(4)) > 0 then
+     try
+       tabConfiguracoes.id := tabUsuarios.ConfigSalva;
+       daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
+       wRotinas := TRotinas.Create;
+
+     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, true,ParamStr(4)) > 0 then
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe XML: : ' + ParamStr(4), true);
      except
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);

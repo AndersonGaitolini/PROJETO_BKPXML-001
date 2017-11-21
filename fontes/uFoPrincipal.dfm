@@ -169,7 +169,6 @@ object foPrincipal: TfoPrincipal
     Enabled = False
     TabOrder = 1
     Visible = False
-    ExplicitWidth = 826
     object btnEnvioArq: TButton
       Left = 9
       Top = 7
@@ -262,13 +261,12 @@ object foPrincipal: TfoPrincipal
       BevelInner = bvRaised
       BevelKind = bkFlat
       TabOrder = 9
-      ExplicitLeft = 601
       DesignSize = (
         220
         48)
       object Shape1: TShape
-        Left = -181
-        Top = -200
+        Left = -189
+        Top = -208
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -278,8 +276,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -64
-        Top = -172
+        Left = -72
+        Top = -180
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -289,8 +287,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -181
-        Top = -172
+        Left = -189
+        Top = -180
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -300,8 +298,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -64
-        Top = -158
+        Left = -72
+        Top = -166
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -312,8 +310,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -181
-        Top = -158
+        Left = -189
+        Top = -166
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -323,8 +321,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -64
-        Top = -199
+        Left = -72
+        Top = -207
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -334,8 +332,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -181
-        Top = -186
+        Left = -189
+        Top = -194
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -345,8 +343,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -165
-        Top = -200
+        Left = -173
+        Top = -208
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -355,8 +353,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -50
-        Top = -173
+        Left = -58
+        Top = -181
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -365,8 +363,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -165
-        Top = -172
+        Left = -173
+        Top = -180
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -375,8 +373,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -50
-        Top = -159
+        Left = -58
+        Top = -167
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -386,8 +384,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -165
-        Top = -158
+        Left = -173
+        Top = -166
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -396,8 +394,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -165
-        Top = -186
+        Left = -173
+        Top = -194
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -406,8 +404,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -50
-        Top = -200
+        Left = -58
+        Top = -208
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -416,8 +414,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -64
-        Top = -186
+        Left = -72
+        Top = -194
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -427,8 +425,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -50
-        Top = -187
+        Left = -58
+        Top = -195
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -447,9 +445,6 @@ object foPrincipal: TfoPrincipal
     Alignment = taLeftJustify
     Caption = 'pnl1'
     TabOrder = 2
-    ExplicitTop = 54
-    ExplicitWidth = 825
-    ExplicitHeight = 418
     object dbgNfebkp: TDBGrid
       Left = 1
       Top = 1
@@ -460,7 +455,7 @@ object foPrincipal: TfoPrincipal
       DataSource = DM_NFEDFE.dsBkpdfe
       DrawingStyle = gdsGradient
       FixedColor = clHighlightText
-      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
+      Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgMultiSelect, dgTitleClick, dgTitleHotTrack]
       PopupMenu = pmExportar
       ReadOnly = True
       TabOrder = 0
@@ -500,6 +495,13 @@ object foPrincipal: TfoPrincipal
         end
         item
           Expanded = False
+          FieldName = 'CNPJDEST'
+          Title.Caption = 'CNPJ /CPF Dest.'
+          Width = 96
+          Visible = True
+        end
+        item
+          Expanded = False
           FieldName = 'TIPO'
           Visible = True
         end
@@ -507,7 +509,7 @@ object foPrincipal: TfoPrincipal
           Expanded = False
           FieldName = 'IDF_DOCUMENTO'
           Title.Caption = 'DOCUMENTO'
-          Width = 64
+          Width = 70
           Visible = True
         end
         item
@@ -606,13 +608,6 @@ object foPrincipal: TfoPrincipal
           Expanded = False
           FieldName = 'CHECKBOX'
           Visible = False
-        end
-        item
-          Expanded = False
-          FieldName = 'CNPJDEST'
-          Title.Caption = 'CNPJ  / CPF Cliente'
-          Width = 96
-          Visible = True
         end>
     end
     object statPrincipal: TStatusBar
@@ -643,8 +638,6 @@ object foPrincipal: TfoPrincipal
         end>
       SizeGrip = False
       OnDrawPanel = statPrincipalDrawPanel
-      ExplicitTop = 395
-      ExplicitWidth = 823
     end
     object ProgressBar1: TProgressBar
       Left = 1
@@ -653,8 +646,6 @@ object foPrincipal: TfoPrincipal
       Height = 17
       Align = alBottom
       TabOrder = 2
-      ExplicitTop = 378
-      ExplicitWidth = 823
     end
   end
   object pnlMenu: TPanel
@@ -665,10 +656,9 @@ object foPrincipal: TfoPrincipal
     Align = alTop
     Anchors = [akLeft, akRight, akBottom]
     TabOrder = 0
-    ExplicitWidth = 825
     object btnCarregaConfig: TSpeedButton
-      Left = 796
-      Top = 6
+      Left = 893
+      Top = 16
       Width = 21
       Height = 18
       Margins.Left = 2
@@ -694,8 +684,8 @@ object foPrincipal: TfoPrincipal
       Caption = 'Fim'
     end
     object lbConfig: TLabel
-      Left = 596
-      Top = 9
+      Left = 668
+      Top = 18
       Width = 69
       Height = 12
       Caption = 'Configura'#231#245'es:'
@@ -813,16 +803,23 @@ object foPrincipal: TfoPrincipal
       Pen.Color = clGray
     end
     object lbConsultas: TLabel
-      Left = 596
-      Top = 44
-      Width = 47
+      Left = 603
+      Top = 43
+      Width = 134
       Height = 12
-      Caption = 'Consultas:'
+      Caption = 'Cons. CNPJ/CPF destinat'#225'rio:'
+    end
+    object bvl1: TBevel
+      Left = 596
+      Top = 0
+      Width = 1
+      Height = 55
+      Style = bsRaised
     end
     object edConfiguracao: TEdit
-      Left = 671
-      Top = 6
-      Width = 122
+      Left = 743
+      Top = 14
+      Width = 145
       Height = 20
       AutoSelect = False
       AutoSize = False
@@ -870,16 +867,18 @@ object foPrincipal: TfoPrincipal
       OnDrawItem = cbbEmpCNPJDrawItem
     end
     object edConsultaSQL: TEdit
-      Left = 649
+      Left = 743
       Top = 40
-      Width = 260
+      Width = 144
       Height = 20
       AutoSelect = False
       AutoSize = False
       TabOrder = 5
+      OnChange = edConsultaSQLChange
+      OnKeyUp = edConsultaSQLKeyUp
     end
     object btnFIltroSQL: TBitBtn
-      Left = 915
+      Left = 894
       Top = 40
       Width = 25
       Height = 20
@@ -894,7 +893,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 201
     Bitmap = {
-      494C01012C003C00900220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C00980220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7382,7 +7381,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 277
     Bitmap = {
-      494C010103000C00380210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C00400210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF

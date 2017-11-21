@@ -14,11 +14,9 @@ object DM_NFEDFE: TDM_NFEDFE
         'FDB'
       'DriverID=FBEmbed'
       'Pooled=False')
-    Connected = True
     LoginPrompt = False
-    AfterConnect = conConexaoFDAfterConnect
     Left = 24
-    Top = 24
+    Top = 25
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
@@ -32,8 +30,8 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
-    VendorHome = 'C:\fb'
-    VendorLib = 'fbClient.dll'
+    VendorHome = 'C:\fb\bin'
+    VendorLib = 'fbembed.dll'
     OnDriverCreated = DataModuleCreate
     Embedded = True
     Left = 176
@@ -167,7 +165,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provBkpdfe'
     StoreDefs = True
-    AfterOpen = cdsBkpdfeAfterOpen
     Left = 21
     Top = 203
     object cdsBkpdfeID: TIntegerField
@@ -284,7 +281,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Top = 203
   end
   object sqlBkpDfe: TFDQuery
-    AfterOpen = sqlBkpDfeAfterOpen
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
@@ -301,7 +297,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Aggregates = <>
     Params = <>
     ProviderName = 'provUsuarios'
-    AfterOpen = cdsUsuariosAfterOpen
     Left = 18
     Top = 145
     object cdsUsuariosID: TIntegerField
@@ -331,7 +326,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Top = 145
   end
   object sqlUsuarios: TFDQuery
-    AfterOpen = sqlUsuariosAfterOpen
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
@@ -343,7 +337,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Aggregates = <>
     Params = <>
     ProviderName = 'provConfiguracoes'
-    AfterOpen = cdsConfiguracoesAfterOpen
     Left = 19
     Top = 85
     object intgrfldConfiguracoesID: TIntegerField
@@ -443,7 +436,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Top = 85
   end
   object sqlConfiguracoes: TFDQuery
-    AfterOpen = sqlConfiguracoesAfterOpen
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (

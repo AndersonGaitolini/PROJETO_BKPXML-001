@@ -695,11 +695,8 @@ var
               if Assigned(wNodeDest) and (wNodeDest.NodeName = 'dest') then
               begin
                 wNodeDest := wNodeDest.ChildNodes.First;
-                if (wNodeDest.NodeName = 'CPF') then
-                  CNPJDest := funcvarXML(wNodeDest.ChildNodes['CPF'])
-                else
-                if (wNodeDest.NodeName = 'CNPJ') then
-                  CNPJDest := funcvarXML(wNodeDest.ChildNodes['CNPJ'])
+                if (wNodeDest.NodeName = 'CPF') or (wNodeDest.NodeName = 'CNPJ') then
+                  CNPJDest := wNodeDest.Text;
               end;
 
               Status := cAguardando;
@@ -1056,12 +1053,14 @@ var
      begin
        if Assigned(wArrayObjXML[I]) then
        begin
-         if not pParametro then
-           pProgress('Gravando arquivo: '+wArrayObjXML[I].Chave, J);
-
          Inc(J,1);
          if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
+         begin
+           if not pParametro then
+             pProgress('Gravando arquivo: '+wArrayObjXML[I].Chave, J);
+
            wArrayObjXML[i].Free;
+         end;
        end
        else
          wArrayObjXML[i].Free;

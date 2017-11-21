@@ -83,18 +83,15 @@ type
     cdsBkpdfeCNPJDEST: TStringField;
 
     procedure DataModuleCreate(Sender: TObject);
-    procedure cdsBkpdfeAfterOpen(DataSet: TDataSet);
-    procedure cdsUsuariosAfterOpen(DataSet: TDataSet);
-    procedure cdsConfiguracoesAfterOpen(DataSet: TDataSet);
-    procedure sqlBkpDfeAfterOpen(DataSet: TDataSet);
-    procedure sqlUsuariosAfterOpen(DataSet: TDataSet);
-    procedure sqlConfiguracoesAfterOpen(DataSet: TDataSet);
-    procedure conConexaoFDAfterConnect(Sender: TObject);
   private
     { Private declarations }
+    FConectado : boolean;
+
   public
     { Public declarations }
     Dao   : TDaoFD;
+
+    property Conectado : boolean read FConectado write FConectado;
   end;
 
 var
@@ -108,49 +105,6 @@ uses
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
-
-procedure TDM_NFEDFE.cdsBkpdfeAfterOpen(DataSet: TDataSet);
-begin
-  try
-
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'cdsBkpdfeAfterOpen : '+E.Message);
-         end;
-  end;
-
-end;
-
-procedure TDM_NFEDFE.cdsConfiguracoesAfterOpen(DataSet: TDataSet);
-begin
-  try
-
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'cdsConfiguracoesAfterOpen : '+E.Message);
-         end;
-  end;
-end;
-
-procedure TDM_NFEDFE.cdsUsuariosAfterOpen(DataSet: TDataSet);
-begin
-  try
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'cdsUsuariosAfterOpen : '+E.Message);
-         end;
-  end;
-end;
-
-procedure TDM_NFEDFE.conConexaoFDAfterConnect(Sender: TObject);
-begin
-  try
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'sqlBkpDfeAfterOpen : '+E.Message);
-         end;
-  end;
-end;
 
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
@@ -170,36 +124,30 @@ begin
 
   CNPJDOC := TCNPJDOC.Create;
 
-end;
+  FConectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
 
-procedure TDM_NFEDFE.sqlBkpDfeAfterOpen(DataSet: TDataSet);
-begin
-  try
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'sqlBkpDfeAfterOpen : '+E.Message);
-         end;
+  if not Assigned(sqlBkpDfe.FindField('CNPJDEST')) then
+  begin
+    dao.StartTransaction;
+    try
+      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+      Dao.Commit;
+    except on E: Exception do
+       Dao.RollBack;
+    end;
   end;
-end;
 
-procedure TDM_NFEDFE.sqlConfiguracoesAfterOpen(DataSet: TDataSet);
-begin
-  try
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'sqlConfiguracoesAfterOpen : '+E.Message);
-         end;
+  if not Assigned(sqlBkpDfe.FindField('XMLERRO')) then
+  begin
+    dao.StartTransaction;
+    try
+      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+      Dao.Commit;
+    except on E: Exception do
+       Dao.RollBack;
+    end;
   end;
-end;
 
-procedure TDM_NFEDFE.sqlUsuariosAfterOpen(DataSet: TDataSet);
-begin
-  try
-  except on E: Exception do
-         begin
-           AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'sqlUsuariosAfterOpen : '+E.Message);
-         end;
-  end;
 end;
 
 end.

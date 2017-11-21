@@ -1,8 +1,8 @@
 Title  Ambiente de Programacao MAXXML
 
-if exist D:\Programacao\DELPHI\BackupXML\PROJETO_BKPXML_GITHUB-001 goto homepc
+if (exist D:\Programacao\DELPHI\BackupXML\PROJETO_BKPXML_GITHUB-001) goto homepc
 
-else if exist E:\projeto2\PROJETO_BKPXML-001 goto office-pc
+else if (exist E:\projeto2\PROJETO_BKPXML-001) goto office-pc
 
 else goto exitit
 
