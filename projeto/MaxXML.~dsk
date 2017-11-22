@@ -1,33 +1,50 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\Data.DB.pas',0,1,5729,1,5740,0,0,,
-File_1=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.pas',0,1,16041,1,16052,0,0,,
-File_2=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas',0,1,15652,1,15660,0,0,,
-File_3=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Stan.Error.pas',0,1,178,1,189,0,0,,
-File_4=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,10737,1,10749,0,0,,
-File_5=TSourceModule,'J:\fontes\ORM\DaoFD.pas',0,1,295,20,305,0,0,,
-File_6=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Comp.Client.pas',0,1,5631,1,5635,0,0,,
-File_7=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Stan.Consts.pas',0,1,24,1,34,0,0,,
-File_8=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBWrapper.pas',0,1,1354,1,1362,0,0,,
-File_9=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.FB.pas',0,1,370,1,380,0,0,,
-File_10=TSourceModule,'J:\fontes\ufoLogin.pas',0,1,9,29,12,0,0,,
-File_11=TSourceModule,'J:\fontes\Padroes\ufoLoginPadrao.pas',0,3,11,3,11,0,0,,
-File_12=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.Forms.pas',0,1,1,6,9,0,0,{{1716,4}
-File_13=TSourceModule,'J:\fontes\uFoCadUsuario.pas',0,1,40,49,48,0,0,,
-File_14=TSourceModule,'J:\fontes\uFoConfiguracao.pas',0,1,1208,1,1215,0,0,,
+File_0=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\XML\Xml.XMLDoc.pas',0,1,2669,1,2686,0,0,,
+File_1=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\XML\Xml.Win.msxmldom.pas',0,1,533,1,544,0,0,{{465,0},{472,11},{'Deprecated IXMLDOMDocument creation'}},
+File_2=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\Data.DB.pas',0,1,5729,1,5740,0,0,,
+File_3=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.pas',0,1,16041,1,16052,0,0,,
+File_4=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Stan.Error.pas',0,1,178,1,189,0,0,,
+File_5=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas',0,1,10737,1,10749,0,0,,
+File_6=TSourceModule,'J:\fontes\ORM\DaoFD.pas',0,1,295,20,305,0,0,,
+File_7=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Comp.Client.pas',0,1,5631,1,5635,0,0,,
+File_8=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Stan.Consts.pas',0,1,24,1,34,0,0,,
+File_9=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBWrapper.pas',0,1,1354,1,1362,0,0,,
+File_10=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.FB.pas',0,1,370,1,380,0,0,,
+File_11=TSourceModule,'J:\fontes\ufoLogin.pas',0,1,9,29,12,0,0,,
+File_12=TSourceModule,'J:\fontes\Padroes\ufoLoginPadrao.pas',0,3,11,3,11,0,0,,
+File_13=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.Forms.pas',0,1,1,6,9,0,0,{{1716,4}
+File_14=TSourceModule,'J:\fontes\uFoCadUsuario.pas',0,1,40,49,48,0,0,,
 
 [Modules]
-Module0=J:\fontes\uFoPrincipal.pas
-Module1=J:\fontes\classes\Lm_bkpdfe.pas
-Module2=J:\fontes\uRotinas.pas
-Module3=J:\projeto\MaxXML.dproj
-Module4=J:\fontes\uMetodosUteis.pas
-Module5=J:\fontes\uDMnfebkp.pas
-Count=6
+Module0=J:\fontes\uRotinas.pas
+Module1=J:\fontes\uFoPrincipal.pas
+Module2=J:\fontes\uProgressThread.pas
+Module3=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas
+Module4=J:\fontes\classes\Lm_bkpdfe.pas
+Module5=J:\projeto\MaxXML.dproj
+Module6=J:\fontes\uDMnfebkp.pas
+Module7=J:\fontes\uMetodosUteis.pas
+Count=8
 EditWindowCount=1
+
+[J:\fontes\uRotinas.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
 
 [J:\fontes\uFoPrincipal.pas]
 ModuleType=TSourceModule
 FormState=1
+FormOnTop=0
+
+[J:\fontes\uProgressThread.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas]
+ModuleType=TSourceModule
+FormState=0
 FormOnTop=0
 
 [J:\fontes\classes\Lm_bkpdfe.pas]
@@ -35,33 +52,30 @@ ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[J:\fontes\uRotinas.pas]
-ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
-
 [J:\projeto\MaxXML.dproj]
 ModuleType=TBaseProject
+
+[J:\fontes\uDMnfebkp.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
 
 [J:\fontes\uMetodosUteis.pas]
 ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[J:\fontes\uDMnfebkp.pas]
-ModuleType=TSourceModule
-FormState=1
-FormOnTop=1
-
 [EditWindow0]
-ViewCount=6
-CurrentEditView=J:\fontes\uFoPrincipal.pas
+ViewCount=8
+CurrentEditView=J:\fontes\uRotinas.pas
 View0=0
 View1=1
 View2=2
 View3=3
 View4=4
 View5=5
+View6=6
+View7=7
 PercentageSizes=1
 Create=1
 Visible=1
@@ -94,15 +108,26 @@ BottomMiddelPanelData=0000080001020200000009000000446F636B5369746530100000004772
 [View0]
 CustomEditViewType=TEditView
 Module=J:\fontes\uFoPrincipal.pas
-CursorX=35
-CursorY=376
-TopLine=369
+CursorX=1
+CursorY=1401
+TopLine=1390
 LeftCol=1
 Elisions=
 Bookmarks=
 EditViewName=J:\fontes\uFoPrincipal.pas
 
 [View1]
+CustomEditViewType=TEditView
+Module=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas
+CursorX=1
+CursorY=15162
+TopLine=15164
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas
+
+[View2]
 CustomEditViewType=TEditView
 Module=J:\fontes\classes\Lm_bkpdfe.pas
 CursorX=1
@@ -113,7 +138,7 @@ Elisions=
 Bookmarks=
 EditViewName=J:\fontes\classes\Lm_bkpdfe.pas
 
-[View2]
+[View3]
 CustomEditViewType=TEditView
 Module=J:\projeto\MaxXML.dpr
 CursorX=15
@@ -124,18 +149,29 @@ Elisions=
 Bookmarks=
 EditViewName=J:\projeto\MaxXML.dpr
 
-[View3]
+[View4]
 CustomEditViewType=TEditView
 Module=J:\fontes\uRotinas.pas
-CursorX=1
-CursorY=428
-TopLine=417
+CursorX=10
+CursorY=1667
+TopLine=1657
 LeftCol=1
 Elisions=
 Bookmarks={1,835,1}
 EditViewName=J:\fontes\uRotinas.pas
 
-[View4]
+[View5]
+CustomEditViewType=TEditView
+Module=J:\fontes\uProgressThread.pas
+CursorX=3
+CursorY=12
+TopLine=13
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=J:\fontes\uProgressThread.pas
+
+[View6]
 CustomEditViewType=TEditView
 Module=J:\fontes\uMetodosUteis.pas
 CursorX=1
@@ -143,10 +179,10 @@ CursorY=526
 TopLine=512
 LeftCol=1
 Elisions=
-Bookmarks=
+Bookmarks={1,668,1}
 EditViewName=J:\fontes\uMetodosUteis.pas
 
-[View5]
+[View7]
 CustomEditViewType=TEditView
 Module=J:\fontes\uDMnfebkp.pas
 CursorX=1
@@ -183,10 +219,12 @@ Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=3
-Breakpoint0='J:\fontes\uFoPrincipal.pas',677,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint1='J:\fontes\uFoPrincipal.pas',1208,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint2='J:\fontes\uFoPrincipal.pas',378,'',0,1,'',1,0,0,'',1,'','','',0,''
+Count=5
+Breakpoint0='J:\fontes\uFoPrincipal.pas',1401,'',0,0,'',1,0,0,'',1,'','','',0,''
+Breakpoint1='J:\fontes\uRotinas.pas',992,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint2='J:\fontes\uRotinas.pas',1036,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint3='d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\XML\Xml.XMLDoc.pas',2680,'',0,0,'',1,0,0,'',1,'','','',0,''
+Breakpoint4='J:\fontes\uRotinas.pas',1661,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -311,12 +349,12 @@ TBDockHeight=6553
 LRDockWidth=1562
 Dockable=1
 StayOnTop=0
-SplitPos=63
+SplitPos=117
 
 [PropInspDesignerSelection]
 ArrangeBy=Name
-SelectedItem=Connected,CustomHint
-ExpandedItems=ConnectedStoredUsage=0,FetchOptions=0,FormatOptions=0,"LiveBindings Designer=0",Params=0,ResourceOptions=0,TxOptions=0,UpdateOptions=0,DataSource=0,LiveBindings=0,PopupMenu=0
+SelectedItem=Align,Images
+ExpandedItems=Anchors=0,Constraints=0,DataSource=0
 
 [ModelViewTool]
 PercentageSizes=1
