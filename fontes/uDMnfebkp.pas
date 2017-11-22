@@ -126,27 +126,64 @@ begin
 
   FConectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
 
-  if not Assigned(sqlBkpDfe.FindField('CNPJDEST')) then
-  begin
+  try
+    Dao.ConsultaSql('SELECT CNPJDEST FROM LM_BKPDFE');
+  except //on E: Exception do
     dao.StartTransaction;
     try
-      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST CNPJVARCHAR');
       Dao.Commit;
     except on E: Exception do
-       Dao.RollBack;
+      Dao.RollBack;
     end;
   end;
 
-  if not Assigned(sqlBkpDfe.FindField('XMLERRO')) then
-  begin
+  try
+    Dao.ConsultaSql('SELECT XMLERRO FROM LM_BKPDFE');
+  except //on E: Exception do
     dao.StartTransaction;
     try
-      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO XMLBLOB');
       Dao.Commit;
     except on E: Exception do
-       Dao.RollBack;
+      Dao.RollBack;
     end;
   end;
+
+  try
+    Dao.ConsultaSql('SELECT CNPJ FROM LM_BKPDFE');
+  except //on E: Exception do
+    dao.StartTransaction;
+    try
+      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ CNPJVARCHAR');
+      Dao.Commit;
+    except on E: Exception do
+      Dao.RollBack;
+    end;
+  end;
+
+//  if not Assigned(sqlBkpDfe.FindField('CNPJDEST')) then
+//  begin
+//    dao.StartTransaction;
+//    try
+////      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+//     Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST CNPJVARCHAR');
+//      Dao.Commit;
+//    except on E: Exception do
+//       Dao.RollBack;
+//    end;
+//  end;
+
+//  if not Assigned(sqlBkpDfe.FindField('XMLERRO')) then
+//  begin
+//    dao.StartTransaction;
+//    try
+//      Dao.ConsultaSqlExecute('CREATE DOMAIN XMLBLOB AS BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+//      Dao.Commit;
+//    except on E: Exception do
+//       Dao.RollBack;
+//    end;
+//  end;
 
 end;
 

@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>MaxXML.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -102,7 +102,7 @@
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
         <DCC_BplOutput>J:\projeto\</DCC_BplOutput>
         <DCC_DcuOutput>J:\dcu\</DCC_DcuOutput>
-        <DCC_ExeOutput>E:\EXE LIBERADOS\</DCC_ExeOutput>
+        <DCC_ExeOutput>V:\RELEASE\</DCC_ExeOutput>
         <DCC_DcpOutput>J:\projeto\</DCC_DcpOutput>
         <VerInfo_Locale>1046</VerInfo_Locale>
         <DCC_UnitSearchPath>J:\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -880,13 +880,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>
