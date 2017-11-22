@@ -15,7 +15,7 @@ object DM_NFEDFE: TDM_NFEDFE
       'DriverID=FBEmbed'
       'Pooled=False')
     LoginPrompt = False
-    Left = 24
+    Left = 23
     Top = 25
   end
   object fdtrTransacao: TFDTransaction
@@ -30,7 +30,7 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
-    VendorHome = 'C:\fb\bin'
+    VendorHome = 'C:\fb'
     VendorLib = 'fbembed.dll'
     OnDriverCreated = DataModuleCreate
     Embedded = True

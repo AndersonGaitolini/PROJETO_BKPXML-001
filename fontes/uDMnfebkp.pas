@@ -124,44 +124,6 @@ begin
 
   CNPJDOC := TCNPJDOC.Create;
 
-  FConectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
-
-  try
-    Dao.ConsultaSql('SELECT CNPJDEST FROM LM_BKPDFE');
-  except //on E: Exception do
-    dao.StartTransaction;
-    try
-      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST CNPJVARCHAR');
-      Dao.Commit;
-    except on E: Exception do
-      Dao.RollBack;
-    end;
-  end;
-
-  try
-    Dao.ConsultaSql('SELECT XMLERRO FROM LM_BKPDFE');
-  except //on E: Exception do
-    dao.StartTransaction;
-    try
-      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO XMLBLOB');
-      Dao.Commit;
-    except on E: Exception do
-      Dao.RollBack;
-    end;
-  end;
-
-  try
-    Dao.ConsultaSql('SELECT CNPJ FROM LM_BKPDFE');
-  except //on E: Exception do
-    dao.StartTransaction;
-    try
-      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ CNPJVARCHAR');
-      Dao.Commit;
-    except on E: Exception do
-      Dao.RollBack;
-    end;
-  end;
-
 //  if not Assigned(sqlBkpDfe.FindField('CNPJDEST')) then
 //  begin
 //    dao.StartTransaction;

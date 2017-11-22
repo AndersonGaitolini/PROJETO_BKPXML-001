@@ -114,6 +114,7 @@ type
     function fConsDeleteObjXML(var pObjXML  : TLm_bkpdfe; pCampos: array of string): Boolean;
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
+    procedure pAtualizaTabela;
     function pFiltraOrdena (pFieldNameOrder : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJ: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
      pValue1: string = '';pValue2: string = ''): TDataSet;
 
@@ -153,13 +154,13 @@ uses
 { TDaoBkpdfe }
 
 function TDaoBkpdfe.fCarregaXMLEnvio(pObjXML : TLm_bkpdfe): Boolean;
-var wDataSet : TDataSet;
+var //wDataSet : TDataSet;
     wChaveAux : string;
     wControle : Integer;
     wSQL : string;
 begin
   wChaveAux := pObjXML.Chave;
-  wDataSet := TDataSet.Create(Application);
+//  wDataSet := TDataSet.Create(Application);
   try
     DM_NFEDFE.Dao.StartTransaction;
     try
@@ -186,7 +187,7 @@ begin
            end;
     end;
   finally
-   FreeAndNil(wDataSet);
+//   FreeAndNil(wDataSet);
   end;
 end;
 
@@ -374,14 +375,15 @@ var wDataSet : TDataSet;
   end;
 
 begin
-  REsult := False;
+
+  Result := False;
   wDataSet := TDataSet.Create(Application);
     try
       with DM_NFEDFE do
       begin
         wDataSet := dao.ConsultaTab(pObjXML, pCampos);
-        wDataSet.Close;
-        wDataSet.Open;
+//        wDataSet.Close;
+//        wDataSet.Open;
         wDataSet.Edit;
 
         if (wDataSet.RecordCount = 1) then
@@ -393,7 +395,7 @@ begin
         if (wDataSet.RecordCount > 1) and (wDataSet.FieldByName('Idf_documento').AsInteger = pObjXML.FIdf_documento) and
            (wDataSet.FieldByName('Dataemissao').AsDateTime < pObjXML.Dataemissao )then
         begin
-          uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'fConsultaObjXML XML: : wDataSet.FieldByName('+ inttostr(pObjXML.Idf_documento)+ ').AsInteger = pObjXML.FIdf_documento('+ inttostr(pObjXML.Idf_documento)+')', true);
+//          uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'fConsultaObjXML XML: : wDataSet.FieldByName('+ inttostr(pObjXML.Idf_documento)+ ').AsInteger = pObjXML.FIdf_documento('+ inttostr(pObjXML.Idf_documento)+')', true);
           pReplaceIfNecessario;
         end;
 
@@ -474,6 +476,48 @@ begin
     end;
   finally
     FreeAndNil(wDataSet);
+  end;
+end;
+
+procedure TDaoBkpdfe.pAtualizaTabela;
+begin
+  with DM_NFEDFE do
+  begin
+    try
+      Dao.ConsultaSql('SELECT CNPJDEST FROM LM_BKPDFE');
+    except //on E: Exception do
+      dao.StartTransaction;
+      try
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+        Dao.Commit;
+      except on E: Exception do
+        Dao.RollBack;
+      end;
+    end;
+
+    try
+      Dao.ConsultaSql('SELECT XMLERRO FROM LM_BKPDFE');
+    except //on E: Exception do
+      dao.StartTransaction;
+      try
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+        Dao.Commit;
+      except on E: Exception do
+        Dao.RollBack;
+      end;
+    end;
+
+    try
+      Dao.ConsultaSql('SELECT CNPJ FROM LM_BKPDFE');
+    except //on E: Exception do
+      dao.StartTransaction;
+      try
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+        Dao.Commit;
+      except on E: Exception do
+        Dao.RollBack;
+      end;
+    end;
   end;
 end;
 

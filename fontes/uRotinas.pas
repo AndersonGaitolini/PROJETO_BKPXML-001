@@ -403,21 +403,29 @@ begin
           begin
             if (ObjetoXML.Protocolocanc <> '') and (ObjetoXML.Protocoloaut <> '') then
             begin
-              wStream := objetoXML.Xmlextendcanc;
+              if  objetoXML.Status = 004 then
+                wStream := objetoXML.Xmlenviocanc
+              else
+                wStream := objetoXML.Xmlextendcanc;
+
               if wStream.Size > 0 then
               begin
                 wXMLFilename := ObjetoXML.Chave;
                 pSalveName('xmlextendcanc','xml', wXMLFilename);
-                wStream := objetoXML.Xmlextendcanc;
                 pDecompress(wStream, wDirTemp+'\'+wXMLFilename);
                 if fZipFile(wPathZIP, wDirTemp+'\'+wXMLFilename) then
                   DeleteFile(wDirTemp+'\'+wXMLFilename);
               end;
 
-              wStream := objetoXML.Xmlextend;
+              if  objetoXML.Status = 001 then
+                wStream := objetoXML.Xmlenvio
+              else
+                wStream := objetoXML.Xmlextend;
+
               if wStream.Size > 0 then
               begin
                 wXMLFilename := ObjetoXML.Chave;
+
                 pSalveName('xmlextend','xml', wXMLFilename );
                 pDecompress(wStream, wDirTemp+'\'+wXMLFilename);
                 if fZipFile(wPathZIP, wDirTemp+'\'+wXMLFilename) then

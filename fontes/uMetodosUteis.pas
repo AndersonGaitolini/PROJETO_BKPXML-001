@@ -674,19 +674,11 @@ var
     try
       try
         ArqLog := pDirLog+'\'+pNameLog+FormatDateTime('-dd-mm-aaaa',now)+'.log';
-//        ArqLog := pDirLog+'\'+pNameLog+'.log';
 
         if FileExists(ArqLog) then
-         f.LoadFromFile(ArqLog);
+          f.LoadFromFile(ArqLog);
 
-//        wIndex := F.IndexOf(aStr);
-//        if wIndex > -1 then
-//        begin
-//          f.Delete(wIndex);
-//          f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]))
-//        end
-//        else
-          f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]));
+         f.Add(Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]));
 
         f.SaveToFile(ArqLog);
       except on E: Exception do
@@ -981,6 +973,7 @@ wHandle : THandle;
 
        AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wDataBase = ['+ wDataBase + ']',wLog);
        AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wFBClient = ['+ wFBClient+ ']',wLog);
+
       prCon.Open;
       Result := prCon.Connected;
 

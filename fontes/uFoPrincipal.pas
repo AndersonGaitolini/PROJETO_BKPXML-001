@@ -1487,6 +1487,7 @@ var
   end;
 
 begin
+  DaoObjetoXML.pAtualizaTabela;
   foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.4';
   pSetaCores;
   pIniciaGrid;

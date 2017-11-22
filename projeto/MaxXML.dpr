@@ -60,6 +60,8 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
+  DM_NFEDFE.Conectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
+
   if (ParamCount = 0) then
   begin
     if not DM_NFEDFE.Conectado then
