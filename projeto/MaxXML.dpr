@@ -60,7 +60,7 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  DM_NFEDFE.Conectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
+  ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
 
   if (ParamCount = 0) then
   begin
@@ -165,11 +165,23 @@ begin
       Application.Terminate;
       exit;
     end;
-//    else
-//      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'Conectou BD : XML Envio: ' + ParamStr(3));
+
+    if TRUE then
+    begin
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(3)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(4)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(5)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(6)), true);
+    end;
 
     tabUsuarios.Usuario         := Trim(ParamStr(2));
     tabUsuarios.Senha           := Trim(ParamStr(3));
+    if not FileExists(Trim(ParamStr(4))) then
+      Application.Terminate;
+
     Lm_bkpdfe.CNPJDOC.Documento := Trim(ParamStr(5));
     Lm_bkpdfe.CNPJDOC.Fantasia  := Trim(ParamStr(6));
     Lm_bkpdfe.CNPJDOC.Parametro := true;
@@ -183,7 +195,7 @@ begin
        wRotinas := TRotinas.Create;
 
      if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, true,ParamStr(4)) > 0 then
-       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe XML: : ' + ParamStr(4), true);
+
      except
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;

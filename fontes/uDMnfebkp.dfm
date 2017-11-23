@@ -30,7 +30,7 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
-    VendorHome = 'C:\fb'
+    VendorHome = 'C:\fb\bin'
     VendorLib = 'fbembed.dll'
     OnDriverCreated = DataModuleCreate
     Embedded = True

@@ -52,7 +52,7 @@ Const
   function DateXMLToDate(pDateXML: String): TDate;
   function fOpenFileName(var prFileName:string;pTitle: string; pFilter: array of string; pFilterIndex : integer = 0): Boolean;
   function fOpenFile(pTitleName: string;var pFileName : String; pFilterName: array of string; pFilterIndex : integer = 0; pDefaultExt : string = '*.*' ): Boolean; overload;
-
+  function fGetWindowsDrive: Char;
 
   function fOpenPath(var pInitialDir: string; pTitle : string = ''): Boolean;
   function fSaveFile(pInitialDir, pFileNAme, pTitle: String; pFilter: array of string): TSaveDialog;
@@ -78,6 +78,9 @@ Const
   var
    wOpe : TOperacao = opNil;
 implementation
+
+uses
+  uDMnfebkp;
 
 
 //  { Criptografa uma String }
@@ -764,6 +767,16 @@ begin
   end;
 end;
 
+function fGetWindowsDrive: Char;
+var S: string;
+begin
+  SetLength(S, MAX_PATH);
+  if GetWindowsDirectory(PChar(S), MAX_PATH) > 0 then
+    Result := string(S)[1]
+  else
+    Result := #0;
+end;
+
 function fSaveFile(pInitialDir, pFileName, pTitle: String; pFilter: array of string): TSaveDialog;
 var  wSaveXML : TSaveDialog;
      I : Integer;
@@ -941,28 +954,28 @@ wHandle : THandle;
 
       AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
 
-      wFBClient := GetCurrentDir;
+//      wFBClient := GetCurrentDir;
       wDataBase := wFBClient;
       if (ParamCount = 0) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
       begin
-        wFBClient := wFBClient + '\fb\fbembed.dll';
+//        wFBClient := wFBClient + '\fb\fbembed.dll';
         wDataBase := wDataBase + '\BACKUPXML.FDB';
       end
       else
       if (ParamCount >= 2) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
       begin
         wDataBase := wDataBase + '\MAXXML\BACKUPXML.FDB';
-        wFBClient := wFBClient + '\MAXXML\fb\fbembed.dll';
+//        wFBClient := wFBClient + '\MAXXML\fb\fbembed.dll';
       end
       else
       begin
         Application.Terminate;
       end;
 
-      prDriver.VendorLib := ExtractFileName(wFBClient);
+      prDriver.VendorLib := 'fbembed.dll';
 
       prDriver.VendorHome := '';
-      prDriver.VendorHome := ExtractFileDir(wFBClient);
+      prDriver.VendorHome := fGetWindowsDrive + ':\fb\';
 
       prCon.Params.Values['Database'] := wDataBase;
       prCon.Params.Values['DriverID']   := 'FBEmbed';
@@ -975,6 +988,7 @@ wHandle : THandle;
        AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wFBClient = ['+ wFBClient+ ']',wLog);
 
       prCon.Open;
+      DM_NFEDFE.Conectado := prCon.Connected;
       Result := prCon.Connected;
 
       if ParamCount = 0 then
