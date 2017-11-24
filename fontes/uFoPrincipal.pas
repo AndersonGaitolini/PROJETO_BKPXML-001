@@ -12,7 +12,8 @@ uses
   JvTrayIcon, IPPeerClient, REST.Backend.PushTypes, System.JSON,
   System.PushNotification, Data.Bind.Components, Data.Bind.ObjectScope,
   REST.Backend.BindSource, REST.Backend.PushDevice,System.TypInfo, Vcl.Buttons,uRotinas,
-  Vcl.DBCtrls, Vcl.AppEvnts, JvBaseDlg, JvSelectDirectory,System.MaskUtils;
+  Vcl.DBCtrls, Vcl.AppEvnts, JvBaseDlg, JvSelectDirectory,System.MaskUtils,
+  IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient;
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
@@ -261,7 +262,6 @@ type
     procedure pRotinasProgress(pNomeMetodo: TExecuteMetodo);
     procedure DoTerminate(PSender: TObject);
     procedure pMenuMaster(pAtiva : boolean);
-    procedure pCarregaConfigUsuario(pIDConfig: Integer);
 
     procedure pDataFiltro;
     procedure pFiltroEmissaoXML;
@@ -333,18 +333,18 @@ end;
 
 procedure TfoPrincipal.btnCarregaConfigClick(Sender: TObject);
 begin
-  foConsConfiguracoes := TfoConsConfiguracoes.Create(Application);
-try
-  with foConsConfiguracoes do
-  begin
-    evtTelaUsuarios := etuEditar;
-    ShowModal;
-  end;
-  pCarregaConfigUsuario(tabConfiguracoes.Id);
-
-finally
-  FreeAndNil(foConsConfiguracoes);
-end;
+//  foConsConfiguracoes := TfoConsConfiguracoes.Create(Application);
+//try
+//  with foConsConfiguracoes do
+//  begin
+//    evtTelaUsuarios := etuEditar;
+//    ShowModal;
+//  end;
+//  pCarregaConfigUsuario(tabConfiguracoes.Id);
+//
+//finally
+//  FreeAndNil(foConsConfiguracoes);
+//end;
 end;
 
 procedure TfoPrincipal.btnCanEnvioArqClick(Sender: TObject);
@@ -548,20 +548,6 @@ begin
   dbgNfebkp.DataSource.DataSet.First;
 end;
 
-procedure TfoPrincipal.pCarregaConfigUsuario(pIDConfig: Integer);
-begin
-  if not Assigned(tabConfiguracoes) then
-    tabConfiguracoes := TConfiguracoes.Create;
-
-  tabConfiguracoes.id := pIDConfig;
-  daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
-
-  edConfiguracao.Visible   := wVisible;
-  lbConfig.Visible         := wVisible;
-  btnCarregaConfig.Visible := wVisible;
-  edConfiguracao.Text := tabConfiguracoes.DescriConfig;
-end;
-
 procedure TfoPrincipal.pDataFiltro;
 var y,m,d: word;
 begin
@@ -758,7 +744,6 @@ const
 begin
   pSelecaoChave(wListaSelecionados);
   wVisible := wRotinas.fMaster(tabUsuarios);
-  pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
   pPopupMenuMaster(wVisible);
 end;
 
@@ -841,14 +826,11 @@ end;
 
 procedure TfoPrincipal.mmConfgDiretoriosClick(Sender: TObject);
 begin
-  foConsConfiguracoes := TfoConsConfiguracoes.Create(Application);
+  foConfiguracao := TfoConfiguracao.Create(Application);
 try
-  evtTelaUsuarios := etuEditar;
-
-  foConsConfiguracoes.ShowModal;
-  pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
+  foConfiguracao.ShowModal;
 finally
-  FreeAndNil(foConsConfiguracoes);
+  FreeAndNil(foConfiguracao);
 end;
 end;
 
@@ -857,8 +839,6 @@ begin
   FoConsUsuario := TfoConsUsuario.Create(Application);
   try
     FoConsUsuario.ShowModal;
-
-    pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
     statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
 
   finally
@@ -1382,7 +1362,7 @@ begin
   begin
     wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
     case wStatus of
-     -999: Canvas.Font.Color := clLime;
+     -999: Canvas.Font.Color := clYellow;
       001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
       004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
       100: Canvas.Font.Color := clBlack;    //XML Envio Processado
@@ -1510,7 +1490,6 @@ begin
   dts.Free;
 
   wVisible := wRotinas.fMaster(tabUsuarios);
-  pCarregaConfigUsuario(i);
   pMenuMaster(wVisible);
 
   statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
@@ -1874,7 +1853,6 @@ begin
     if wShowResult = mrOk then
     begin
       wVisible := wRotinas.fMaster(tabUsuarios);
-      pCarregaConfigUsuario(tabUsuarios.ConfigSalva);
       statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
     end
     else

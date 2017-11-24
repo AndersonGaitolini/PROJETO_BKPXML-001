@@ -605,8 +605,8 @@ const cAsc = 'Asc'; cdesc = 'desc';
              ShowMessage('Método: pFiltro!'+#10#13+
              'Exception: '+e.Message);
 
-             if not ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
-               ShowMessage('Não reconectou!');
+//             if not fConexaoBD then
+//               ShowMessage('Não reconectou!');
            end;
     end;
   end;

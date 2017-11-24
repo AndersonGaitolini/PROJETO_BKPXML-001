@@ -9,14 +9,17 @@ object DM_NFEDFE: TDM_NFEDFE
       'User_Name=sysdba'
       'Password=masterkey'
       'Database=V:\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
+      '|Database=C:\MAX\MAXXML\BACKUPXML.FDB'
       
         '|Database=D:\Programacao\DELPHI\BASE\zancanaro\MAXXML\BACKUPXML.' +
         'FDB'
       'DriverID=FBEmbed'
-      'Pooled=False')
+      'Pooled=False'
+      ''
+      '')
     LoginPrompt = False
-    Left = 23
-    Top = 25
+    Left = 25
+    Top = 26
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
@@ -30,12 +33,11 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
-    VendorHome = 'C:\fb\bin'
+    VendorHome = 'C:\fb'
     VendorLib = 'fbembed.dll'
-    OnDriverCreated = DataModuleCreate
     Embedded = True
-    Left = 176
-    Top = 24
+    Left = 177
+    Top = 23
   end
   object dsConfiguracoes: TDataSource
     DataSet = cdsConfiguracoes

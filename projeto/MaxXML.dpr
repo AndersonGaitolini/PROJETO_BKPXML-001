@@ -41,7 +41,7 @@ uses
 
 var
  ShowResult : Byte;
- wMsg, wSenhaAtual, wPathMAX: string;
+ wMsg, wIniFile, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
  i,wTipo : integer;
  wMaxOK : boolean;
@@ -60,7 +60,20 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
+  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+  if not (FileExists(wIniFile)) then
+  begin
+   if (ParamCount = 0) then
+   begin
+     Application.CreateForm(TfoConfiguracao, foConfiguracao);
+     Application.Run;
+     DM_NFEDFE.fConexaoBD;
+   end
+   else
+    Application.Terminate;
+  end
+  else
+    DM_NFEDFE.fConexaoBD;
 
   if (ParamCount = 0) then
   begin

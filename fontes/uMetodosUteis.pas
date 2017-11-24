@@ -5,7 +5,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils;
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient;
 
 Const
   Threshold2000 : Integer = 2000;
@@ -44,7 +44,8 @@ Const
   procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
   procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
   function getINI(pIniFilePath, prSessao, prSubSessao, prValor:string): string;
-  function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
+  function fPingIP(pHost : String) :boolean;
+//  function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
   function fArqIni: string;
   procedure pAtivaCamposForm(pForm: TForm; pEnable: boolean; pLista : array of TTipoClass);
   function fNomePC: string;
@@ -75,13 +76,14 @@ Const
 //  function fDesCriptStr(pString : string) : string;
 //  function fCripStr(pString : string) : string;
 
+  procedure pAppTerminate;
+
   var
    wOpe : TOperacao = opNil;
 implementation
-
+
 uses
-  uDMnfebkp;
-
+  uFoConfiguracao, uDMnfebkp;
 
 //  { Criptografa uma String }
 //  function fCripStr(pString : string) : string;
@@ -912,103 +914,124 @@ begin
   end;
 end;
 
-function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
+function fPingIP(pHost : String) :boolean;
 var
-wMSg : string;
-wDataBase: string;
-wFBClient,wFBClient1  : string;
-wUser : string;
-wSenha: string;
-wOk, wLog :Boolean;
-wHandle : THandle;
+  IdICMPClient: TIdICMPClient;
+begin
 
-  procedure pIniArquivo(pSource: string);
-  begin
-    try
-      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
-    except
-      wHandle := FindWindow( 0,pWideChar(pSource));
-      FileClose(wHandle);
-      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
-    end;
-  end;
-
-  procedure pIniFbClient(pSource: string);
-  begin
-    try
-    setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
-    except
-      wHandle := FindWindow( 0,pWideChar(pSource));
-      FileClose(wHandle);
-      setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
-    end;
-  end;
-
- begin
-  wLog := false;
   try
-    try
-      Result := False;
-      prCon.Connected := Result;
-      prCon.Close;
-
-      AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
-
-//      wFBClient := GetCurrentDir;
-      wDataBase := wFBClient;
-      if (ParamCount = 0) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
-      begin
-//        wFBClient := wFBClient + '\fb\fbembed.dll';
-        wDataBase := wDataBase + '\BACKUPXML.FDB';
-      end
-      else
-      if (ParamCount >= 2) and (LowerCase(ExtractFileName(ParamStr(0))) = 'maxxml.exe') then
-      begin
-        wDataBase := wDataBase + '\MAXXML\BACKUPXML.FDB';
-//        wFBClient := wFBClient + '\MAXXML\fb\fbembed.dll';
-      end
-      else
-      begin
-        Application.Terminate;
-      end;
-
-      prDriver.VendorLib := 'fbembed.dll';
-
-      prDriver.VendorHome := '';
-      prDriver.VendorHome := fGetWindowsDrive + ':\fb\';
-
-      prCon.Params.Values['Database'] := wDataBase;
-      prCon.Params.Values['DriverID']   := 'FBEmbed';
-//      prCon.Params.Values['DriverID']   := 'FB';
-      prCon.Params.Values['User_Name']  := 'sysdba';//wUser;
-      prCon.Params.Values['Password']   := 'masterkey';//wSenha;
-      prCon.Params.Values['SQLDialect'] := '3';
-
-       AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wDataBase = ['+ wDataBase + ']',wLog);
-       AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - wFBClient = ['+ wFBClient+ ']',wLog);
-
-      prCon.Open;
-      DM_NFEDFE.Conectado := prCon.Connected;
-      Result := prCon.Connected;
-
-      if ParamCount = 0 then
-        if not prCon.Connected then
-          ShowMessage('Não conectado! Path BD: '+wDataBase);
-    except
-      on E: Exception do
-         begin
-           AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
-           #10#13+ E.Message,wLog);
-         end;
-    end;
+    IdICMPClient := TIdICMPClient.Create(nil);
+    IdICMPClient.Host := pHost;
+    IdICMPClient.ReceiveTimeout := 500;
+    IdICMPClient.Ping;
+    Result := (IdICMPClient.ReplyStatus.BytesReceived > 0);
   finally
+    IdICMPClient.Free;
+  end
 
-    if not Result  then
-    begin
-        Application.Terminate;
-    end;
-  end;
 end;
+
+//function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
+//var
+//wMSg : string;
+//wDataBase: string;
+//wHost: string;
+//wLog :Boolean;
+////wHandle : THandle;
+//
+////  procedure pIniArquivo(pSource: string);
+////  begin
+////    try
+////      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
+////    except
+////      wHandle := FindWindow( 0,pWideChar(pSource));
+////      FileClose(wHandle);
+////      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
+////    end;
+////  end;
+////
+////  procedure pIniFbClient(pSource: string);
+////  begin
+////    try
+////    setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
+////    except
+////      wHandle := FindWindow( 0,pWideChar(pSource));
+////      FileClose(wHandle);
+////      setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
+////    end;
+////  end;
+//
+// begin
+//  wLog := false;
+//  try
+//    try
+//      Result := False;
+//      prCon.Connected := Result;
+//      prCon.Close;
+//
+//      AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
+//      if (FileExists(ExtractFileName(ChangeFileExt(Application.ExeName, 'INI')))) then
+//      begin
+//        with prCon.Params do
+//        begin
+//          Values['ConfigName'] := getINI(fArqIni, 'MAXXML',   'ConfigName', '');
+//          Values['Usuario'] := getINI(fArqIni, 'MAXXML',      'Usuario', '');
+//          Values['Password'] := getINI(fArqIni, 'MAXXML',     'Password', '');
+//          Values['Database'] := getINI(fArqIni, 'MAXXML',     'Database', '');
+//          Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
+//          Values['VendorLib'] := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
+//          Values['VendorHome'] := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
+//          Values['DriverId'] := getINI(fArqIni, 'MAXXML',     'DriverId', '');
+//          Values['Port'] := getINI(fArqIni, 'MAXXML',         'Port', '');
+//
+//          if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
+//          begin
+//            wHost := getINI(fArqIni, 'MAXXML', 'Server', '');
+//
+//            if not fPingIP(wHost) then
+//            begin
+//               pAppTerminate;
+//               ShowMessage('Sem Conexão de Rede');
+//            end
+//            else
+//            begin
+//              Values['Server'] := wHost;
+//              Values['Protocol'] := getINI(fArqIni, 'MAXXML',     'Protocol', '');
+//              Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
+//            end;
+//          end;
+//        end;
+//      end
+//      else
+//      if (ParamCount = 0)then
+//      begin
+//        foConfiguracao := TfoConfiguracao.Create(Application);
+//        try
+//          foConfiguracao.ShowModal;
+//        finally
+//          FreeAndNil(foConfiguracao);
+//        end;
+//      end;
+//
+//      prCon.Open;
+//      DM_NFEDFE.Conectado := prCon.Connected;
+//      Result := prCon.Connected;
+//
+//    except
+//      on E: Exception do
+//         begin
+//           AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
+//           #10#13+ E.Message,wLog);
+//         end;
+//    end;
+//  finally
+//
+//    if not Result  then
+//    begin
+//      pAppTerminate;
+//    end;
+//  end;
+//end;
 
 procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
 var
@@ -1036,8 +1059,7 @@ end;
 
 function fArqIni: string;
 begin
-  Result := ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-  Result := GetCurrentDir +'\'+Result;
+  Result := ExtractFileDir(Application.ExeName) +'\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));;
 
   if not FileExists(Result) then
     setINI(Result,'','','');
@@ -1096,6 +1118,11 @@ class function TConvert<T>.EnumConvertStr(const eEnum:T): String;
     raise EConvertError.Create('O Parâmetro passado não corresponde a '+sLineBreak+
              'um inteiro Ou a um Tipo Enumerado');
    end;
+ end;
+
+ procedure pAppTerminate;
+ begin
+   Application.Terminate;
  end;
 
 

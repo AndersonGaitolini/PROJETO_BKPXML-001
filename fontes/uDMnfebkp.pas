@@ -9,9 +9,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.Comp.Client, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
   FireDAC.Phys.IBBase, FireDAC.VCLUI.Wait, FireDAC.Comp.UI,
-  //ORM
   Base, DaoFD, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet;
+  FireDAC.DApt, FireDAC.Comp.DataSet,FMX.Forms;
 
 type
   TDM_NFEDFE = class(TDataModule)
@@ -91,6 +90,7 @@ type
     { Public declarations }
     Dao   : TDaoFD;
 
+    function fConexaoBD:Boolean;
     property Conectado : boolean read FConectado write FConectado;
   end;
 
@@ -105,6 +105,75 @@ uses
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+function TDM_NFEDFE.fConexaoBD: Boolean;
+var
+wMSg : string;
+wDataBase: string;
+wHost: string;
+wLog :Boolean;
+
+ begin
+   with conConexaoFD do
+   begin
+    wLog := false;
+    try
+      try
+        Result := False;
+        Connected := Result;
+        Close;
+
+        AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
+        with Params do
+        begin
+          Values['ConfigName'] := getINI(fArqIni, 'MAXXML',   'ConfigName', '');
+          Values['Usuario'] := getINI(fArqIni, 'MAXXML',      'Usuario', '');
+          Values['Password'] := getINI(fArqIni, 'MAXXML',     'Password', '');
+          Values['Database'] := getINI(fArqIni, 'MAXXML',     'Database', '');
+          Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
+          Values['VendorLib'] := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
+          Values['VendorHome'] := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
+          Values['DriverId'] := getINI(fArqIni, 'MAXXML',     'DriverId', '');
+          Values['Port'] := getINI(fArqIni, 'MAXXML',         'Port', '');
+
+          if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
+          begin
+            wHost := getINI(fArqIni, 'MAXXML', 'Server', '');
+
+            if not fPingIP(wHost) then
+            begin
+               pAppTerminate;
+               ShowMessage('Sem Conexão de Rede');
+            end
+            else
+            begin
+              Values['Server'] := wHost;
+              Values['Protocol'] := getINI(fArqIni, 'MAXXML',     'Protocol', '');
+              Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
+            end;
+          end;
+        end;
+
+        Open;
+        FConectado := Connected;
+        Result := Connected;
+
+      except
+        on E: Exception do
+           begin
+//             AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
+//             #10#13+ E.Message,wLog);
+           end;
+      end;
+    finally
+
+      if not Result  then
+      begin
+        pAppTerminate;
+      end;
+    end;
+   end;
+end;
 
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin

@@ -6,8 +6,9 @@ inherited foLogin: TfoLogin
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'SOUIS  - MAXXML'
-  ClientHeight = 195
+  ClientHeight = 175
   ClientWidth = 197
+  Menu = mmMenuLogin
   OnCreate = FormCreate
   ExplicitWidth = 203
   ExplicitHeight = 224
@@ -15,15 +16,16 @@ inherited foLogin: TfoLogin
   TextHeight = 12
   inherited pnl1: TPanel
     Width = 197
-    Height = 176
+    Height = 156
     Margins.Left = 3
     Margins.Top = 3
     Margins.Right = 3
     Margins.Bottom = 3
-    ExplicitHeight = 284
+    ExplicitWidth = 197
+    ExplicitHeight = 176
     inherited lbUserNome: TLabel
       Left = 7
-      Top = 60
+      Top = 53
       Width = 38
       Margins.Left = 3
       Margins.Top = 3
@@ -37,15 +39,16 @@ inherited foLogin: TfoLogin
     end
     object lbSenha: TLabel [1]
       Left = 10
-      Top = 86
+      Top = 76
       Width = 32
-      Height = 13
+      Height = 12
       Anchors = []
       Caption = 'Senha:'
+      ExplicitTop = 86
     end
     object lbMAXXML: TLabel [2]
       Left = 36
-      Top = 14
+      Top = 11
       Width = 125
       Height = 19
       Anchors = []
@@ -56,10 +59,11 @@ inherited foLogin: TfoLogin
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ExplicitTop = 14
     end
     inherited edUsuario: TEdit
       Left = 48
-      Top = 57
+      Top = 49
       Margins.Left = 3
       Margins.Top = 3
       Margins.Right = 3
@@ -72,8 +76,7 @@ inherited foLogin: TfoLogin
     end
     inherited edSenha: TEdit
       Left = 48
-      Top = 83
-      Height = 21
+      Top = 72
       Margins.Left = 3
       Margins.Top = 3
       Margins.Right = 3
@@ -83,11 +86,10 @@ inherited foLogin: TfoLogin
       OnExit = edSenhaExit
       ExplicitLeft = 48
       ExplicitTop = 83
-      ExplicitHeight = 21
     end
     inherited btnAcessar: TBitBtn
       Left = 36
-      Top = 110
+      Top = 96
       Margins.Left = 3
       Margins.Top = 3
       Margins.Right = 3
@@ -101,7 +103,7 @@ inherited foLogin: TfoLogin
     end
     object btnCancelar: TBitBtn
       Left = 101
-      Top = 110
+      Top = 96
       Width = 60
       Height = 20
       Margins.Left = 2
@@ -114,11 +116,12 @@ inherited foLogin: TfoLogin
       ModalResult = 2
       TabOrder = 3
       OnClick = btnCancelarClick
+      ExplicitTop = 110
     end
   end
   object statMsg: TStatusBar
     Left = 0
-    Top = 176
+    Top = 156
     Width = 197
     Height = 19
     Panels = <
@@ -128,7 +131,17 @@ inherited foLogin: TfoLogin
       item
         Width = 50
       end>
-    ExplicitTop = 284
-    ExplicitWidth = 242
+    ExplicitTop = 176
+  end
+  object mmMenuLogin: TMainMenu
+    Left = 156
+    Top = 21
+    object Configura1: TMenuItem
+      Caption = 'Configura'#231#245'es'
+      object mmConexoBD: TMenuItem
+        Caption = 'Conex'#227'o BD'
+        OnClick = mmConexoBDClick
+      end
+    end
   end
 end

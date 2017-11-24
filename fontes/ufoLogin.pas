@@ -14,6 +14,9 @@ type
     statMsg: TStatusBar;
     lbSenha: TLabel;
     lbMAXXML: TLabel;
+    mmMenuLogin: TMainMenu;
+    Configura1: TMenuItem;
+    mmConexoBD: TMenuItem;
     procedure btnAcessarClick(Sender: TObject);
     procedure edSenhaExit(Sender: TObject);
     procedure edUsuarioExit(Sender: TObject);
@@ -21,6 +24,7 @@ type
     procedure btnCancelarClick(Sender: TObject);
     procedure edUsuarioChange(Sender: TObject);
     procedure edSenhaChange(Sender: TObject);
+    procedure mmConexoBDClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -36,6 +40,9 @@ var
 
 //  wTabConect : TT_conectado;
 implementation
+
+uses
+  uFoConfiguracao;
 
 
 
@@ -121,6 +128,17 @@ begin
 
   if not Assigned(daoLogin) then
     daoLogin := TDaoLogin.Create;
+end;
+
+procedure TfoLogin.mmConexoBDClick(Sender: TObject);
+begin
+  inherited;
+  foConfiguracao := TfoConfiguracao.Create(Application);
+  try
+    foConfiguracao.ShowModal;
+  finally
+    FreeAndNil(foConfiguracao);
+  end;
 end;
 
 initialization
