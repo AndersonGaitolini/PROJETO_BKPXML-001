@@ -8,6 +8,7 @@ uses
 <<<<<<< HEAD
   JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient;
 =======
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,System.MaskUtils;
 >>>>>>> c1a9c1dbce83ca278d6f1dabdd5357b459d8f879
 
 Const
