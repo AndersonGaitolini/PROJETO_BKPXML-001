@@ -5,7 +5,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils;
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,System.MaskUtils;
 
 Const
   Threshold2000 : Integer = 2000;
@@ -25,6 +25,7 @@ Const
     TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
     TTipoClass = (tiLabel, tiButton, tiBitBtn, tiEdit, tiPanel, tiComboBox, tiTodos);
     DayType = (Domingo, Segunda, Terca, Quarta, Quinta, Sexta, Sabado);
+    TTipoDocumento = (tdCNPJ, tdCPF, tdPIS);
 
   Type
   TGenerico = 0..255;
@@ -62,6 +63,7 @@ Const
   procedure pGetDirList(pDirectory: String; var pListaDir: TStringList; SubPastas: Boolean);
 
   function fMascaraCNPJ(pString: string): string;
+  function fMascaraDoc(pSTR: string; pDoc : TTipoDocumento): string;
   function fTiraMascaraCNPJ(pString: string): string;
   function fSenhaAtual(pData: string):string;
   function fSEsp(Txt: string): string;
@@ -296,6 +298,34 @@ begin
  except
    Result := '00.000.000/0000-00';
  end;
+end;
+
+function fMascaraDoc(pSTR: string; pDoc : TTipoDocumento): string;
+begin
+  Result := pSTR;
+  case pDoc of
+
+    tdCNPJ: begin
+              if Length(pSTR) = 14 then
+                Result := FormatMaskText('00.000.000\0000-00', pSTR)
+              else
+               Exit;
+            end;
+
+    tdCPF: begin
+              if Length(pSTR) = 11 then
+                Result := FormatMaskText('000.000.000-00', pSTR)
+              else
+                Exit;
+            end;
+
+    tdPIS: begin
+              if Length(pSTR) = 11 then
+                Result := FormatMaskText('000.0000.000-0', pSTR)
+              else
+                Exit;
+            end;
+  end;
 end;
 
 function fTiraMascaraCNPJ(pString: string): string;
