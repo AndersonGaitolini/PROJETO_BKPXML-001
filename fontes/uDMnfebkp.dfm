@@ -9,17 +9,11 @@ object DM_NFEDFE: TDM_NFEDFE
       'User_Name=sysdba'
       'Password=masterkey'
       'Database=V:\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
-      '|Database=C:\MAX\MAXXML\BACKUPXML.FDB'
-      
-        '|Database=D:\Programacao\DELPHI\BASE\zancanaro\MAXXML\BACKUPXML.' +
-        'FDB'
-      'DriverID=FBEmbed'
-      'Pooled=False'
-      ''
-      '')
+      'Port=3050'
+      'DriverID=FBEmbed')
     LoginPrompt = False
-    Left = 25
-    Top = 26
+    Left = 27
+    Top = 25
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD

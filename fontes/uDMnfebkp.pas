@@ -122,55 +122,49 @@ wLog :Boolean;
         Result := False;
         Connected := Result;
         Close;
+        conConexaoFD.Params.SaveToFile(GetCurrentDir + '\Params-antes.txt');
 
         AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
-        with Params do
+        Params.Values['User_Name']    := getINI(fArqIni, 'MAXXML',      'User_Name', '');
+        Params.Values['Password']   := getINI(fArqIni, 'MAXXML',     'Password', '');
+        Params.Values['Database']   := getINI(fArqIni, 'MAXXML',     'Database', '');
+        Params.Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
+        Params.Values['DriverId']   := getINI(fArqIni, 'MAXXML',     'DriverId', '');
+        Params.Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
+        fddrfbDriver.VendorLib  := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
+        fddrfbDriver.VendorHome := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
+        fddrfbDriver.Embedded := StrToBoolDef( getINI(fArqIni, 'MAXXML',   'Embedded', ''),true);
+//        Params.Values['Conexao'] :=  getINI(fArqIni, 'MAXXML', 'Conexao', '');
+        if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
         begin
-          Values['ConfigName'] := getINI(fArqIni, 'MAXXML',   'ConfigName', '');
-          Values['Usuario'] := getINI(fArqIni, 'MAXXML',      'Usuario', '');
-          Values['Password'] := getINI(fArqIni, 'MAXXML',     'Password', '');
-          Values['Database'] := getINI(fArqIni, 'MAXXML',     'Database', '');
-          Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
-          Values['VendorLib'] := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
-          Values['VendorHome'] := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
-          Values['DriverId'] := getINI(fArqIni, 'MAXXML',     'DriverId', '');
-          Values['Port'] := getINI(fArqIni, 'MAXXML',         'Port', '');
-
-          if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
-          begin
-            wHost := getINI(fArqIni, 'MAXXML', 'Server', '');
-
-            if not fPingIP(wHost) then
-            begin
-               pAppTerminate;
-               ShowMessage('Sem Conexão de Rede');
-            end
-            else
-            begin
-              Values['Server'] := wHost;
-              Values['Protocol'] := getINI(fArqIni, 'MAXXML',     'Protocol', '');
-              Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
-            end;
-          end;
+          Params.Values['Server'] := getINI(fArqIni,   'MAXXML', 'Server', '');
+          Params.Values['Protocol'] := getINI(fArqIni, 'MAXXML', 'Protocol', '');
+          Params.Values['Port'] := getINI(fArqIni,     'MAXXML', 'Port', '');
+        end
+        else
+        if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Local') then
+        begin
+          Params.Values['Server'] := getINI(fArqIni,   'MAXXML', 'Server', 'Localhost');
+          Params.Values['Protocol'] := getINI(fArqIni, 'MAXXML', 'Protocol', 'local');
+          Params.Values['Port'] := getINI(fArqIni,     'MAXXML', 'Port', '');
         end;
 
+        conConexaoFD.Params.SaveToFile(GetCurrentDir + '\Params-depois.txt');
         Open;
         FConectado := Connected;
         Result := Connected;
-
       except
         on E: Exception do
            begin
-//             AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
-//             #10#13+ E.Message,wLog);
+
            end;
       end;
     finally
 
-      if not Result  then
-      begin
-        pAppTerminate;
-      end;
+//      if not Result  then
+//      begin
+//        pAppTerminate;
+//      end;
     end;
    end;
 end;

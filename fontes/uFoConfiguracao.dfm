@@ -1,6 +1,7 @@
 object foConfiguracao: TfoConfiguracao
   Left = 0
   Top = 0
+  BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Configura'#231#245'es do banco de dados'
   ClientHeight = 425
@@ -26,28 +27,25 @@ object foConfiguracao: TfoConfiguracao
     Left = 0
     Top = 37
     Width = 450
-    Height = 327
+    Height = 346
     Align = alClient
     TabOrder = 2
-    ExplicitHeight = 368
+    ExplicitHeight = 327
     object pgcConfig: TPageControl
       Left = 1
       Top = 1
       Width = 448
-      Height = 325
+      Height = 344
       Hint = 'Configura par'#226'metros do banco de dados'
       ActivePage = tsConfigBD
       Align = alClient
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      ExplicitHeight = 366
+      ExplicitHeight = 325
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
-        ExplicitLeft = 8
-        ExplicitTop = -14
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 298
         object Label1: TLabel
           Left = 12
           Top = 206
@@ -110,7 +108,7 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Banco de dados'
-          TabOrder = 3
+          TabOrder = 4
           Text = 'MAXXML\BACKUPXML.FDB'
         end
         object edConfigName: TLabeledEdit
@@ -149,7 +147,8 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Servidor(Nome ou IP)'
-          TabOrder = 10
+          PopupMenu = pmHost
+          TabOrder = 13
         end
         object edServerPort: TLabeledEdit
           AlignWithMargins = True
@@ -170,7 +169,7 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Caption = 'Porta'
           MaxLength = 4
           NumbersOnly = True
-          TabOrder = 11
+          TabOrder = 15
           Text = '3050'
         end
         object edVendorHome: TLabeledEdit
@@ -209,7 +208,7 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Dialeto SQL'
-          TabOrder = 4
+          TabOrder = 3
         end
         object edVendorLib: TLabeledEdit
           AlignWithMargins = True
@@ -254,7 +253,7 @@ object foConfiguracao: TfoConfiguracao
           Width = 70
           Height = 17
           Caption = 'Embedded'
-          TabOrder = 9
+          TabOrder = 11
         end
         object edDriverName: TLabeledEdit
           AlignWithMargins = True
@@ -273,7 +272,7 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Driver Name'
-          TabOrder = 12
+          TabOrder = 10
           Text = 'FBEmbed'
         end
         object cbbTipoConexao: TComboBox
@@ -281,8 +280,7 @@ object foConfiguracao: TfoConfiguracao
           Top = 224
           Width = 153
           Height = 20
-          ItemIndex = 0
-          TabOrder = 13
+          TabOrder = 12
           Text = 'Local'
           OnChange = cbbTipoConexaoChange
           Items.Strings = (
@@ -306,7 +304,7 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'CharacterSet'
-          TabOrder = 14
+          TabOrder = 9
           Text = 'WIN1252'
         end
         object edProtocol: TLabeledEdit
@@ -326,41 +324,25 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Protocolo'
-          TabOrder = 15
+          TabOrder = 14
           Text = 'TCPIP'
         end
       end
     end
   end
-  object statMSg: TStatusBar
-    Left = 0
-    Top = 406
-    Width = 450
-    Height = 19
-    Panels = <
-      item
-        Text = 'Situa'#231#227'o: '
-        Width = 60
-      end
-      item
-        Text = 'Nenhuma'
-        Width = 50
-      end>
-    ExplicitTop = 447
-  end
   object pnlRodape: TPanel
     Left = 0
-    Top = 364
+    Top = 383
     Width = 450
     Height = 42
     Align = alBottom
     TabOrder = 3
-    ExplicitTop = 405
+    ExplicitTop = 364
     DesignSize = (
       450
       42)
     object btn2: TBitBtn
-      Left = 274
+      Left = 226
       Top = 11
       Width = 92
       Height = 20
@@ -389,43 +371,11 @@ object foConfiguracao: TfoConfiguracao
         3333333333333333333888330000333333333333333333333333333333333333
         0000}
       NumGlyphs = 2
-      TabOrder = 2
-    end
-    object btnOK: TBitBtn
-      Left = 85
-      Top = 11
-      Width = 91
-      Height = 20
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Anchors = [akTop, akRight]
-      Caption = '&OK'
-      Default = True
-      Glyph.Data = {
-        DE010000424DDE01000000000000760000002800000024000000120000000100
-        0400000000006801000000000000000000001000000000000000000000000000
-        80000080000000808000800000008000800080800000C0C0C000808080000000
-        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-        3333333333333333333333330000333333333333333333333333F33333333333
-        00003333344333333333333333388F3333333333000033334224333333333333
-        338338F3333333330000333422224333333333333833338F3333333300003342
-        222224333333333383333338F3333333000034222A22224333333338F338F333
-        8F33333300003222A3A2224333333338F3838F338F33333300003A2A333A2224
-        33333338F83338F338F33333000033A33333A222433333338333338F338F3333
-        0000333333333A222433333333333338F338F33300003333333333A222433333
-        333333338F338F33000033333333333A222433333333333338F338F300003333
-        33333333A222433333333333338F338F00003333333333333A22433333333333
-        3338F38F000033333333333333A223333333333333338F830000333333333333
-        333A333333333333333338330000333333333333333333333333333333333333
-        0000}
-      NumGlyphs = 2
-      TabOrder = 0
-      OnClick = btnOKClick
+      TabOrder = 1
+      OnClick = btn2Click
     end
     object btnAplicar: TBitBtn
-      Left = 180
+      Left = 132
       Top = 11
       Width = 90
       Height = 20
@@ -453,7 +403,7 @@ object foConfiguracao: TfoConfiguracao
         3333333333338888883333330000333333333333333333333333333333333333
         0000}
       NumGlyphs = 2
-      TabOrder = 1
+      TabOrder = 0
       OnClick = btnAplicarClick
     end
   end
@@ -499,7 +449,7 @@ object foConfiguracao: TfoConfiguracao
     Left = 400
     Top = 84
     Bitmap = {
-      494C010104000C00280110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00300110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -769,5 +719,17 @@ object foConfiguracao: TfoConfiguracao
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
+  end
+  object pmHost: TPopupMenu
+    Left = 408
+    Top = 198
+    object mmNomedoPC: TMenuItem
+      Caption = '&Nome do PC'
+      OnClick = mmNomedoPCClick
+    end
+    object mmIPLocal: TMenuItem
+      Caption = 'IP Local'
+      OnClick = mmIPLocalClick
+    end
   end
 end

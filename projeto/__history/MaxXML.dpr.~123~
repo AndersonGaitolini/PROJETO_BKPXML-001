@@ -41,7 +41,7 @@ uses
 
 var
  ShowResult : Byte;
- wMsg, wSenhaAtual, wPathMAX: string;
+ wMsg, wIniFile, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
  i,wTipo : integer;
  wMaxOK : boolean;
@@ -52,6 +52,10 @@ var
   cXMLProcessado = 2;
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
+
+ label
+   GotoLogin, GotoTerminate;
+
 {$R *.res}
 begin
   Application.Initialize;
@@ -60,20 +64,24 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  DM_NFEDFE.Conectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
+  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+    if (FileExists(wIniFile)) then
+       DM_NFEDFE.fConexaoBD
+    else
+    if (ParamCount = 0) then
+    begin
+      goto GotoLogin;
+    end
+    else
+      goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
-    if not DM_NFEDFE.Conectado then
-    begin
-      Application.Terminate;
-      exit;
-    end;
-
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
 
+    GotoLogin:
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
 
@@ -168,7 +176,7 @@ begin
 
     if TRUE then
     begin
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir, 'ParamStr('+ Trim(ParamStr(0)),True);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(3)), true);
@@ -200,7 +208,7 @@ begin
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;
    end;
-
+   GotoTerminate:
    Application.Terminate;
   end;
 

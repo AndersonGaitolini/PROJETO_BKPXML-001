@@ -5,11 +5,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-<<<<<<< HEAD
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient;
-=======
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,System.MaskUtils;
->>>>>>> c1a9c1dbce83ca278d6f1dabdd5357b459d8f879
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock;
+
 
 Const
   Threshold2000 : Integer = 2000;
@@ -54,6 +51,7 @@ Const
   function fArqIni: string;
   procedure pAtivaCamposForm(pForm: TForm; pEnable: boolean; pLista : array of TTipoClass);
   function fNomePC: string;
+  function fLocalIP : string;
   function ExtractName(const Filename: String): String;
   function DateXMLToDate(pDateXML: String): TDate;
   function fOpenFileName(var prFileName:string;pTitle: string; pFilter: array of string; pFilterIndex : integer = 0): Boolean;
@@ -901,9 +899,9 @@ var
 aExt : String;
 aPos : Integer;
 begin
-aExt := ExtractFileExt(Filename);
-Result := ExtractFileName(Filename);
-if aExt <> '' then
+  aExt := ExtractFileExt(Filename);
+  Result := ExtractFileName(Filename);
+   if aExt <> '' then
    begin
    aPos := Pos(aExt,Result);
    if aPos > 0 then
@@ -911,6 +909,35 @@ if aExt <> '' then
       Delete(Result,aPos,Length(aExt));
       end;
    end;
+
+end;
+
+function fLocalIP : string;
+  type
+  TaPInAddr = array [0..10] of PInAddr;
+  PaPInAddr = ^TaPInAddr;
+  var
+  phe  : PHostEnt;
+  pptr : PaPInAddr;
+  Buffer : array [0..63] of ansichar;
+  I : Integer;
+  GInitData : TWSADATA;
+begin
+  WSAStartup($101, GInitData);
+  Result := '';
+  GetHostName( Buffer, SizeOf(Buffer));
+  phe :=GetHostByName(buffer);
+  if phe = nil then
+    Exit;
+
+  pptr := PaPInAddr(Phe^.h_addr_list);
+  I := 0;
+  while pptr^[I] <> nil do
+  begin
+    result:=StrPas(inet_ntoa(pptr^[I]^));
+    Inc(I);
+  end;
+  WSACleanup;
 end;
 
 function fNomePC: string;
@@ -952,7 +979,6 @@ function fPingIP(pHost : String) :boolean;
 var
   IdICMPClient: TIdICMPClient;
 begin
-
   try
     IdICMPClient := TIdICMPClient.Create(nil);
     IdICMPClient.Host := pHost;
@@ -962,7 +988,6 @@ begin
   finally
     IdICMPClient.Free;
   end
-
 end;
 
 //function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;

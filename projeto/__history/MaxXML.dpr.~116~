@@ -41,7 +41,7 @@ uses
 
 var
  ShowResult : Byte;
- wMsg, wSenhaAtual, wPathMAX: string;
+ wMsg, wIniFile, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
  i,wTipo : integer;
  wMaxOK : boolean;
@@ -60,7 +60,25 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  DM_NFEDFE.Conectado := uMetodosUteis.ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver);
+  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+  if not (FileExists(wIniFile)) then
+  begin
+    if (ParamCount = 0) then
+    begin
+//     Application.CreateForm(TfoConfiguracao, foConfiguracao);
+//     ShowResult := foConfiguracao.ShowModal;
+//     Application.Run;
+//     if ShowResult = mrOk then
+//       DM_NFEDFE.fConexaoBD
+//     else
+//       Application.Terminate;
+
+    end
+    else
+      Application.Terminate;
+  end
+  else
+    DM_NFEDFE.fConexaoBD;
 
   if (ParamCount = 0) then
   begin
@@ -168,13 +186,13 @@ begin
 
     if TRUE then
     begin
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(3), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(4), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(5), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(6), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(3)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(4)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(5)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(6)), true);
     end;
 
     tabUsuarios.Usuario         := Trim(ParamStr(2));

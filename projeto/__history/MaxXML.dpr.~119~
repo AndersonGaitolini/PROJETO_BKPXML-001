@@ -60,19 +60,13 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  if not (FileExists(Application.ExeName)) then
-    Application.Terminate;
+  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+    if (FileExists(wIniFile)) then
+       DM_NFEDFE.fConexaoBD;
 
-  DM_NFEDFE.fConexaoBD;
 
   if (ParamCount = 0) then
   begin
-    if not DM_NFEDFE.Conectado then
-    begin
-      Application.Terminate;
-      exit;
-    end;
-
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;

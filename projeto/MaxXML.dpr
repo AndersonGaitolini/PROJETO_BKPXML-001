@@ -52,6 +52,10 @@ var
   cXMLProcessado = 2;
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
+
+ label
+   GotoLogin, GotoTerminate;
+
 {$R *.res}
 begin
   Application.Initialize;
@@ -61,31 +65,26 @@ begin
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
   wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-  if not (FileExists(wIniFile)) then
-  begin
-   if (ParamCount = 0) then
-   begin
-     Application.CreateForm(TfoConfiguracao, foConfiguracao);
-     Application.Run;
-     DM_NFEDFE.fConexaoBD;
-   end
-   else
-    Application.Terminate;
-  end
-  else
-    DM_NFEDFE.fConexaoBD;
+    if (FileExists(wIniFile)) then
+    begin
+      if not (DM_NFEDFE.fConexaoBD) then
+         goto GotoLogin;
+    end
+    else
+    if (ParamCount = 0) then
+    begin
+      goto GotoLogin;
+    end
+    else
+      goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
-    if not DM_NFEDFE.Conectado then
-    begin
-      Application.Terminate;
-      exit;
-    end;
-
+    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
+
 
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
@@ -98,7 +97,7 @@ begin
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
       tabUsuarios := SoapUsuario;
-      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
+//      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end
@@ -213,7 +212,7 @@ begin
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;
    end;
-
+   GotoTerminate:
    Application.Terminate;
   end;
 

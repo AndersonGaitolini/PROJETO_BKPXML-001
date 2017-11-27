@@ -29,10 +29,8 @@ type
     edDataBase: TLabeledEdit;
     dlgOpenDir: TOpenDialog;
     ilCadastro: TImageList;
-    statMSg: TStatusBar;
     pnlRodape: TPanel;
     btn2: TBitBtn;
-    btnOK: TBitBtn;
     pnlMenu: TPanel;
     jtobMenuConfig: TJvToolBar;
     btnAplicar: TBitBtn;
@@ -52,6 +50,9 @@ type
     edCharacterSet: TLabeledEdit;
     edProtocol: TLabeledEdit;
     btnLimpa: TToolButton;
+    pmHost: TPopupMenu;
+    mmNomedoPC: TMenuItem;
+    mmIPLocal: TMenuItem;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -64,13 +65,18 @@ type
     procedure cbbTipoConexaoChange(Sender: TObject);
     procedure btnFindPathLibClick(Sender: TObject);
     procedure btnLimpaClick(Sender: TObject);
+    procedure btn2Click(Sender: TObject);
+    procedure mmIPLocalClick(Sender: TObject);
+    procedure mmNomedoPCClick(Sender: TObject);
   private
     { Private declarations }
+    wRemote :boolean;
     function validacampos(pForm : TForm): boolean;
     function LimpaCampos(pForm : TForm): boolean;
     procedure pSalvarParametros;
     procedure pLerParametros;
     procedure pPreemcheCampos;
+    procedure pLocalRemote;
 
     procedure pEnableConfig(pForm : TForm;pEnable: boolean);
   public
@@ -93,31 +99,29 @@ implementation
 {$R *.dfm}
 
 
+procedure TfoConfiguracao.btn2Click(Sender: TObject);
+begin
+  ModalResult := mrCancel;
+end;
+
 procedure TfoConfiguracao.btnAplicarClick(Sender: TObject);
 begin
-  if Validacampos(foConfiguracao) then
+//  if Validacampos(foConfiguracao) then
   begin
     pSalvarParametros;
+    ModalResult := mrOk;
   end;
 end;
 
 procedure TfoConfiguracao.btnOKClick(Sender: TObject);
 begin
-
   if wOpe = opOK then
-     ModalResult := mrOk
+    foConfiguracao.Close;
 end;
 
-
-
-
 procedure TfoConfiguracao.cbbTipoConexaoChange(Sender: TObject);
-var wRemote :boolean;
 begin
-   wRemote := cbbTipoConexao.ItemIndex = 0;
-   edServerName.Enabled := wRemote;
-   edProtocol.Enabled   := wRemote;
-   edServerPort.Enabled := wRemote;
+  pLocalRemote;
 end;
 
 procedure TfoConfiguracao.btnFindBDClick(Sender: TObject);
@@ -236,27 +240,38 @@ end;
 procedure TfoConfiguracao.FormShow(Sender: TObject);
 begin
   pLerParametros;
+  pLocalRemote;
   pgcConfig.TabIndex := 0;
 end;
 
 procedure TfoConfiguracao.pLerParametros;
 begin
-  if FileExists(ExtractFileName(ChangeFileExt(Application.ExeName, 'INI'))) then
+  if FileExists(ChangeFileExt(Application.ExeName, '.INI')) then
   begin
     edConfigName.Text   := getINI(fArqIni, 'MAXXML', 'ConfigName', '');
-    edUsuarioBD.Text    := getINI(fArqIni, 'MAXXML', 'usuario', '');
-    edSenhaBD.Text      := getINI(fArqIni, 'MAXXML', 'password', '');
+    edUsuarioBD.Text    := getINI(fArqIni, 'MAXXML', 'User_Name', '');
+    edSenhaBD.Text      := getINI(fArqIni, 'MAXXML', 'Password', '');
     edDataBase.Text     := getINI(fArqIni, 'MAXXML', 'Database', '');
     edSQLDialect.Text   := getINI(fArqIni, 'MAXXML', 'SQLDialect', '');
     edVendorLib.Text    := getINI(fArqIni, 'MAXXML', 'VendorLib', '');
     edVendorHome.Text   := getINI(fArqIni, 'MAXXML', 'VendorHome', '');
+    cbEmbedded.Checked  := StrToBoolDef(getINI(fArqIni, 'MAXXML', 'Embedded',''),true);
     edDriverName.Text   := getINI(fArqIni, 'MAXXML', 'DriverId', '');
     edServerName.Text   := getINI(fArqIni, 'MAXXML', 'Server', '');
     edServerPort.Text   := getINI(fArqIni, 'MAXXML', 'Port', '');
     edCharacterSet.Text := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
     edProtocol.Text     := getINI(fArqIni, 'MAXXML', 'Protocol', '');
-    cbbTipoConexao.Items[cbbTipoConexao.Items.IndexOf(getINI(fArqIni,   'MAXXML', 'Conexao', ''))];
+//    if (getINI(fArqIni,   'MAXXML', 'Conexao', '') = 'Remote') then
+      cbbTipoConexao.ItemIndex := cbbTipoConexao.Items.IndexOf(getINI(fArqIni,   'MAXXML', 'Conexao', ''));
   end;
+end;
+
+procedure TfoConfiguracao.pLocalRemote;
+begin
+  wRemote := cbbTipoConexao.ItemIndex = 1;
+  edServerName.Enabled := wRemote;
+  edProtocol.Enabled   := wRemote;
+  edServerPort.Enabled := wRemote;
 end;
 
 procedure TfoConfiguracao.pPreemcheCampos;
@@ -264,15 +279,15 @@ begin
   edConfigName.Text   := 'MAXXML-'+fNomePC;
   edUsuarioBD.Text    := 'sysdba';
   edSenhaBD.Text      := 'masterkey';
-  edDataBase.Text     := GetCurrentDir+ '\MAXXML\BACKUPXML.FDB';
+  edDataBase.Text     := GetCurrentDir+ '\BACKUPXML.FDB';
   edSQLDialect.Text   := '3';
   edVendorLib.Text    := 'fbembed.dll';
-  edVendorHome.Text   := GetCurrentDir+ '\MAXXML\fb\';
+  edVendorHome.Text   := GetCurrentDir+ '\fb\';
   edDriverName.Text   := 'FBembed';
   edServerName.Text   := fNomePC;
   edServerPort.Text   := '3050';
   edProtocol.Text     := 'TCPIP';
-  cbbTipoConexao.Items[0];
+  cbbTipoConexao.ItemIndex := 0;
   edCharacterSet.Text := 'WIN1252';
   cbEmbedded.Checked := True;
 end;
@@ -303,6 +318,19 @@ begin
   result := true;
 end;
 
+procedure TfoConfiguracao.mmIPLocalClick(Sender: TObject);
+var wStr: String;
+begin
+  wStr := fLocalIP;
+  edServerName.clear;
+  edServerName.Text := wStr;
+end;
+
+procedure TfoConfiguracao.mmNomedoPCClick(Sender: TObject);
+begin
+  edServerName.Text := fNomePC;
+end;
+
 procedure TfoConfiguracao.pEnableConfig(pForm : TForm; pEnable: boolean);
 var i : integer;
 begin
@@ -319,26 +347,41 @@ end;
 procedure TfoConfiguracao.pSalvarParametros;
 var
  wIniFile : string;
+ wHandle : THandle;
 begin
   wIniFile := ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
   wIniFile := GetCurrentDir +'\'+wIniFile;
 
-  if FileExists(fArqIni) then
+  if FileExists(wIniFile) then
   begin
+    wHandle := FindWindow( 0,pWideChar(wIniFile));
+    CloseHandle(wHandle);
+    DeleteFile(wIniFile);
+  end;
+
     setINI(wIniFile, 'MAXXML', 'ConfigName', Trim(edConfigName.Text));
-    setINI(wIniFile, 'MAXXML', 'usuario',    Trim(edUsuarioBD.Text   ));
-    setINI(wIniFile, 'MAXXML', 'password',   Trim(edSenhaBD.Text     ));
+    setINI(wIniFile, 'MAXXML', 'User_Name',    Trim(edUsuarioBD.Text   ));
+    setINI(wIniFile, 'MAXXML', 'Password',   Trim(edSenhaBD.Text     ));
     setINI(wIniFile, 'MAXXML', 'Database',   Trim(edDataBase.Text    ));
     setINI(wIniFile, 'MAXXML', 'SQLDialect', Trim(edSQLDialect.Text  ));
     setINI(wIniFile, 'MAXXML', 'VendorLib',  Trim(edVendorLib.Text   ));
     setINI(wIniFile, 'MAXXML', 'VendorHome', Trim(edVendorHome.Text  ));
     setINI(wIniFile, 'MAXXML', 'DriverId',   Trim(edDriverName.Text  ));
-    setINI(wIniFile, 'MAXXML', 'Server',     Trim(edServerName.Text  ));
-    setINI(wIniFile, 'MAXXML', 'Port',       Trim(edServerPort.Text  ));
-    setINI(wIniFile, 'MAXXML', 'Conexao',       cbbTipoConexao.Items[cbbTipoConexao.ItemIndex]);
-    setINI(wIniFile, 'MAXXML', 'Protocol',      Trim(edProtocol.Text));
+
+    if (cbEmbedded.Checked) then
+      setINI(wIniFile, 'MAXXML', 'Embedded',  'True')
+    else
+      setINI(wIniFile, 'MAXXML', 'Embedded',  'False');
+
     setINI(wIniFile, 'MAXXML', 'CharacterSet',  Trim(edCharacterSet.Text));
-  end;
+    setINI(wIniFile, 'MAXXML', 'Conexao',    cbbTipoConexao.Items[cbbTipoConexao.ItemIndex]);
+
+    if cbbTipoConexao.ItemIndex = 1 then
+    begin
+      setINI(wIniFile, 'MAXXML', 'Port',     Trim(edServerPort.Text  ));
+      setINI(wIniFile, 'MAXXML', 'Server',   Trim(edServerName.Text  ));
+      setINI(wIniFile, 'MAXXML', 'Protocol', Trim(edProtocol.Text));
+    end;
 end;
 
 function TfoConfiguracao.validacampos(pForm : TForm): boolean;

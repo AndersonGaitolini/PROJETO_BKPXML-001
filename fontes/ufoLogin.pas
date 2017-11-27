@@ -27,6 +27,7 @@ type
     procedure mmConexoBDClick(Sender: TObject);
   private
     { Private declarations }
+    statusCon : string;
   public
     { Public declarations }
     wObjUsuarios : TUsuarios;
@@ -57,7 +58,15 @@ end;
 procedure TfoLogin.btnAcessarClick(Sender: TObject);
 var wSenhaAtual: string;
     wDataSet : TDataSet;
+
 begin
+  if not DM_NFEDFE.Conectado then
+  begin
+    ShowMessage('Verifique a conexão com a base de dados.');
+    Exit;
+  end;
+
+
   if not Assigned(tabUsuarios) then
     Exit;
 
@@ -117,9 +126,14 @@ begin
 end;
 
 procedure TfoLogin.FormCreate(Sender: TObject);
-var
- statusCon : string;
 begin
+  statMsg.Panels[0].Text := 'Base de dados:';
+
+  if DM_NFEDFE.Conectado then
+    statusCon := 'Conectada'
+  else
+    statusCon := 'Desconectada';
+
   edUsuario.Clear;
   edSenha.Clear;
   statMsg.Panels[1].Text := statusCon;
@@ -136,6 +150,13 @@ begin
   foConfiguracao := TfoConfiguracao.Create(Application);
   try
     foConfiguracao.ShowModal;
+
+    if DM_NFEDFE.fConexaoBD then
+      statusCon := 'Conectado!'
+    else
+      statusCon := 'Desconectado!';
+
+    statMsg.Panels[1].Text := statusCon;
   finally
     FreeAndNil(foConfiguracao);
   end;

@@ -1362,7 +1362,7 @@ begin
   begin
     wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
     case wStatus of
-     -999: Canvas.Font.Color := clYellow;
+     -999: Canvas.Font.Color := clWebPink;
       001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
       004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
       100: Canvas.Font.Color := clBlack;    //XML Envio Processado
