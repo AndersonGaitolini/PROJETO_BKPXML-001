@@ -62,30 +62,31 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML)';
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
+  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-    if (FileExists(wIniFile)) then
-       DM_NFEDFE.fConexaoBD
-    else
-    if (ParamCount = 0) then
-    begin
-//      Application.CreateForm(TFoConfiguracao, FoConfiguracao);
-//      ShowResult := FoConfiguracao.ShowModal;
-//      if ShowResult = mrOk then
-        goto GotoLogin;
-    end
-    else
-    goto GotoTerminate;
-
+//  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+//    if (FileExists(wIniFile)) then
+//    begin
+//      if not (DM_NFEDFE.fConexaoBD) then
+//         goto GotoLogin;
+//    end
+//    else
+//    if (ParamCount = 0) then
+//    begin
+//      goto GotoLogin;
+//    end
+//    else
+//      goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
+    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
 
-    GotoLogin:
+
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
 
@@ -97,7 +98,7 @@ begin
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
       tabUsuarios := SoapUsuario;
-      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
+//      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end

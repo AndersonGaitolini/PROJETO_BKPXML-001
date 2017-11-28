@@ -13,6 +13,61 @@ uses
   FireDAC.DApt, FireDAC.Comp.DataSet,FMX.Forms;
 
 type
+  TTipoConexao = (tcLocal, tcLocalEmbed, tcRemote);
+
+  TConecxaoBD = class(TObject)
+  private
+    { private declarations }
+    FConectado : boolean;
+    FPassword   : String;
+    FUserName   : String;
+    FDataBase   : String;
+    FSQLDialect : String;
+    FDriverID   : String;
+    FCharacterSet : String;
+    FVendorLib    : String;
+    FVendorHome   : String;
+    FEmbedded     : boolean;
+    FServer       : String;
+    FProtocol     : String;
+    FPort         : String;
+    FIniFile      : String;
+    FTipoCon      : TTipoConexao;
+    FConn         : TFDConnection;
+    FDriver       : TFDPhysFBDriverLink;
+  protected
+    { protected declarations }
+
+  public
+    { public declarations }
+    property Conectado    : boolean      read  FConectado    write FConectado   ;
+    property IniFile      : String       read  FIniFile      write FIniFile     ;
+    property Password     : String       read  FPassword     write FPassword    ;
+    property UserName     : String       read  FUserName     write FUserName    ;
+    property DataBase     : String       read  FDataBase     write FDataBase    ;
+    property SQLDialect   : String       read  FSQLDialect   write FSQLDialect  ;
+    property DriverID     : String       read  FDriverID     write FDriverID    ;
+    property CharacterSet : String       read  FCharacterSet write FCharacterSet;
+    property VendorLib    : String       read  FVendorLib    write FVendorLib   ;
+    property VendorHome   : String       read  FVendorHome   write FVendorHome  ;
+    property Embedded     : boolean      read  FEmbedded     write FEmbedded    ;
+    property Server       : String       read  FServer       write FServer      ;
+    property Protocol     : String       read  FProtocol     write FProtocol    ;
+    property Port         : String       read  FPort         write FPort        ;
+    property TipoCon      : TTipoConexao read  FTipoCon      write FTipoCon;
+    property Conn         : TFDConnection read FConn write FConn;
+    property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
+
+    function fConexaoBD: Boolean;
+    procedure pConecta;
+    procedure pClearParams;
+    procedure pReadParams;
+    procedure pReadDriver;
+
+    constructor Create(pConn : TFDConnection; pDriver : TFDPhysFBDriverLink); overload;
+  end;
+
+type
   TDM_NFEDFE = class(TDataModule)
     conConexaoFD: TFDConnection;
     fdtrTransacao: TFDTransaction;
@@ -84,93 +139,28 @@ type
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
-    FConectado : boolean;
-
   public
     { Public declarations }
     Dao   : TDaoFD;
 
-    function fConexaoBD:Boolean;
-    property Conectado : boolean read FConectado write FConectado;
   end;
 
 var
   DM_NFEDFE: TDM_NFEDFE;
+  ConecxaoBD : TConecxaoBD;
 
 implementation
 
 uses
-  ConfigPadrao, Configuracoes, Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs, uRotinas;
+  Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs, uRotinas, Configuracoes, ConfigPadrao;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
 
-function TDM_NFEDFE.fConexaoBD: Boolean;
-var
-wMSg : string;
-wDataBase: string;
-wHost: string;
-wLog :Boolean;
-
- begin
-   with conConexaoFD do
-   begin
-    wLog := false;
-    try
-      try
-        Result := False;
-        Connected := Result;
-        Close;
-        conConexaoFD.Params.SaveToFile(GetCurrentDir + '\Params-antes.txt');
-
-        AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
-        Params.Values['User_Name']    := getINI(fArqIni, 'MAXXML',      'User_Name', '');
-        Params.Values['Password']   := getINI(fArqIni, 'MAXXML',     'Password', '');
-        Params.Values['Database']   := getINI(fArqIni, 'MAXXML',     'Database', '');
-        Params.Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
-        Params.Values['DriverId']   := getINI(fArqIni, 'MAXXML',     'DriverId', '');
-        Params.Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
-        fddrfbDriver.VendorLib  := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
-        fddrfbDriver.VendorHome := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
-        fddrfbDriver.Embedded := StrToBoolDef( getINI(fArqIni, 'MAXXML',   'Embedded', ''),true);
-//        Params.Values['Conexao'] :=  getINI(fArqIni, 'MAXXML', 'Conexao', '');
-        if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
-        begin
-          Params.Values['Server'] := getINI(fArqIni,   'MAXXML', 'Server', '');
-          Params.Values['Protocol'] := getINI(fArqIni, 'MAXXML', 'Protocol', '');
-          Params.Values['Port'] := getINI(fArqIni,     'MAXXML', 'Port', '');
-        end
-        else
-        if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Local') then
-        begin
-          Params.Values['Server'] := getINI(fArqIni,   'MAXXML', 'Server', 'Localhost');
-          Params.Values['Protocol'] := getINI(fArqIni, 'MAXXML', 'Protocol', 'local');
-          Params.Values['Port'] := getINI(fArqIni,     'MAXXML', 'Port', '');
-        end;
-
-        conConexaoFD.Params.SaveToFile(GetCurrentDir + '\Params-depois.txt');
-        Open;
-        FConectado := Connected;
-        Result := Connected;
-      except
-        on E: Exception do
-           begin
-
-           end;
-      end;
-    finally
-
-//      if not Result  then
-//      begin
-//        pAppTerminate;
-//      end;
-    end;
-   end;
-end;
-
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
+  ConecxaoBD := TConecxaoBD.Create(conConexaoFD, fddrfbDriver);
   Dao := TDaoFD.Create(conConexaoFD, fdtrTransacao);
   sqlBkpDfe.Connection := conConexaoFD;
   tabConfigpadrao := TConfigpadrao.create;
@@ -212,4 +202,125 @@ begin
 
 end;
 
+{ TConecxaoBD }
+
+constructor TConecxaoBD.Create(pConn: TFDConnection;
+  pDriver: TFDPhysFBDriverLink);
+begin
+//  inherited;
+  FConn := pConn;
+  FDriver := pDriver;
+end;
+
+function TConecxaoBD.fConexaoBD: Boolean;
+var
+wMSg : string;
+wDataBase: string;
+wHost: string;
+wLog :Boolean;
+
+
+procedure pConLocal;
+begin
+  FConn.Params.Values['User_Name']    := FUserName;
+  FConn.Params.Values['Password']     := FPassword;
+  FConn.Params.Values['Database']     := FDataBase;
+  FConn.Params.Values['SQLDialect']   := FSQLDialect;
+  FConn.Params.Values['DriverID']     := FDriverID;
+  FConn.Params.Values['CharacterSet'] := FCharacterSet;
+end;
+
+procedure pConLocalEmbedded;
+begin
+  FConn.Params.Values['User_Name']    := FUserName;
+  FConn.Params.Values['Password']     := FPassword;
+  FConn.Params.Values['Database']     := FDataBase;
+  FConn.Params.Values['SQLDialect']   := FSQLDialect;
+  FConn.Params.Values['DriverID']     := FDriverID;
+  FConn.Params.Values['CharacterSet'] := FCharacterSet;
+  FDriver.VendorLib                   := FVendorLib;
+  FDriver.VendorHome                  := FVendorHome;
+  FDriver.Embedded                    := FEmbedded;
+end;
+
+procedure pConRemote;
+begin
+  FConn.Params.Values['User_Name']    := FUserName;
+  FConn.Params.Values['Password']     := FPassword;
+  FConn.Params.Values['Database']     := FDataBase;
+  FConn.Params.Values['SQLDialect']   := FSQLDialect;
+  FConn.Params.Values['DriverID']     := FDriverID;
+  FConn.Params.Values['CharacterSet'] := FCharacterSet;
+  FConn.Params.Values['Server']       := FServer;
+  FConn.Params.Values['Protocol']     := FProtocol;
+  FConn.Params.Values['Port']         := FPort;
+end;
+
+ begin
+  try
+    pClearParams;
+    case TipoCon of
+      tcLocal: pConLocal;
+      tcLocalEmbed: pConLocalEmbedded;
+      tcRemote: pConRemote;
+    else
+      Exit;
+    end;
+
+    FConn.Open;
+    Result := FConn.Connected;
+  except
+    on E: Exception do
+       begin
+         ShowMessage(e.Message);
+       end;
+  end;
+end;
+
+procedure TConecxaoBD.pClearParams;
+begin
+  FConn.Params.Clear;
+end;
+
+procedure TConecxaoBD.pConecta;
+begin
+  FConn.Connected := false;
+  FConn.Close;
+  Conectado := fConexaoBD;
+end;
+
+
+procedure TConecxaoBD.pReadDriver;
+begin
+  FVendorLib := FDriver.VendorLib;
+  FVendorHome := FDriver.VendorHome;
+  FEmbedded   := FDriver.Embedded;
+end;
+
+procedure TConecxaoBD.pReadParams;
+begin
+  FUserName     :=  Conn.Params.Values['User_Name'];
+  FPassword     :=  Conn.Params.Values['Password'];
+  FDataBase     :=  Conn.Params.Values['Database'];
+  FSQLDialect   :=  Conn.Params.Values['SQLDialect'];
+  FDriverID     :=  Conn.Params.Values['DriverID'];
+  FCharacterSet :=  Conn.Params.Values['CharacterSet'];
+  FServer       :=  Conn.Params.Values['Server'];
+  FProtocol     :=  Conn.Params.Values['Protocol'];
+  FPort         :=  Conn.Params.Values['Port'];
+end;
+
 end.
+
+//:= getINI(fArqIni, 'MAXXML',     'Password', '');
+//:= getINI(fArqIni, 'MAXXML',     'Database', '');
+//:= getINI(fArqIni, 'MAXXML',     'User_Name', '');
+//:= '3';
+//:= getINI(fArqIni, 'MAXXML',     'DriverId', '');
+//:= getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
+//:= getINI(fArqIni, 'MAXXML',    'VendorLib', '');
+//:= getINI(fArqIni, 'MAXXML',   'VendorHome', '');
+//:= getINI(fArqIni, 'MAXXML',   'Embedded', '');
+//:= getINI(fArqIni,   'MAXXML', 'Server','');
+//:= getINI(fArqIni, 'MAXXML', 'Protocol', '');
+//:= getINI(fArqIni,     'MAXXML', 'Port', '');

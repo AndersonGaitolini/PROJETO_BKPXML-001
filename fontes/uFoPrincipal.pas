@@ -169,7 +169,6 @@ type
     btnFIltroSQL: TBitBtn;
     bvl1: TBevel;
     procedure FormCreate(Sender: TObject);
-    procedure mniConfigBDClick(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure dbgNfebkpDrawColumnCell(Sender: TObject; const Rect: TRect;
@@ -308,7 +307,7 @@ implementation
 
 uses
 
-uFoConsConfiguracao, uFoConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos, uFoFiltroDetalhe;
+uFoConsConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos, uFoFiltroDetalhe, uFoConexao;
 
 {$R *.dfm}
 
@@ -826,11 +825,11 @@ end;
 
 procedure TfoPrincipal.mmConfgDiretoriosClick(Sender: TObject);
 begin
-  foConfiguracao := TfoConfiguracao.Create(Application);
+  foConexao:= TfoConexao.Create(Application);
 try
-  foConfiguracao.ShowModal;
+  foConexao.ShowModal;
 finally
-  FreeAndNil(foConfiguracao);
+  FreeAndNil(foConexao);
 end;
 end;
 
@@ -1818,18 +1817,6 @@ begin
   fSelecionaLinhaGrid;
   pSelecaoChave(wListaSelecionados);
   wRotinas.fExportaLoteXML(wListaSelecionados);
-end;
-
-procedure TfoPrincipal.mniConfigBDClick(Sender: TObject);
-begin
-  foConfiguracao := TfoConfiguracao.Create(application);
-  try
-    foConfiguracao.Usuarios := tabUsuarios;
-    foConfiguracao.IDConfig := tabUsuarios.Id;
-    foConfiguracao.showmodal;
-  finally
-    foConfiguracao.Free;
-  end;
 end;
 
 procedure TfoPrincipal.mniReconectarClick(Sender: TObject);

@@ -28,7 +28,6 @@ uses
   uFoConsConfiguracao in 'J:\fontes\uFoConsConfiguracao.pas' {foConsConfiguracoes},
   ConfigPadrao in 'J:\fontes\classes\ConfigPadrao.pas',
   uFoConfigPadrao in 'J:\fontes\uFoConfigPadrao.pas' {foConfigPadrao},
-  uFoConfiguracao in 'J:\fontes\uFoConfiguracao.pas' {foConfiguracao},
   uRotinas in 'J:\fontes\uRotinas.pas',
   uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
   uFoCadUsuario in 'J:\fontes\uFoCadUsuario.pas' {foCadUsuario},
@@ -37,7 +36,8 @@ uses
   ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
   uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
   uProgressThread in 'J:\fontes\uProgressThread.pas',
-  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado};
+  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado},
+  uFoConexao in 'J:\fontes\uFoConexao.pas' {foConexao};
 
 var
  ShowResult : Byte;
@@ -64,27 +64,28 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-    if (FileExists(wIniFile)) then
-       DM_NFEDFE.fConexaoBD
+//  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+//    if (FileExists(DM_NFEDFE.IniFile)) then
+    if not (ConecxaoBD.Conectado) then
+    begin
+      goto GotoLogin;
+    end
     else
     if (ParamCount = 0) then
     begin
-//      Application.CreateForm(TFoConfiguracao, FoConfiguracao);
-//      ShowResult := FoConfiguracao.ShowModal;
-//      if ShowResult = mrOk then
-        goto GotoLogin;
+      goto GotoLogin;
     end
-    goto GotoTerminate;
-
+    else
+      goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
+    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
 
-    GotoLogin:
+
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
 
@@ -96,7 +97,7 @@ begin
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
       tabUsuarios := SoapUsuario;
-      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
+//      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end

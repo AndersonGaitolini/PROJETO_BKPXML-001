@@ -1,10 +1,10 @@
-object foConfiguracao: TfoConfiguracao
+object foConexao: TfoConexao
   Left = 0
   Top = 0
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Configura'#231#245'es do banco de dados'
-  ClientHeight = 488
+  ClientHeight = 291
   ClientWidth = 450
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,6 +17,7 @@ object foConfiguracao: TfoConfiguracao
   OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
+  OnCreate = FormCreate
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnKeyUp = FormKeyUp
@@ -27,33 +28,22 @@ object foConfiguracao: TfoConfiguracao
     Left = 0
     Top = 37
     Width = 450
-    Height = 409
+    Height = 254
     Align = alClient
     TabOrder = 2
-    ExplicitHeight = 346
     object pgcConfig: TPageControl
       Left = 1
       Top = 1
       Width = 448
-      Height = 407
+      Height = 233
       Hint = 'Configura par'#226'metros do banco de dados'
       ActivePage = tsConfigBD
       Align = alClient
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      ExplicitHeight = 344
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
-        ExplicitLeft = 8
-        ExplicitTop = 22
-        object Label1: TLabel
-          Left = 11
-          Top = 123
-          Width = 77
-          Height = 12
-          Caption = 'Tipo de Conex'#227'o'
-        end
         object lbStatusConn: TLabel
           Left = 94
           Top = 343
@@ -63,8 +53,8 @@ object foConfiguracao: TfoConfiguracao
         end
         object edUsuarioBD: TLabeledEdit
           AlignWithMargins = True
-          Left = 11
-          Top = 20
+          Left = 13
+          Top = 73
           Width = 155
           Height = 20
           Margins.Left = 2
@@ -82,8 +72,8 @@ object foConfiguracao: TfoConfiguracao
         end
         object edSenhaBD: TLabeledEdit
           AlignWithMargins = True
-          Left = 173
-          Top = 20
+          Left = 175
+          Top = 73
           Width = 155
           Height = 20
           Margins.Left = 2
@@ -101,9 +91,9 @@ object foConfiguracao: TfoConfiguracao
         end
         object edDataBase: TLabeledEdit
           AlignWithMargins = True
-          Left = 11
-          Top = 57
-          Width = 265
+          Left = 13
+          Top = 110
+          Width = 317
           Height = 20
           Margins.Left = 2
           Margins.Top = 2
@@ -116,143 +106,16 @@ object foConfiguracao: TfoConfiguracao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Banco de dados'
-          TabOrder = 3
-          Text = 'MAXXML\BACKUPXML.FDB'
-        end
-        object edVendorHome: TLabeledEdit
-          AlignWithMargins = True
-          Left = 3
-          Top = 297
-          Width = 190
-          Height = 20
-          Margins.Left = 2
-          Margins.Top = 2
-          Margins.Right = 2
-          Margins.Bottom = 2
-          EditLabel.Width = 126
-          EditLabel.Height = 12
-          EditLabel.Margins.Left = 2
-          EditLabel.Margins.Top = 2
-          EditLabel.Margins.Right = 2
-          EditLabel.Margins.Bottom = 2
-          EditLabel.Caption = 'Diret'#243'rio da Biblioteca (DLL)'
-          TabOrder = 5
-        end
-        object edSQLDialect: TLabeledEdit
-          AlignWithMargins = True
-          Left = 280
-          Top = 57
-          Width = 48
-          Height = 20
-          Margins.Left = 2
-          Margins.Top = 2
-          Margins.Right = 2
-          Margins.Bottom = 2
-          EditLabel.Width = 52
-          EditLabel.Height = 12
-          EditLabel.Margins.Left = 2
-          EditLabel.Margins.Top = 2
-          EditLabel.Margins.Right = 2
-          EditLabel.Margins.Bottom = 2
-          EditLabel.Caption = 'Dialeto SQL'
           TabOrder = 2
         end
-        object edVendorLib: TLabeledEdit
-          AlignWithMargins = True
-          Left = 202
-          Top = 297
-          Width = 118
-          Height = 20
-          Margins.Left = 2
-          Margins.Top = 2
-          Margins.Right = 2
-          Margins.Bottom = 2
-          EditLabel.Width = 85
-          EditLabel.Height = 12
-          EditLabel.Margins.Left = 2
-          EditLabel.Margins.Top = 2
-          EditLabel.Margins.Right = 2
-          EditLabel.Margins.Bottom = 2
-          EditLabel.Caption = 'Nome da Biblioteca'
-          TabOrder = 6
-        end
-        object btnFindPathLib: TButton
-          Left = 325
-          Top = 295
-          Width = 27
-          Height = 25
-          Caption = '...'
-          TabOrder = 7
-          OnClick = btnFindPathLibClick
-        end
         object btnFindBD: TButton
-          Left = 333
-          Top = 55
+          Left = 335
+          Top = 108
           Width = 27
           Height = 25
           Caption = '...'
-          TabOrder = 4
+          TabOrder = 3
           OnClick = btnFindBDClick
-        end
-        object cbEmbedded: TCheckBox
-          Left = 3
-          Top = 262
-          Width = 70
-          Height = 17
-          Caption = 'Embedded'
-          TabOrder = 10
-        end
-        object edDriverName: TLabeledEdit
-          AlignWithMargins = True
-          Left = 139
-          Top = 97
-          Width = 97
-          Height = 20
-          Margins.Left = 2
-          Margins.Top = 2
-          Margins.Right = 2
-          Margins.Bottom = 2
-          EditLabel.Width = 56
-          EditLabel.Height = 12
-          EditLabel.Margins.Left = 2
-          EditLabel.Margins.Top = 2
-          EditLabel.Margins.Right = 2
-          EditLabel.Margins.Bottom = 2
-          EditLabel.Caption = 'Driver Name'
-          TabOrder = 9
-          Text = 'FBEmbed'
-        end
-        object cbbTipoConexao: TComboBox
-          Left = 11
-          Top = 141
-          Width = 153
-          Height = 20
-          TabOrder = 11
-          Text = 'Local'
-          OnChange = cbbTipoConexaoChange
-          Items.Strings = (
-            'Local'
-            'Remote')
-        end
-        object edCharacterSet: TLabeledEdit
-          AlignWithMargins = True
-          Left = 11
-          Top = 98
-          Width = 112
-          Height = 20
-          Margins.Left = 2
-          Margins.Top = 2
-          Margins.Right = 2
-          Margins.Bottom = 2
-          EditLabel.Width = 58
-          EditLabel.Height = 12
-          EditLabel.Margins.Left = 2
-          EditLabel.Margins.Top = 2
-          EditLabel.Margins.Right = 2
-          EditLabel.Margins.Bottom = 2
-          EditLabel.Caption = 'CharacterSet'
-          TabOrder = 8
-          Text = 'WIN1252'
         end
         object btnConectar: TButton
           Left = 13
@@ -260,163 +123,84 @@ object foConfiguracao: TfoConfiguracao
           Width = 75
           Height = 25
           Caption = '&Conectar'
-          TabOrder = 12
-          OnClick = btnConectarClick
+          TabOrder = 4
         end
-        object pnlRemote: TPanel
-          Left = -5
-          Top = 171
-          Width = 369
-          Height = 85
-          TabOrder = 13
-          object lbRemote: TLabel
-            Left = 25
-            Top = 8
-            Width = 33
-            Height = 12
-            Caption = 'Remote'
-          end
-          object edProtocol: TLabeledEdit
-            AlignWithMargins = True
-            Left = 184
-            Top = 54
-            Width = 85
-            Height = 20
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            EditLabel.Width = 44
-            EditLabel.Height = 12
-            EditLabel.Margins.Left = 2
-            EditLabel.Margins.Top = 2
-            EditLabel.Margins.Right = 2
-            EditLabel.Margins.Bottom = 2
-            EditLabel.Caption = 'Protocolo'
-            TabOrder = 0
-            Text = 'TCPIP'
-          end
-          object edServerPort: TLabeledEdit
-            AlignWithMargins = True
-            Left = 273
-            Top = 54
-            Width = 63
-            Height = 20
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            EditLabel.Width = 24
-            EditLabel.Height = 12
-            EditLabel.Margins.Left = 2
-            EditLabel.Margins.Top = 2
-            EditLabel.Margins.Right = 2
-            EditLabel.Margins.Bottom = 2
-            EditLabel.Caption = 'Porta'
-            MaxLength = 4
-            NumbersOnly = True
-            TabOrder = 1
-            Text = '3050'
-          end
-          object edServerName: TLabeledEdit
-            AlignWithMargins = True
-            Left = 25
-            Top = 54
-            Width = 155
-            Height = 20
-            Margins.Left = 2
-            Margins.Top = 2
-            Margins.Right = 2
-            Margins.Bottom = 2
-            EditLabel.Width = 101
-            EditLabel.Height = 12
-            EditLabel.Margins.Left = 2
-            EditLabel.Margins.Top = 2
-            EditLabel.Margins.Right = 2
-            EditLabel.Margins.Bottom = 2
-            EditLabel.Caption = 'Servidor(Nome ou IP)'
-            PopupMenu = pmHost
-            TabOrder = 2
-          end
+        object cbbTipoCon: TComboBox
+          Left = 13
+          Top = 34
+          Width = 145
+          Height = 20
+          ItemIndex = 0
+          TabOrder = 5
+          Text = 'Local'
+          OnChange = cbbTipoConChange
+          Items.Strings = (
+            'Local'
+            'Local(Embarcado)'
+            'Remoto')
+        end
+        object btnConectar1: TButton
+          Left = 13
+          Top = 179
+          Width = 75
+          Height = 25
+          Caption = 'Conectar'
+          TabOrder = 6
+          OnClick = btnConectar1Click
+        end
+        object edServerName: TLabeledEdit
+          AlignWithMargins = True
+          Left = 13
+          Top = 147
+          Width = 155
+          Height = 20
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          EditLabel.Width = 74
+          EditLabel.Height = 12
+          EditLabel.Margins.Left = 2
+          EditLabel.Margins.Top = 2
+          EditLabel.Margins.Right = 2
+          EditLabel.Margins.Bottom = 2
+          EditLabel.Caption = 'Servername / IP'
+          TabOrder = 7
+        end
+        object btnPing: TButton
+          Left = 173
+          Top = 145
+          Width = 64
+          Height = 24
+          Caption = 'Ping'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -10
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          TabOrder = 8
+          OnClick = btnPingClick
         end
       end
     end
-  end
-  object pnlRodape: TPanel
-    Left = 0
-    Top = 446
-    Width = 450
-    Height = 42
-    Align = alBottom
-    TabOrder = 3
-    ExplicitTop = 383
-    DesignSize = (
-      450
-      42)
-    object btn2: TBitBtn
-      Left = 226
-      Top = 11
-      Width = 92
-      Height = 20
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Anchors = [akTop, akRight]
-      Cancel = True
-      Caption = '&Cancel'
-      Glyph.Data = {
-        DE010000424DDE01000000000000760000002800000024000000120000000100
-        0400000000006801000000000000000000001000000000000000000000000000
-        80000080000000808000800000008000800080800000C0C0C000808080000000
-        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
-        333333333333333333333333000033338833333333333333333F333333333333
-        0000333911833333983333333388F333333F3333000033391118333911833333
-        38F38F333F88F33300003339111183911118333338F338F3F8338F3300003333
-        911118111118333338F3338F833338F3000033333911111111833333338F3338
-        3333F8330000333333911111183333333338F333333F83330000333333311111
-        8333333333338F3333383333000033333339111183333333333338F333833333
-        00003333339111118333333333333833338F3333000033333911181118333333
-        33338333338F333300003333911183911183333333383338F338F33300003333
-        9118333911183333338F33838F338F33000033333913333391113333338FF833
-        38F338F300003333333333333919333333388333338FFF830000333333333333
-        3333333333333333333888330000333333333333333333333333333333333333
-        0000}
-      NumGlyphs = 2
-      TabOrder = 1
-      OnClick = btn2Click
-    end
-    object btnAplicar: TBitBtn
-      Left = 132
-      Top = 11
-      Width = 90
-      Height = 20
-      Margins.Left = 2
-      Margins.Top = 2
-      Margins.Right = 2
-      Margins.Bottom = 2
-      Anchors = [akTop, akRight]
-      Caption = '&Salvar'
-      Glyph.Data = {
-        DE010000424DDE01000000000000760000002800000024000000120000000100
-        0400000000006801000000000000000000001000000000000000000000000000
-        80000080000000808000800000008000800080800000C0C0C000808080000000
-        FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333444444
-        33333333333F8888883F33330000324334222222443333388F3833333388F333
-        000032244222222222433338F8833FFFFF338F3300003222222AAAAA22243338
-        F333F88888F338F30000322222A33333A2224338F33F8333338F338F00003222
-        223333333A224338F33833333338F38F00003222222333333A444338FFFF8F33
-        3338888300003AAAAAAA33333333333888888833333333330000333333333333
-        333333333333333333FFFFFF000033333333333344444433FFFF333333888888
-        00003A444333333A22222438888F333338F3333800003A2243333333A2222438
-        F38F333333833338000033A224333334422224338338FFFFF8833338000033A2
-        22444442222224338F3388888333FF380000333A2222222222AA243338FF3333
-        33FF88F800003333AA222222AA33A3333388FFFFFF8833830000333333AAAAAA
-        3333333333338888883333330000333333333333333333333333333333333333
-        0000}
-      NumGlyphs = 2
-      TabOrder = 0
-      OnClick = btnAplicarClick
+    object stat1: TStatusBar
+      Left = 1
+      Top = 234
+      Width = 448
+      Height = 19
+      Panels = <
+        item
+          Text = 'Status:'
+          Width = 50
+        end
+        item
+          Text = 'Desconetado'
+          Width = 150
+        end
+        item
+          Width = 50
+        end>
     end
   end
   object pnlMenu: TPanel
@@ -450,7 +234,6 @@ object foConfiguracao: TfoConfiguracao
       Top = 0
       Caption = 'Limpa'
       ImageIndex = 2
-      OnClick = btnLimpaClick
     end
   end
   object dlgOpenDir: TOpenDialog
@@ -461,7 +244,7 @@ object foConfiguracao: TfoConfiguracao
     Left = 400
     Top = 84
     Bitmap = {
-      494C010104000C003C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00400110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -731,17 +514,5 @@ object foConfiguracao: TfoConfiguracao
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
       000000000000}
-  end
-  object pmHost: TPopupMenu
-    Left = 408
-    Top = 198
-    object mmNomedoPC: TMenuItem
-      Caption = '&Nome do PC'
-      OnClick = mmNomedoPCClick
-    end
-    object mmIPLocal: TMenuItem
-      Caption = 'IP Local'
-      OnClick = mmIPLocalClick
-    end
   end
 end

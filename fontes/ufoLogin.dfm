@@ -21,7 +21,6 @@ inherited foLogin: TfoLogin
     Margins.Top = 3
     Margins.Right = 3
     Margins.Bottom = 3
-    ExplicitTop = -6
     ExplicitWidth = 197
     ExplicitHeight = 156
     inherited lbUserNome: TLabel
@@ -131,11 +130,10 @@ inherited foLogin: TfoLogin
       item
         Width = 50
       end>
-    ExplicitTop = 162
   end
   object mmMenuLogin: TMainMenu
-    Left = 156
-    Top = 21
+    Left = 159
+    Top = 22
     object Configura1: TMenuItem
       Caption = 'Configura'#231#245'es'
       object mmConexoBD: TMenuItem

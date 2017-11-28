@@ -8,12 +8,15 @@ object DM_NFEDFE: TDM_NFEDFE
       'CharacterSet=WIN1252'
       'User_Name=sysdba'
       'Password=masterkey'
-      'Database=V:\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
+      'Database=C:\MAX\MAXXML\BACKUPXML.FDB'
+      '|Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
+      'Protocol=TCPIP'
+      'Server=ANDERSONVM-PC'
       'DriverID=FBEmbed')
     LoginPrompt = False
-    Left = 27
-    Top = 25
+    Left = 28
+    Top = 26
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
@@ -27,11 +30,10 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
-    VendorHome = 'C:\fb'
-    VendorLib = 'fbembed.dll'
+    VendorLib = 'C:\fb\bin\fbembed.dll'
     Embedded = True
-    Left = 177
-    Top = 23
+    Left = 171
+    Top = 26
   end
   object dsConfiguracoes: TDataSource
     DataSet = cdsConfiguracoes

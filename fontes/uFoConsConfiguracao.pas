@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uFoConsultaPadrao, Data.DB,
   Vcl.ComCtrls, Vcl.ToolWin, JvExComCtrls, JvToolBar, Vcl.Grids, Vcl.DBGrids,
-  Vcl.ExtCtrls, Configuracoes, uDMnfebkp,Usuarios, System.ImageList, Vcl.ImgList,uMetodosUteis,uFoConfiguracao;
+  Vcl.ExtCtrls, Configuracoes, uDMnfebkp,Usuarios, System.ImageList, Vcl.ImgList,uMetodosUteis;
 
 
 type
@@ -20,8 +20,6 @@ type
     procedure dbg1DrawColumnCell(Sender: TObject; const Rect: TRect;
       DataCol: Integer; Column: TColumn; State: TGridDrawState);
     procedure dbgConsultaTitleClick(Column: TColumn);
-    procedure btnInserirClick(Sender: TObject);
-    procedure btnAlterarClick(Sender: TObject);
     procedure btnExcluirClick(Sender: TObject);
     procedure btnLoadIniClick(Sender: TObject);
     procedure dbgConsultaDblClick(Sender: TObject);
@@ -43,6 +41,8 @@ implementation
 
 
 {$R *.dfm}
+
+uses uFoConexao;
 
 {Eventos do form}
 procedure TfoConsConfiguracoes.pAtualizaGrid;
@@ -68,25 +68,6 @@ begin
   btnExcluir.Enabled := pEnable;
 end;
 
-procedure TfoConsConfiguracoes.btnInserirClick(Sender: TObject);
-begin
-  inherited;
-
-  statMsg.Panels[1].Text := 'Inserindo um Registro';
-
-  foConfiguracao := TfoConfiguracao.Create(Application);
-  try
-    wOpe := opInserir;
-    tabConfiguracoes.IDusuario := tabUsuarios.Id;
-    foConfiguracao.ShowModal;
-
-    pAtualizaGrid;
-  finally
-    foConfiguracao.Free;
-  end;
-
-end;
-
 procedure TfoConsConfiguracoes.btnLoadIniClick(Sender: TObject);
 begin
   inherited;
@@ -100,38 +81,6 @@ begin
   tabUsuarios.ConfigSalva := tabConfiguracoes.Id;
   DM_NFEDFE.Dao.Salvar(tabUsuarios, ['ConfigSalva']);
   Close;
-end;
-
-procedure TfoConsConfiguracoes.btnAlterarClick(Sender: TObject);
-begin
-  inherited;
-//  if evtTelaUsuarios = etuEditar then
-  begin
-    if dbgConsulta.DataSource.DataSet.IsEmpty then
-    begin
-      statMsg.Panels[1].Text := 'Selecione um Registro';
-      exit
-    end;
-    foConfiguracao := TfoConfiguracao.Create(Application);
-    try
-      wOpe := opAlterar;
-      tabConfiguracoes.Id := DM_NFEDFE.cdsConfiguracoes.FieldByName('id').AsInteger;
-      daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
-      foConfiguracao.ShowModal;
-
-      pAtualizaGrid;
-    finally
-      foConfiguracao.Free;
-    end;
-//  end
-//  else
-//  if evtTelaUsuarios = etuConsultar then
-//  begin
-    tabConfiguracoes.Id := DM_NFEDFE.cdsConfiguracoes.FieldByName('id').AsInteger;
-    tabUsuarios.ConfigSalva := tabConfiguracoes.Id;
-    DM_NFEDFE.Dao.Salvar(tabUsuarios, ['ConfigSalva']);
-    Close;
-  end;
 end;
 
 procedure TfoConsConfiguracoes.btnExcluirClick(Sender: TObject);

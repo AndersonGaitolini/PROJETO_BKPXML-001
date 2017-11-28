@@ -99,14 +99,12 @@ inherited foConsConfiguracoes: TfoConsConfiguracoes
       Top = 0
       Caption = 'btnInserir'
       ImageIndex = 0
-      OnClick = btnInserirClick
     end
     object btnAlterar: TToolButton
       Left = 97
       Top = 0
       Caption = 'btnAlterar'
       ImageIndex = 1
-      OnClick = btnAlterarClick
     end
     object btnExcluir: TToolButton
       Left = 194
@@ -120,7 +118,7 @@ inherited foConsConfiguracoes: TfoConsConfiguracoes
     Left = 556
     Top = 16
     Bitmap = {
-      494C010104000C00000110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00080110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

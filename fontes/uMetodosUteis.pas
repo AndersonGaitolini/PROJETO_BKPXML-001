@@ -87,7 +87,7 @@ Const
 implementation
 
 uses
-  uFoConfiguracao, uDMnfebkp;
+  uDMnfebkp;
 
 //  { Criptografa uma String }
 //  function fCripStr(pString : string) : string;

@@ -157,9 +157,6 @@
         <DCCReference Include="J:\fontes\uFoConfigPadrao.pas">
             <Form>foConfigPadrao</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoConfiguracao.pas">
-            <Form>foConfiguracao</Form>
-        </DCCReference>
         <DCCReference Include="J:\fontes\uRotinas.pas"/>
         <DCCReference Include="J:\fontes\uFoXMLSimulacao.pas">
             <Form>foXMLSimulcao</Form>
@@ -182,6 +179,10 @@
         <DCCReference Include="J:\fontes\uProgressThread.pas"/>
         <DCCReference Include="J:\fontes\uFoFiltroDetalhe.pas">
             <Form>foFiltroDetalahado</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="J:\fontes\uFoConexao.pas">
+            <Form>foConexao</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <None Include="ModelSupport_MaxXML\default.txaPackage"/>
@@ -880,13 +881,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

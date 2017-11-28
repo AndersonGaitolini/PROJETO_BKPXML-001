@@ -1,2 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<BorlandProject/>
+<BorlandProject>
+  <Transactions>
+    <Transaction>2017/11/28 15:32:55.035,J:\fontes\uFoConexao.pas=J:\fontes\uFoConfiguracao.pas</Transaction>
+    <Transaction>2017/11/28 15:32:55.052,J:\fontes\uFoConexao.dfm=J:\fontes\uFoConfiguracao.dfm</Transaction>
+  </Transactions>
+</BorlandProject>

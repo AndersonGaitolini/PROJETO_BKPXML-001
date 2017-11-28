@@ -29,11 +29,11 @@ uses
   FNFePathRetornoLido : string;
   FNFePathPDFSalvo  : string;
   {NFCe}
-  FNFCePathEnvio   : string;
-  FNFCePathProcessado : string;
-  FNFCePathRejeitado  : string;
+  FNFCePathEnvio       : string;
+  FNFCePathProcessado  : string;
+  FNFCePathRejeitado   : string;
   FNFCePathRetornoLido : string;
-  FNFCePathPDFSalvo : string;
+  FNFCePathPDFSalvo    : string;
 
   {NFSe}
   FNFSePathEnvio       : string;
@@ -43,7 +43,7 @@ uses
   FNFSePathPDFSalvo    : string;
 
 
-  public                          NFePathRejeitado
+  public
   [attPK]
   [TCampo('id', tcPK)]
   property Id           : integer read FId    write FId;
@@ -60,26 +60,26 @@ uses
   property NFePathRetornoLido  : string read FNFePathRetornoLido  write FNFePathRetornoLido;
   property NFePathPDFSalvo     : string read FNFePathPDFSalvo   write FNFePathPDFSalvo;
   {NFCe}
-  property : string read FNFCePathEnvio   write FNFCePathEnvio;
-  property : string read FNFCePathProcessado write FNFCePathProcessado;
-  property : string read FNFCePathRejeitado  write FNFCePathRejeitado;
-  property : string read FNFCePathRetornoLido write FNFCePathRetornoLido;
-  property : string read FNFCePathPDFSalvo write FNFCePathPDFSalvo;
+  property NFCePathEnvio      : string read FNFCePathEnvio   write FNFCePathEnvio;
+  property NFCePathProcessado : string read FNFCePathProcessado write FNFCePathProcessado;
+  property NFCePathRejeitado  : string read FNFCePathRejeitado  write FNFCePathRejeitado;
+  property NFCePathRetornoLido: string read FNFCePathRetornoLido write FNFCePathRetornoLido;
+  property NFCePathPDFSalvo   : string read FNFCePathPDFSalvo write FNFCePathPDFSalvo;
   {NFSe}
-  property NFSePathSend    : string read FNFSePathEnvio   write FNFSePathEnvio;
-  property NFSePathReturn  : string read FNFSePathProcessado write FNFSePathProcessado;
-  property PathRetEnvNFSe  : string read FNFSePathRejeitado  write FNFSePathRejeitado;
-  property PathRetCancNFSe : string read FNFSePathRetornoLido write FNFSePathRetornoLido;
-  property PathRetInutNFSe : string read FNFSePathPDFSalvo write FNFSePathPDFSalvo;
+  property NFSePathEnvio      : string read FNFSePathEnvio       write FNFSePathEnvio;
+  property NFSePathProcessado : string read FNFSePathProcessado  write FNFSePathProcessado;
+  property NFSePathRejeitado  : string read FNFSePathRejeitado   write FNFSePathRejeitado;
+  property NFSePathRetornoLido: string read FNFSePathRetornoLido write FNFSePathRetornoLido;
+  property NFSePathPDFSalvo   : string read FNFSePathPDFSalvo    write FNFSePathPDFSalvo;
   end;
 
  type
-   TDaoConfiguracoes= class(TObject)
-   public
+  TDaoConfiguracoes= class(TObject)
+  public
      function fInserirConfiguracoes(pTab: TConfiguracoes): Integer;
      function fSalvarConfiguracoes (pTab: TConfiguracoes): Boolean;
      function fExcluirConfiguracoes(pTab : TConfiguracoes): Boolean;
-     function fCarregaConfiguracoes (var pTab: TConfiguracoes; aCampos : array of string): TDataSet;
+     function fCarregaConfiguracoes (var pTab: TConfiguracoes; aCampos : array of string; pPodeCadastrar: boolean=false): TDataSet;
      function fSelectAllConfiguracoes(pTab: TConfiguracoes): Boolean;
      function fBuscaIDConfig(pTab: TConfiguracoes; pConfigDescri: string): Integer;
      function ConsultaSQLConfiguracoes(pTab : TConfiguracoes; aCampos : array of string):TDataSet;
@@ -95,6 +95,9 @@ var
   tabConfiguracoes : TConfiguracoes;
   daoConfiguracoes : TDaoConfiguracoes;
 implementation
+
+uses
+  uFoConsConfiguracao, uFoConfiguracao;
 
 { TDaoLogin }
 function TDaoConfiguracoes.fSalvarConfiguracoes(pTab: TConfiguracoes): Boolean;
@@ -166,7 +169,7 @@ begin
   end;
 end;
 
-function TDaoConfiguracoes.fCarregaConfiguracoes(var pTab: TConfiguracoes; aCampos : array of string): TDataSet;
+function TDaoConfiguracoes.fCarregaConfiguracoes(var pTab: TConfiguracoes; aCampos : array of string; pPodeCadastrar: boolean=false): TDataSet;
 var DatSet : TDataSet;
 begin
   DatSet := TDataSet.Create(nil);
@@ -185,44 +188,48 @@ begin
         FSenhaBD := DatSet.FieldByName('SenhaBD').AsString;
         FPathBD := DatSet.FieldByName('PathBD').AsString;
         FNameBD := DatSet.FieldByName('NameBD').AsString;
-        FNFePathEnvio := DatSet.FieldByName('NFePathSend').AsString;
-        FNFePathProcessado := DatSet.FieldByName('NFePathReturn').AsString;
-        FNFePathPDFSalvo := DatSet.FieldByName('PathRetEnvNFe').AsString;
-        FNFePathRejeitado := DatSet.FieldByName('PathRetCancNFe').AsString;
-        FNFePathRetornoLido := DatSet.FieldByName('PathRetInutNFe').AsString;
-        FExtAutNFe := DatSet.FieldByName('ExtAutNFe').AsString;
-        FExtCancNFe := DatSet.FieldByName('ExtCancNFe').AsString;
-        FExtInutNFe := DatSet.FieldByName('ExtInutNFe').AsString;
-        FNFCePathEnvio := DatSet.FieldByName('NFCePathSend').AsString;
-        FNFCePathProcessado := DatSet.FieldByName('NFCePathReturn').AsString;
-        FNFCePathRejeitado := DatSet.FieldByName('PathRetEnvNFCe').AsString;
-        FNFCePathRetornoLido := DatSet.FieldByName('PathRetCancNFCe').AsString;
-        FNFCePathPDFSalvo := DatSet.FieldByName('PathRetInutNFCe').AsString;
-        FExtAutNFCe := DatSet.FieldByName('ExtAutNFCe').AsString;
-        FExtCancNFCe := DatSet.FieldByName('ExtCancNFCe').AsString;
-        FExtInutNFCe := DatSet.FieldByName('ExtInutNFCe').AsString;
-        FNFSePathEnvio := DatSet.FieldByName('NFSePathSend').AsString;
-        FNFSePathProcessado := DatSet.FieldByName('NFSePathReturn').AsString;
-        FNFSePathRejeitado := DatSet.FieldByName('PathRetEnvNFSe').AsString;
-        FNFSePathRetornoLido := DatSet.FieldByName('PathRetCancNFSe').AsString;
-        FNFSePathPDFSalvo := DatSet.FieldByName('PathRetInutNFSe').AsString;
-        FExtAutNFSe := DatSet.FieldByName('ExtAutNFSe').AsString;
-        FExtCancNFSe := DatSet.FieldByName('ExtCancNFSe').AsString;
-        FExtInutNFSe := DatSet.FieldByName('ExtInutNFSe').AsString;
         FDescriConfig := DatSet.FieldByName('DescriConfig').AsString;
         FIDusuario := DatSet.FieldByName('IDusuario').AsInteger;
 
-        result := DatSet;
+        FNFePathEnvio       := DatSet.FieldByName('NFePathEnvio').AsString;
+        FNFePathProcessado  := DatSet.FieldByName('NFePathProcessado').AsString;
+        FNFePathPDFSalvo    := DatSet.FieldByName('NFePathRejeitado').AsString;
+        FNFePathRejeitado   := DatSet.FieldByName('NFePathRetornoLido').AsString;
+        FNFePathRetornoLido := DatSet.FieldByName('NFePathPDFSalvo').AsString;
+
+        FNFCePathEnvio       := DatSet.FieldByName('NFCePathEnvio').AsString;
+        FNFCePathProcessado  := DatSet.FieldByName('NFCePathProcessado').AsString;
+        FNFCePathRejeitado   := DatSet.FieldByName('NFCePathRejeitado').AsString;
+        FNFCePathRetornoLido := DatSet.FieldByName('NFCePathRetornoLido').AsString;
+        FNFCePathPDFSalvo    := DatSet.FieldByName('NFCePathPDFSalvo').AsString;
+
+        FNFSePathEnvio       := DatSet.FieldByName('NFSePathEnvio').AsString;
+        FNFSePathProcessado  := DatSet.FieldByName('NFSePathProcessado').AsString;
+        FNFSePathRejeitado   := DatSet.FieldByName('NFSePathRejeitado').AsString;
+        FNFSePathRetornoLido := DatSet.FieldByName('NFSePathRetornoLido').AsString;
+        FNFSePathPDFSalvo    := DatSet.FieldByName('NFSePathPDFSalvo').AsString;
       end
       else
       begin
-        ShowMessage('Registro não encontrado!');
-        result := nil;
-        Exit;
+       if pPodeCadastrar then
+       if  MessageDlg('Nenhuma há configuração para este usuário'+#10#13+
+                   'Deseja cadastrar agora?',mtInformation, mbYesNo,0) = mrYes then
+       begin
+          foConsConfiguracoes := TfoConsConfiguracoes.Create(Application);
+          try
+            tabConfiguracoes := pTab;
+            foConsConfiguracoes.ShowModal;
+          finally
+            DatSet := Dao.ConsultaTab(pTab, aCampos);
+            foConsConfiguracoes.Free;
+          end;
+       end;
       end;
+
+      result := DatSet;
     end;
   finally
-   DatSet.Free;
+
   end;
 
 end;
@@ -248,7 +255,7 @@ begin
     end;
   end;
   finally
-    ptab.Free;
+
   end;
 end;
 

@@ -97,7 +97,7 @@ var
 implementation
 
 uses
-  uFoConsConfiguracao, uFoConfiguracao;
+  uFoConsConfiguracao;
 
 { TDaoLogin }
 function TDaoConfiguracoes.fSalvarConfiguracoes(pTab: TConfiguracoes): Boolean;

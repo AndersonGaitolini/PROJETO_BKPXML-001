@@ -34,10 +34,7 @@ type
     pnlMenu: TPanel;
     jtobMenuConfig: TJvToolBar;
     btnAplicar: TBitBtn;
-    edConfigName: TLabeledEdit;
     btnIniFile: TToolButton;
-    edServerName: TLabeledEdit;
-    edServerPort: TLabeledEdit;
     edVendorHome: TLabeledEdit;
     edSQLDialect: TLabeledEdit;
     edVendorLib: TLabeledEdit;
@@ -48,11 +45,17 @@ type
     cbbTipoConexao: TComboBox;
     Label1: TLabel;
     edCharacterSet: TLabeledEdit;
-    edProtocol: TLabeledEdit;
     btnLimpa: TToolButton;
     pmHost: TPopupMenu;
     mmNomedoPC: TMenuItem;
     mmIPLocal: TMenuItem;
+    btnConectar: TButton;
+    lbStatusConn: TLabel;
+    pnlRemote: TPanel;
+    edProtocol: TLabeledEdit;
+    edServerPort: TLabeledEdit;
+    edServerName: TLabeledEdit;
+    lbRemote: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
@@ -68,6 +71,7 @@ type
     procedure btn2Click(Sender: TObject);
     procedure mmIPLocalClick(Sender: TObject);
     procedure mmNomedoPCClick(Sender: TObject);
+    procedure btnConectarClick(Sender: TObject);
   private
     { Private declarations }
     wRemote :boolean;
@@ -111,6 +115,19 @@ begin
     pSalvarParametros;
     ModalResult := mrOk;
   end;
+end;
+
+procedure TfoConfiguracao.btnConectarClick(Sender: TObject);
+begin
+  pSalvarParametros;
+
+  if DM_NFEDFE.fConexaoBD then
+    lbStatusConn.Caption := 'Conectado'
+  else
+    lbStatusConn.Caption := 'Desconectado';
+
+  btnConectar.Enabled := not DM_NFEDFE.Conectado;
+
 end;
 
 procedure TfoConfiguracao.btnOKClick(Sender: TObject);
@@ -240,15 +257,21 @@ end;
 procedure TfoConfiguracao.FormShow(Sender: TObject);
 begin
   pLerParametros;
-  pLocalRemote;
+//  pLocalRemote;
   pgcConfig.TabIndex := 0;
+
+  if DM_NFEDFE.Conectado then
+    lbStatusConn.Caption := 'Conectado'
+  else
+    lbStatusConn.Caption := 'Desconectado';
+
+  btnConectar.Enabled := not DM_NFEDFE.Conectado;
 end;
 
 procedure TfoConfiguracao.pLerParametros;
 begin
   if FileExists(ChangeFileExt(Application.ExeName, '.INI')) then
   begin
-    edConfigName.Text   := getINI(fArqIni, 'MAXXML', 'ConfigName', '');
     edUsuarioBD.Text    := getINI(fArqIni, 'MAXXML', 'User_Name', '');
     edSenhaBD.Text      := getINI(fArqIni, 'MAXXML', 'Password', '');
     edDataBase.Text     := getINI(fArqIni, 'MAXXML', 'Database', '');
@@ -261,8 +284,11 @@ begin
     edServerPort.Text   := getINI(fArqIni, 'MAXXML', 'Port', '');
     edCharacterSet.Text := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
     edProtocol.Text     := getINI(fArqIni, 'MAXXML', 'Protocol', '');
-//    if (getINI(fArqIni,   'MAXXML', 'Conexao', '') = 'Remote') then
-      cbbTipoConexao.ItemIndex := cbbTipoConexao.Items.IndexOf(getINI(fArqIni,   'MAXXML', 'Conexao', ''));
+
+    if (getINI(fArqIni,   'MAXXML', 'Conexao', '') = 'Remote') then
+      cbbTipoConexao.ItemIndex := 1
+    else
+      cbbTipoConexao.ItemIndex := 0;
   end;
 end;
 
@@ -272,6 +298,26 @@ begin
   edServerName.Enabled := wRemote;
   edProtocol.Enabled   := wRemote;
   edServerPort.Enabled := wRemote;
+
+  if cbbTipoConexao.ItemIndex = 1 then
+  begin
+    edServerName.Text   := fNomePC;
+    edServerPort.Text   := '3050';
+    edProtocol.Text     := 'TCPIP';
+    edServerName.Enabled := true;
+    edServerPort.Enabled := true;
+    edProtocol.Enabled   := true;
+  end
+  else
+  if cbbTipoConexao.ItemIndex = 0 then
+  begin
+    edServerName.Text   := '';
+    edServerPort.Text   := '';
+    edProtocol.Text     := 'LOCAL';
+    edServerName.Enabled := false;
+    edServerPort.Enabled := false;
+    edProtocol.Enabled := false;
+  end
 end;
 
 procedure TfoConfiguracao.pPreemcheCampos;
@@ -283,13 +329,29 @@ begin
   edSQLDialect.Text   := '3';
   edVendorLib.Text    := 'fbembed.dll';
   edVendorHome.Text   := GetCurrentDir+ '\fb\';
-  edDriverName.Text   := 'FBembed';
-  edServerName.Text   := fNomePC;
-  edServerPort.Text   := '3050';
-  edProtocol.Text     := 'TCPIP';
-  cbbTipoConexao.ItemIndex := 0;
+  edDriverName.Text   := 'FBEmbed';
+
   edCharacterSet.Text := 'WIN1252';
   cbEmbedded.Checked := True;
+  if cbbTipoConexao.ItemIndex = 1 then
+  begin
+    edServerName.Text   := fNomePC;
+    edServerPort.Text   := '3050';
+    edProtocol.Text     := 'TCPIP';
+    edServerName.Enabled := true;
+    edServerPort.Enabled := true;
+    edProtocol.Enabled   := true;
+  end
+  else
+  if cbbTipoConexao.ItemIndex = 0 then
+  begin
+    edServerName.Text   := '';
+    edServerPort.Text   := '';
+    edProtocol.Text     := 'LOCAL';
+    edServerName.Enabled := false;
+    edServerPort.Enabled := false;
+    edProtocol.Enabled := false;
+  end
 end;
 
 function TfoConfiguracao.LimpaCampos(pForm: TForm): boolean;
@@ -359,8 +421,7 @@ begin
     DeleteFile(wIniFile);
   end;
 
-    setINI(wIniFile, 'MAXXML', 'ConfigName', Trim(edConfigName.Text));
-    setINI(wIniFile, 'MAXXML', 'User_Name',    Trim(edUsuarioBD.Text   ));
+    setINI(wIniFile, 'MAXXML', 'User_Name',   Trim(edUsuarioBD.Text   ));
     setINI(wIniFile, 'MAXXML', 'Password',   Trim(edSenhaBD.Text     ));
     setINI(wIniFile, 'MAXXML', 'Database',   Trim(edDataBase.Text    ));
     setINI(wIniFile, 'MAXXML', 'SQLDialect', Trim(edSQLDialect.Text  ));
@@ -381,7 +442,14 @@ begin
       setINI(wIniFile, 'MAXXML', 'Port',     Trim(edServerPort.Text  ));
       setINI(wIniFile, 'MAXXML', 'Server',   Trim(edServerName.Text  ));
       setINI(wIniFile, 'MAXXML', 'Protocol', Trim(edProtocol.Text));
-    end;
+    end
+    else
+    if cbbTipoConexao.ItemIndex = 0 then
+    begin
+      setINI(wIniFile, 'MAXXML', 'Port'    ,'local');
+      setINI(wIniFile, 'MAXXML', 'Server  ','' );
+      setINI(wIniFile, 'MAXXML', 'Protocol','');
+    end
 end;
 
 function TfoConfiguracao.validacampos(pForm : TForm): boolean;

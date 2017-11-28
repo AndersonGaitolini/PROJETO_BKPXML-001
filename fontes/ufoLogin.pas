@@ -41,9 +41,9 @@ var
 
 //  wTabConect : TT_conectado;
 implementation
-
+
 uses
-  uFoConfiguracao;
+  uFoConexao;
 
 
 
@@ -60,7 +60,7 @@ var wSenhaAtual: string;
     wDataSet : TDataSet;
 
 begin
-  if not DM_NFEDFE.Conectado then
+  if not ConecxaoBD.Conectado then
   begin
     ShowMessage('Verifique a conexão com a base de dados.');
     Exit;
@@ -129,7 +129,7 @@ procedure TfoLogin.FormCreate(Sender: TObject);
 begin
   statMsg.Panels[0].Text := 'Base de dados:';
 
-  if DM_NFEDFE.Conectado then
+  if ConecxaoBD.Conectado then
     statusCon := 'Conectada'
   else
     statusCon := 'Desconectada';
@@ -147,18 +147,18 @@ end;
 procedure TfoLogin.mmConexoBDClick(Sender: TObject);
 begin
   inherited;
-  foConfiguracao := TfoConfiguracao.Create(Application);
+  foConexao := TfoConexao.Create(Application);
   try
-    foConfiguracao.ShowModal;
+    foConexao.ShowModal;
 
-    if DM_NFEDFE.fConexaoBD then
+    if ConecxaoBD.Conectado then
       statusCon := 'Conectado!'
     else
       statusCon := 'Desconectado!';
 
     statMsg.Panels[1].Text := statusCon;
   finally
-    FreeAndNil(foConfiguracao);
+    FreeAndNil(foConexao);
   end;
 end;
 

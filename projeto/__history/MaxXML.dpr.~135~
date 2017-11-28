@@ -28,7 +28,6 @@ uses
   uFoConsConfiguracao in 'J:\fontes\uFoConsConfiguracao.pas' {foConsConfiguracoes},
   ConfigPadrao in 'J:\fontes\classes\ConfigPadrao.pas',
   uFoConfigPadrao in 'J:\fontes\uFoConfigPadrao.pas' {foConfigPadrao},
-  uFoConfiguracao in 'J:\fontes\uFoConfiguracao.pas' {foConfiguracao},
   uRotinas in 'J:\fontes\uRotinas.pas',
   uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
   uFoCadUsuario in 'J:\fontes\uFoCadUsuario.pas' {foCadUsuario},
@@ -37,7 +36,8 @@ uses
   ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
   uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
   uProgressThread in 'J:\fontes\uProgressThread.pas',
-  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado};
+  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado},
+  uFoConexao in 'J:\fontes\uFoConexao.pas' {foConexao};
 
 var
  ShowResult : Byte;
@@ -52,6 +52,10 @@ var
   cXMLProcessado = 2;
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
+
+ label
+   GotoLogin, GotoTerminate;
+
 {$R *.res}
 begin
   Application.Initialize;
@@ -60,37 +64,28 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  wIniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-  if not (FileExists(wIniFile)) then
-  begin
-    if (ParamCount = 0) then
-    begin
-//     Application.CreateForm(TfoConfiguracao, foConfiguracao);
-//     ShowResult := foConfiguracao.ShowModal;
-//     Application.Run;
-//     if ShowResult = mrOk then
-//       DM_NFEDFE.fConexaoBD
-//     else
-//       Application.Terminate;
+//  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
+//    if (FileExists(DM_NFEDFE.IniFile)) then
 
+    if not (ConecxaoBD.Conectado) then
+    begin
+      goto GotoLogin;
     end
     else
-      Application.Terminate;
-  end
-  else
-    DM_NFEDFE.fConexaoBD;
+    if (ParamCount = 0) then
+    begin
+      goto GotoLogin;
+    end
+    else
+      goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
-    if not DM_NFEDFE.Conectado then
-    begin
-      Application.Terminate;
-      exit;
-    end;
-
+    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
+
 
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
@@ -103,7 +98,7 @@ begin
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
       tabUsuarios := SoapUsuario;
-      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
+//      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end
@@ -118,7 +113,7 @@ begin
     for I := 0 to ParamCount do
       uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: '+ ParamStr(i),true);
 
-    if not DM_NFEDFE.Conectado then
+    if not ConecxaoBD.Conectado then
     begin
       Application.Terminate;
       exit;
@@ -218,7 +213,7 @@ begin
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;
    end;
-
+   GotoTerminate:
    Application.Terminate;
   end;
 
