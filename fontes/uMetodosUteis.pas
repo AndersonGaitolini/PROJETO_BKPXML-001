@@ -5,7 +5,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock;
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock, WinSvc;
 
 
 Const
@@ -20,6 +20,15 @@ Const
   SecondsInMinute = 60;
   HoursInDay = 24;
   MinutesInHour = 60;
+
+ clProcessado = clBlack;
+ clEnvAguard = clGreen;
+ clCancAguard = clPurple;
+ clCancProcessado = clRed;
+ clDenegada = clSilver;
+ clInutilizada = clFuchsia;
+ clXmlDefeito = clBlue;
+ clNaoIdent = clNavy;
 
 
   type
@@ -61,10 +70,13 @@ Const
 
   function fOpenPath(var pInitialDir: string; pTitle : string = ''): Boolean;
   function fSaveFile(pInitialDir, pFileNAme, pTitle: String; pFilter: array of string): TSaveDialog;
+
+  function fCloseFile(pSource: string): boolean;
   Procedure pZapFiles(pMasc:string);
   procedure pCopyFiles(pFileSource, pFileDest:String; pListErro:Boolean);
   procedure pSalveName(pFieldName, pExt: string; var wFileName: string);
   procedure pGetDirList(pDirectory: String; var pListaDir: TStringList; SubPastas: Boolean);
+
 
   function fMascaraCNPJ(pString: string): string;
   function fMascaraDoc(pSTR: string; pDoc : TTipoDocumento): string;
@@ -81,6 +93,8 @@ Const
 //  function fDesCriptStr(pString : string) : string;
 //  function fCripStr(pString : string) : string;
 
+  function fServiceStop(sMachine,sService : string ) : boolean;
+  function fServiceStart(sMachine, sService : string ) : boolean;
   procedure pAppTerminate;
 
   var
@@ -812,6 +826,22 @@ begin
     Result := #0;
 end;
 
+function fCloseFile(pSource: string): boolean;
+var wHandle : THandle;
+begin
+  Result := false;
+  try
+    Result := FileExists(pSource);
+    if Result then
+    begin
+      wHandle := FindWindow( 0,pWideChar(pSource));
+      FileClose(wHandle);
+      Result := True;
+    end;
+  except //on E: Exception do
+  end;
+end;
+
 function fSaveFile(pInitialDir, pFileName, pTitle: String; pFilter: array of string): TSaveDialog;
 var  wSaveXML : TSaveDialog;
      I : Integer;
@@ -955,7 +985,7 @@ begin
 end;
 
 procedure pAtivaCamposForm(pForm: TForm; pEnable: boolean; pLista : array of TTipoClass);
-var i,j : integer;
+var i : integer;
 begin
   if not Assigned(pForm) then
     exit;
@@ -980,12 +1010,18 @@ function fPingIP(pHost : String) :boolean;
 var
   IdICMPClient: TIdICMPClient;
 begin
+  Result := False;
+  IdICMPClient := TIdICMPClient.Create(nil);
   try
-    IdICMPClient := TIdICMPClient.Create(nil);
-    IdICMPClient.Host := pHost;
-    IdICMPClient.ReceiveTimeout := 500;
-    IdICMPClient.Ping;
-    Result := (IdICMPClient.ReplyStatus.BytesReceived > 0);
+    try
+
+      IdICMPClient.Host := pHost;
+      IdICMPClient.ReceiveTimeout := 500;
+      IdICMPClient.Ping;
+      Result := (IdICMPClient.ReplyStatus.BytesReceived > 0);
+    except on E: Exception do
+
+    end;
   finally
     IdICMPClient.Free;
   end
@@ -1186,5 +1222,85 @@ class function TConvert<T>.EnumConvertStr(const eEnum:T): String;
  end;
 
 
+function fServiceStart(sMachine, sService : string ) : boolean;
+var
+  schm,
+  schs   : SC_Handle;
+  ss     : TServiceStatus;
+  psTemp : PChar;
+  dwChkP : DWord;
+begin
+  ss.dwCurrentState := 0; //-1;
+  schm := OpenSCManager(PChar(sMachine),Nil, SC_MANAGER_CONNECT);
+  if(schm > 0)then
+  begin
+    schs := OpenService(schm, PChar(sService), SERVICE_START or SERVICE_QUERY_STATUS);
+    if(schs > 0)then
+    begin
+      psTemp := Nil;
+      if(StartService(schs, 0, psTemp))then
+      begin
+        if(QueryServiceStatus(schs, ss))then
+        begin
+          while(SERVICE_RUNNING <> ss.dwCurrentState)do
+          begin
+            dwChkP := ss.dwCheckPoint;
+            Sleep(ss.dwWaitHint);
+            if(not QueryServiceStatus(schs, ss))then
+            begin
+              break;
+            end;
+            if(ss.dwCheckPoint <  dwChkP)then
+            begin
+              break;
+            end;
+          end;
+        end;
+      end;
+      CloseServiceHandle(schs);
+   end;
+    CloseServiceHandle(schm);
+  end;
+  Result := SERVICE_RUNNING = ss.dwCurrentState;
+end;
+
+function fServiceStop(sMachine,sService : string ) : boolean;
+var
+schm, schs   : SC_Handle;
+ss : TServiceStatus;
+dwChkP : DWord;
+begin
+  schm := OpenSCManager(PChar(sMachine),Nil, SC_MANAGER_CONNECT);
+  if(schm > 0)then
+  begin
+    schs := OpenService(schm,PChar(sService), SERVICE_STOP or SERVICE_QUERY_STATUS);
+    if(schs > 0)then
+    begin
+      if(ControlService(schs, SERVICE_CONTROL_STOP, ss))then
+      begin
+        if(QueryServiceStatus(schs,ss))then
+        begin
+          while(SERVICE_STOPPED <> ss.dwCurrentState)do
+          begin
+              dwChkP := ss.dwCheckPoint;
+              Sleep(ss.dwWaitHint);
+              if(not QueryServiceStatus(schs, ss))then
+              begin
+                break;
+              end;
+
+              if(ss.dwCheckPoint < dwChkP)then
+              begin
+                break;
+              end;
+          end;
+        end;
+      end;
+      CloseServiceHandle(schs);
+    end;
+    CloseServiceHandle(schm);
+  end;
+  Result := SERVICE_STOPPED = ss.dwCurrentState;
+end;
 end.
 

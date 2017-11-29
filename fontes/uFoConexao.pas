@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.ComCtrls, JvBaseDlg, JvSelectDirectory,
+  Vcl.ComCtrls, JvBaseDlg, JvSelectDirectory,System.IniFiles,
   uMetodosUteis,
   Configuracoes,
   Vcl.ToolWin,
@@ -41,6 +41,9 @@ type
     edServerName: TLabeledEdit;
     btnPing: TButton;
     btnSalvaIni: TToolButton;
+    cbbPerfilCon: TComboBox;
+    lbPerfilCon: TLabel;
+    lbTipoCon: TLabel;
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -58,6 +61,7 @@ type
     wRemote :boolean;
     function validacampos(pForm : TForm): boolean;
     function LimpaCampos(pForm : TForm): boolean;
+    procedure pMontaListaPerfil;
     procedure pSalvarParametros;
     procedure pLerParametros;
     procedure pPreemcheCampos;
@@ -92,6 +96,11 @@ procedure TfoConexao.pConLocal;
 begin
   with ConecxaoBD do
   begin
+    if fServiceStart(fNomePC,'FirebirdServerDefaultInstance') then
+      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
+                  'Alt+ R e digite '+ QuotedStr('services.msc'));
+    TipoCon := tcLocal;
+
     UserName     := trim(LowerCase(edUsuarioBD.Text));
     Password     := trim(LowerCase(edSenhaBD.Text));
     DataBase     := trim(LowerCase(edDataBase.Text));
@@ -99,7 +108,7 @@ begin
     DriverID     := 'FB';
     CharacterSet := 'WIN1252';
     Protocol     := 'Local';
-    VendorLib    := 'FBclient.dll'
+    VendorLib    := 'fbclient.dll'
   end;
 end;
 
@@ -107,6 +116,11 @@ procedure TfoConexao.pConLocalEmbedded;
 begin
   with ConecxaoBD do
   begin
+    if fServiceStop(fNomePC,'FirebirdServerDefaultInstance') then
+      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser parado!'+#13#13+
+                  'Alt+ R e digite '+ QuotedStr('services.msc'));
+
+    TipoCon := tcLocalEmbed;
     UserName     := trim(LowerCase(edUsuarioBD.Text));
     Password     := trim(LowerCase(edSenhaBD.Text));
     DataBase     := trim(LowerCase(edDataBase.Text));
@@ -115,6 +129,7 @@ begin
     CharacterSet := 'WIN1252';
     VendorLib    := 'fbembed.dll';
     VendorHome   := ExtractFileDir(Application.ExeName)+'\fb\';
+    Protocol     := 'Local';
     Embedded     := true;
   end;
 end;
@@ -123,16 +138,20 @@ procedure TfoConexao.pConRemote;
 begin
   with ConecxaoBD do
   begin
+    if fServiceStart(fNomePC,'FirebirdServerDefaultInstance') then
+      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
+                  'Alt+ R e digite '+ QuotedStr('services.msc'));
+    TipoCon      := tcRemote;
     UserName     := trim(LowerCase(edUsuarioBD.Text));
     Password     := trim(LowerCase(edSenhaBD.Text));
     DataBase     := trim(LowerCase(edDataBase.Text));
     SQLDialect   := '3';
-    DriverID     := 'FBEmbed';
+    DriverID     := 'FB';
+    VendorLib    := 'fbclient.dll';
     CharacterSet := 'WIN1252';
     Server       := trim(UpperCase(edServerName.Text));
     Protocol     := 'TCPIP';
     Port         := '3050';
-
   end;
 end;
 
@@ -142,8 +161,8 @@ begin
 
   case cbbTipoCon.ItemIndex of
    0: pConLocal;
-   1: ConecxaoBD.TipoCon := tcLocalEmbed;
-   2: ConecxaoBD.TipoCon := tcRemote;
+   1: pConLocalEmbedded;
+   2: pConRemote;
   end;
 
   ConecxaoBD.pWriteParams;
@@ -152,7 +171,9 @@ begin
   if ConecxaoBD.Conectado then
     stat1.Panels[1].Text := 'Conectado!'
   else
-    stat1.Panels[1].Text := 'Desconectado!'
+    stat1.Panels[1].Text := 'Desconectado!';
+
+//  btnConectar1.Enabled := not ConecxaoBD.Conectado;
 end;
 
 procedure TfoConexao.btnFindBDClick(Sender: TObject);
@@ -179,13 +200,11 @@ begin
   wHost := Trim(UpperCase(edServerName.Text));
   if fPingIP(wHost) then
   begin
-    btnConectar1.Enabled := true;
     stat1.Panels[1].Text := 'Ping Ok!';
   end
   else
   begin
     stat1.Panels[1].Text := 'Falha no Ping!';
-    btnConectar1.Enabled := false;
   end;
 
 end;
@@ -197,7 +216,8 @@ end;
 
 procedure TfoConexao.cbbTipoConChange(Sender: TObject);
 begin
-  edServerName.Visible := cbbTipoCon.ItemIndex = 1;
+  edServerName.Visible := cbbTipoCon.ItemIndex = 2;
+  btnPing.Visible := cbbTipoCon.ItemIndex = 2;
   edServerName.Text := Trim(UpperCase(fNomePC));
 end;
 
@@ -287,13 +307,23 @@ procedure TfoConexao.FormShow(Sender: TObject);
 begin
   pLerParametros;
   pgcConfig.TabIndex := 0;
+  if (ConecxaoBD.Protocol = 'TCPIP') then
+    cbbTipoCon.ItemIndex := 2
+  else
+  if (ConecxaoBD.Protocol= 'LOCAL') and (ConecxaoBD.Embedded) then
+    cbbTipoCon.ItemIndex := 1
+  else
+    cbbTipoCon.ItemIndex := 0;
+
+  edServerName.Visible := cbbTipoCon.ItemIndex = 2;
+  btnPing.Visible := cbbTipoCon.ItemIndex = 2;
 
   if ConecxaoBD.Conectado then
     stat1.Panels[1].Text := 'Conectado!'
   else
     stat1.Panels[1].Text := 'Desconectado!';
 
-  btnConectar1.Enabled := not ConecxaoBD.Conectado;
+//  btnConectar1.Enabled := not ConecxaoBD.Conectado;
 end;
 
 procedure TfoConexao.pLerParametros;
@@ -309,12 +339,28 @@ begin
 
 end;
 
+procedure TfoConexao.pMontaListaPerfil;
+var wINI : TIniFile;
+begin
+  wINI := TIniFile.Create(ConecxaoBD.IniFile);
+  try
+    cbbPerfilCon.Clear;
+  finally
+    FreeAndNil(wINI);
+  end;
+end;
+
 procedure TfoConexao.pPreemcheCampos;
 begin
   edUsuarioBD.Text    := 'sysdba';
   edSenhaBD.Text      := 'masterkey';
-  edDataBase.Text     := GetCurrentDir+ '\BACKUPXML.FDB';
-  edServerName.Text   := fNomePC;
+
+  if cbbTipoCon.ItemIndex = 2 then
+    edDataBase.Text :=  '{Nome / IP do servidor}..\BACKUPXML.FDB' //'\\'+fNomePC+ '\..\MAXXML\BACKUPXML.FDB'
+  else
+    edDataBase.Text := Application.GetNamePath+ '\BACKUPXML.FDB';
+
+  edServerName.Text   := '{Nome / IP do servidor}'; //fNomePC;
 
 end;
 
@@ -364,14 +410,13 @@ var
  wHandle : THandle;
 begin
   wIniFile := ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-  wIniFile := GetCurrentDir +'\'+wIniFile;
-
-  if FileExists(wIniFile) then
-  begin
-    wHandle := FindWindow( 0,pWideChar(wIniFile));
-    CloseHandle(wHandle);
-    DeleteFile(wIniFile);
-  end;
+  wIniFile := {GetCurrentDir}Application.GetNamePath +'\'+wIniFile;
+//  if FileExists(wIniFile) then
+//  begin
+//    wHandle := FindWindow( 0,pWideChar(wIniFile));
+//    CloseHandle(wHandle);
+//    DeleteFile(wIniFile);
+//  end;
 
     setINI(wIniFile, 'MAXXML', 'User_Name',   Trim(edUsuarioBD.Text   ));
     setINI(wIniFile, 'MAXXML', 'Password',   Trim(edSenhaBD.Text     ));

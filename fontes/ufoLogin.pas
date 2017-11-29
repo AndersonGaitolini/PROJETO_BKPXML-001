@@ -130,7 +130,7 @@ begin
   statMsg.Panels[0].Text := 'Base de dados:';
 
   if ConecxaoBD.Conectado then
-    statusCon := 'Conectada'
+    statusCon := 'Conectado!'
   else
     statusCon := 'Desconectada';
 

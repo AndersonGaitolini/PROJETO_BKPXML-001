@@ -1,40 +1,40 @@
 inherited foFiltroDetalahado: TfoFiltroDetalahado
   BorderIcons = [biSystemMenu]
   Caption = 'Filtro detalhado - MAXXML'
-  ClientHeight = 313
+  ClientHeight = 336
   ClientWidth = 377
   Position = poDesktopCenter
   OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 393
-  ExplicitHeight = 352
+  ExplicitHeight = 375
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
     Top = 0
     Width = 377
-    Height = 313
+    Height = 336
     Align = alClient
     TabOrder = 0
-    ExplicitTop = 1
+    ExplicitLeft = -1
     object lbDataIni: TLabel
-      Left = 49
-      Top = 194
+      Left = 48
+      Top = 198
       Width = 94
       Height = 13
       Caption = 'Data emiss'#227'o Inicial'
     end
     object lbDataFIm: TLabel
-      Left = 198
-      Top = 194
+      Left = 197
+      Top = 198
       Width = 89
       Height = 13
       Caption = 'Data emiss'#227'o Final'
     end
     object lbA: TLabel
-      Left = 181
-      Top = 218
+      Left = 180
+      Top = 222
       Width = 7
       Height = 13
       Caption = 'A'
@@ -58,6 +58,20 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+    end
+    object lbStatusIni: TLabel
+      Left = 201
+      Top = 111
+      Width = 31
+      Height = 13
+      Caption = 'Status'
+    end
+    object lbOrdena: TLabel
+      Left = 162
+      Top = 243
+      Width = 53
+      Height = 13
+      Caption = 'Ordena'#231#227'o'
     end
     object edIdf_DocIni: TLabeledEdit
       Left = 49
@@ -93,8 +107,8 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
       Text = '0.000.000.0001-00'
     end
     object dtpDataFiltroINI: TDateTimePicker
-      Left = 49
-      Top = 211
+      Left = 48
+      Top = 215
       Width = 121
       Height = 20
       Date = 43006.636531076380000000
@@ -103,8 +117,8 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
       OnExit = dtpDataFiltroINIExit
     end
     object dtpDataFiltroFin: TDateTimePicker
-      Left = 198
-      Top = 213
+      Left = 197
+      Top = 217
       Width = 121
       Height = 20
       Date = 43006.636531076380000000
@@ -113,7 +127,7 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
     end
     object btnOK: TBitBtn
       Left = 151
-      Top = 247
+      Top = 287
       Width = 75
       Height = 25
       Caption = 'OK'
@@ -137,6 +151,7 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
         0000}
       NumGlyphs = 2
       TabOrder = 7
+      OnClick = btnOKClick
     end
     object edIdf_DocFin: TLabeledEdit
       Left = 198
@@ -150,36 +165,60 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
       Text = '0001'
     end
     object rgFiltroData: TRadioGroup
-      Left = 49
-      Top = 153
+      Left = 48
+      Top = 157
       Width = 270
       Height = 39
       Caption = 'Data'
       TabOrder = 4
     end
     object rbRecebimento: TRadioButton
-      Left = 215
-      Top = 165
-      Width = 86
+      Left = 225
+      Top = 169
+      Width = 81
       Height = 17
       Caption = 'Recebimento'
       TabOrder = 8
     end
     object rbAlteracao: TRadioButton
-      Left = 134
-      Top = 165
+      Left = 133
+      Top = 169
       Width = 86
       Height = 17
       Caption = 'Altera'#231#227'o'
       TabOrder = 9
     end
     object rbEmissao: TRadioButton
-      Left = 68
-      Top = 165
+      Left = 67
+      Top = 169
       Width = 60
       Height = 17
       Caption = 'Emissao'
       TabOrder = 10
+    end
+    object jcbbStatus: TJvCheckedComboBox
+      Left = 198
+      Top = 127
+      Width = 121
+      Height = 21
+      CapSelectAll = '&Select all'
+      CapDeSelectAll = '&Deselect all'
+      CapInvertAll = '&Invert all'
+      Flat = False
+      ParentFlat = False
+      TabOrder = 11
+    end
+    object jcbbOrdena: TJvCheckedComboBox
+      Left = 133
+      Top = 260
+      Width = 121
+      Height = 21
+      CapSelectAll = '&Select all'
+      CapDeSelectAll = '&Deselect all'
+      CapInvertAll = '&Invert all'
+      Flat = False
+      ParentFlat = False
+      TabOrder = 12
     end
   end
 end

@@ -27,7 +27,7 @@ type
 
   TfoPrincipal = class(TForm)
     ilPrincipal: TImageList;
-    tmrHora: TTimer;
+    tmrTempo: TTimer;
     pmExpSelecao: TMenuItem;
     ilMenu: TImageList;
     pnlMenu: TPanel;
@@ -579,6 +579,7 @@ end;
 
 procedure TfoPrincipal.pRotinasProgress(pNomeMetodo: TExecuteMetodo);
 begin
+  if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
 
   with wRotinas do
@@ -587,7 +588,6 @@ begin
 
     case pNomeMetodo of
           emLoadXMLNFe: begin
-                          InitialDir := tabConfiguracoes.NFePathProcessado;
                           statPrincipal.Panels[1].Text := '0.00%';
                         end;
 
@@ -1359,21 +1359,22 @@ var wStream : TStream;
 begin
   with (Sender as TDBGrid) do
   begin
+
     wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
     case wStatus of
-     -999: Canvas.Font.Color := clWebPink;
-      001: Canvas.Font.Color := clGreen;     //XML Envio aguardando
-      004: Canvas.Font.Color := clPurple;   //XML Cancelamento Envio aguardando
-      100: Canvas.Font.Color := clBlack;    //XML Envio Processado
+     -999: Canvas.Font.Color := clXmlDefeito;
+      001: Canvas.Font.Color := clEnvAguard;     //XML Envio aguardando
+      004: Canvas.Font.Color := clCancAguard;   //XML Cancelamento Envio aguardando
+      100: Canvas.Font.Color := clProcessado;    //XML Envio Processado
       101,
-      135: Canvas.Font.Color := clRed;      //XML Cancel. Processado
+      135: Canvas.Font.Color := clCancProcessado;      //XML Cancel. Processado
       110,205,301,302,
-      303: Canvas.Font.Color := clSilver;     //Denegada
+      303: Canvas.Font.Color := clDenegada;     //Denegada
       206,
       256,
-      662: Canvas.Font.Color := clFuchsia;  //Inutilizada
+      662: Canvas.Font.Color := clInutilizada;  //Inutilizada
     else
-      Canvas.Font.Color := clNavy;
+      Canvas.Font.Color := clNaoIdent;
     end;
 
     if ((gdSelected in State) or (gdRowSelected in State)) or SelectedRows.CurrentRowSelected then
@@ -1466,6 +1467,9 @@ var
   end;
 
 begin
+  if not Assigned(wRotinas) then
+    wRotinas := TRotinas.Create;
+
   DaoObjetoXML.pAtualizaTabela;
   foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.4';
   pSetaCores;
@@ -1762,9 +1766,9 @@ begin
 
      jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
     if jopdDirDir.Execute then
-      tabConfiguracoes.NFePathProcessado := jopdDirDir.Directory;
+      wRotinas.InitialDir := jopdDirDir.Directory;
 
-    if (tabConfiguracoes.NFePathProcessado = '') OR (NOT DirectoryExists(tabConfiguracoes.NFePathProcessado)) then
+    if (wRotinas.InitialDir = '') OR (NOT DirectoryExists(wRotinas.InitialDir)) then
       exit;
 
     pRotinasProgress(emLoadXMLNFe);

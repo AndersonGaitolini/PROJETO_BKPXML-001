@@ -230,6 +230,9 @@ begin
   FConn.Params.Values['SQLDialect']   := FSQLDialect;
   FConn.Params.Values['DriverID']     := FDriverID;
   FConn.Params.Values['CharacterSet'] := FCharacterSet;
+  FDriver.VendorLib                   := FVendorLib;
+  FDriver.VendorHome                  := FVendorHome;
+  FDriver.Embedded                    := FEmbedded;
 end;
 
 procedure pConLocalEmbedded;
@@ -240,6 +243,7 @@ begin
   FConn.Params.Values['SQLDialect']   := FSQLDialect;
   FConn.Params.Values['DriverID']     := FDriverID;
   FConn.Params.Values['CharacterSet'] := FCharacterSet;
+  FConn.Params.Values['Protocol']     := FProtocol;
   FDriver.VendorLib                   := FVendorLib;
   FDriver.VendorHome                  := FVendorHome;
   FDriver.Embedded                    := FEmbedded;
@@ -253,12 +257,16 @@ begin
   FConn.Params.Values['SQLDialect']   := FSQLDialect;
   FConn.Params.Values['DriverID']     := FDriverID;
   FConn.Params.Values['CharacterSet'] := FCharacterSet;
+  FConn.Params.Values['Protocol']     := FProtocol;
   FConn.Params.Values['Server']       := FServer;
   FConn.Params.Values['Protocol']     := FProtocol;
-  FConn.Params.Values['Port']         := FPort;
+  FDriver.VendorLib                   := FVendorLib;
 end;
 
- begin
+var I:Integer;
+begin
+  Result := False;
+  FConectado := False;
   try
     pClearParams;
     case TipoCon of
@@ -269,14 +277,20 @@ end;
       Exit;
     end;
 
-    FConn.Open;
+//    for I := 0 to ConecxaoBD.Driver.ServicesCount-1 do
+//      ShowMessage(InttoStr(I)+' - '+ConecxaoBD.Driver.Services[I].Name);
+
+    if fCloseFile(FDataBase) then
+      FConn.Open
+    else
+      Result := False;
+
     Result := FConn.Connected;
     FConectado := Result;
   except
-
     on E: Exception do
        begin
-         FConectado := False;
+//         FConectado := False;
          ShowMessage(e.Message);
        end;
   end;

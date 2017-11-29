@@ -69,26 +69,21 @@ begin
 
    ConecxaoBD.pReadParams;
    ConecxaoBD.pConecta;
-    if not (ConecxaoBD.Conectado) then
+    if (ParamCount = 0) and (not (ConecxaoBD.Conectado)) then
     begin
       goto GotoLogin;
     end
     else
-    if (ParamCount = 0) then
-    begin
-      goto GotoLogin;
-    end
-    else
-      goto GotoTerminate;
+    if (ParamCount > 0) and (not (ConecxaoBD.Conectado)) then
+    goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
-
+    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
 
-    GotoLogin:
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
 

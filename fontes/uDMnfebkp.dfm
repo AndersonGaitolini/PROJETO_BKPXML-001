@@ -1,48 +1,49 @@
 object DM_NFEDFE: TDM_NFEDFE
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 276
-  Width = 350
+  Height = 330
+  Width = 364
   object conConexaoFD: TFDConnection
     Params.Strings = (
       'CharacterSet=WIN1252'
       'User_Name=sysdba'
       'Password=masterkey'
-      'Database=C:\MAX\MAXXML\BACKUPXML.FDB'
+      'Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       '|Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
       'Protocol=Local'
       'DriverID=FB')
+    Connected = True
     LoginPrompt = False
     Left = 28
-    Top = 26
+    Top = 80
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
     Left = 252
-    Top = 24
+    Top = 77
   end
   object fdWaitCursor: TFDGUIxWaitCursor
     Provider = 'Forms'
     Left = 100
-    Top = 24
+    Top = 77
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
     VendorLib = 'C:\fb\bin\fbembed.dll'
     Embedded = True
     Left = 171
-    Top = 26
+    Top = 79
   end
   object dsConfiguracoes: TDataSource
     DataSet = cdsConfiguracoes
     Left = 171
-    Top = 85
+    Top = 138
   end
   object dsBkpdfe: TDataSource
     DataSet = cdsBkpdfe
     Left = 173
-    Top = 203
+    Top = 256
   end
   object cdsBkpdfe: TClientDataSet
     Aggregates = <>
@@ -163,7 +164,7 @@ object DM_NFEDFE: TDM_NFEDFE
     ProviderName = 'provBkpdfe'
     StoreDefs = True
     Left = 21
-    Top = 203
+    Top = 256
     object cdsBkpdfeID: TIntegerField
       FieldName = 'ID'
       Origin = 'ID'
@@ -275,7 +276,7 @@ object DM_NFEDFE: TDM_NFEDFE
   object provBkpdfe: TDataSetProvider
     DataSet = sqlBkpDfe
     Left = 97
-    Top = 203
+    Top = 256
   end
   object sqlBkpDfe: TFDQuery
     Connection = conConexaoFD
@@ -283,19 +284,19 @@ object DM_NFEDFE: TDM_NFEDFE
     SQL.Strings = (
       'select * from LM_bkpdfe')
     Left = 250
-    Top = 204
+    Top = 257
   end
   object dsUsuarios: TDataSource
     DataSet = cdsUsuarios
     Left = 170
-    Top = 145
+    Top = 198
   end
   object cdsUsuarios: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'provUsuarios'
     Left = 18
-    Top = 145
+    Top = 198
     object cdsUsuariosID: TIntegerField
       FieldName = 'ID'
       Origin = 'ID'
@@ -320,7 +321,7 @@ object DM_NFEDFE: TDM_NFEDFE
   object provUsuarios: TDataSetProvider
     DataSet = sqlUsuarios
     Left = 94
-    Top = 145
+    Top = 198
   end
   object sqlUsuarios: TFDQuery
     Connection = conConexaoFD
@@ -328,14 +329,14 @@ object DM_NFEDFE: TDM_NFEDFE
     SQL.Strings = (
       'select * from usuarios')
     Left = 246
-    Top = 145
+    Top = 198
   end
   object cdsConfiguracoes: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'provConfiguracoes'
     Left = 19
-    Top = 85
+    Top = 138
     object intgrfldConfiguracoesID: TIntegerField
       FieldName = 'ID'
       Required = True
@@ -430,7 +431,7 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object provConfiguracoes: TDataSetProvider
     Left = 95
-    Top = 85
+    Top = 138
   end
   object sqlConfiguracoes: TFDQuery
     Connection = conConexaoFD
@@ -438,6 +439,6 @@ object DM_NFEDFE: TDM_NFEDFE
     SQL.Strings = (
       'select * from configuracoes')
     Left = 247
-    Top = 85
+    Top = 138
   end
 end

@@ -13,7 +13,7 @@ uses
  uProgressThread, MSXML;
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
- type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF, emSelecionaRows);
+ type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF, emSelecionaRows, emPescaXML);
 
  type TRotinas = class(TProgressThread)
   private
@@ -29,7 +29,7 @@ uses
     property Result: Int64                 read FResult;
     property Maximo: Int64                 read FMaximo write FMaximo;
     property Lista: TStringList            write FLista;
-    property InitialDir: String            write FInitialDir;
+    property InitialDir: String            read FInitialDir write FInitialDir;
     property RefazAutorizacao: Boolean     read FRefazAutorizacao write FRefazAutorizacao;
     property ExecuteMetodo: TExecuteMetodo read FExecuteMetodo write FExecuteMetodo;
 
@@ -46,6 +46,7 @@ uses
     function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
     function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pParametro: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
     function fLoadXMLNFeLista(pLista : TStringList): Boolean;
+    function fPescaXML(): Int64;
 
     function fMaster(pObjUsuario: TUsuarios): boolean;
 
@@ -226,6 +227,38 @@ begin
   end;
   CloseHandle (HSnapShot);
   Result := ProcThreads;
+end;
+
+function TRotinas.fPescaXML: Int64;
+var
+  wDataSet   : TDataSet;
+  wDaoXML    : TDaoBkpdfe;
+  ObjetoXML, ObjXMLAux : TLm_bkpdfe;
+  wStream    : TStream;
+  wFileStream : TFileStream;
+  wMemoStream : TMemoryStream;
+  wFRec      : TSearchRec;
+  wErro, j: integer;
+  XMLArq     : TXMLDocument;
+  wArrayObjXML : array of TLm_bkpdfe;
+  wNodeXML, wNodeInfNFe, wNodeNfeProc, wNodeDest, wNodeEmit: IXMLNode;
+  wFileSource, wFileDest: string;
+  wXmlName, wZipName,wChaveAux,wPathFile, wCNPJAux: string;
+  wXMLEnvio, wXMLProcessado,wOK, wYesAll: boolean;
+
+
+begin
+  try
+
+    try
+
+    except on E: Exception do
+
+    end;
+
+  finally
+
+  end;
 end;
 
 function TRotinas.fIsValidDispatch(const v: OleVariant): Boolean;
@@ -1091,7 +1124,7 @@ begin
   wDataSet   := TDataSet.Create(Application);
 
   if not pParametro then
-    fCarregaPath;
+    wPathFile := FInitialDir; //fCarregaPath;
 
   try
     try
@@ -1821,7 +1854,7 @@ begin
            emExportaPDF : pExecuteExportaPDF;
            emLoadXMLNFe : pExecuteLoadXMLNFe;
        emExportaLoteXML : pExecuteExportaLoteXML;
-        emSelecionaRows : pExecuteSelecionaLinhaGrid
+        emSelecionaRows : pExecuteSelecionaLinhaGrid;
     end;
   finally
     CoInitializeEx(nil,0);

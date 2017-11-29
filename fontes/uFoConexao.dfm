@@ -51,6 +51,20 @@ object foConexao: TfoConexao
           Height = 12
           Caption = 'Desconetado'
         end
+        object lbPerfilCon: TLabel
+          Left = 13
+          Top = 18
+          Width = 81
+          Height = 12
+          Caption = 'Perfis de Conex'#227'o'
+        end
+        object lbTipoCon: TLabel
+          Left = 185
+          Top = 18
+          Width = 77
+          Height = 12
+          Caption = 'Tipo de Conex'#227'o'
+        end
         object edUsuarioBD: TLabeledEdit
           AlignWithMargins = True
           Left = 13
@@ -126,18 +140,18 @@ object foConexao: TfoConexao
           TabOrder = 4
         end
         object cbbTipoCon: TComboBox
-          Left = 13
-          Top = 34
+          Left = 185
+          Top = 36
           Width = 145
           Height = 20
-          ItemIndex = 0
           TabOrder = 5
           Text = 'Local'
           OnChange = cbbTipoConChange
           Items.Strings = (
             'Local'
             'Local(Embarcado)'
-            'Remoto')
+            'Remoto'
+            'Remoto(Embarcado)')
         end
         object btnConectar1: TButton
           Left = 13
@@ -181,6 +195,18 @@ object foConexao: TfoConexao
           ParentFont = False
           TabOrder = 8
           OnClick = btnPingClick
+        end
+        object cbbPerfilCon: TComboBox
+          Left = 13
+          Top = 36
+          Width = 155
+          Height = 20
+          ItemIndex = 0
+          TabOrder = 9
+          Text = 'MAXXML'
+          OnChange = cbbTipoConChange
+          Items.Strings = (
+            'MAXXML')
         end
       end
     end
@@ -252,7 +278,7 @@ object foConexao: TfoConexao
     Left = 400
     Top = 84
     Bitmap = {
-      494C010104000C00440110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C004C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
