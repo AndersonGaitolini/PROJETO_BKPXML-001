@@ -66,8 +66,9 @@ begin
 
 //  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
 //    if (FileExists(DM_NFEDFE.IniFile)) then
-    ConecxaoBD.pConecta;
 
+   ConecxaoBD.pReadParams;
+   ConecxaoBD.pConecta;
     if not (ConecxaoBD.Conectado) then
     begin
       goto GotoLogin;
@@ -82,12 +83,12 @@ begin
 
   if (ParamCount = 0) then
   begin
-    GotoLogin:
+
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
 
-
+    GotoLogin:
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
 

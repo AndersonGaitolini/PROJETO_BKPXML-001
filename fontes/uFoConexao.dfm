@@ -195,7 +195,7 @@ object foConexao: TfoConexao
           Width = 50
         end
         item
-          Text = 'Desconetado'
+          Text = 'Desconectado'
           Width = 150
         end
         item
@@ -229,10 +229,18 @@ object foConexao: TfoConexao
       ImageIndex = 1
       OnClick = btnIniFileClick
     end
-    object btnLimpa: TToolButton
+    object btnSalvaIni: TToolButton
       Left = 74
       Top = 0
+      Caption = 'Salvar'
+      ImageIndex = 3
+      OnClick = btnSalvaIniClick
+    end
+    object btnLimpa: TToolButton
+      Left = 148
+      Top = 0
       Caption = 'Limpa'
+      Enabled = False
       ImageIndex = 2
     end
   end
@@ -244,7 +252,7 @@ object foConexao: TfoConexao
     Left = 400
     Top = 84
     Bitmap = {
-      494C010104000C00400110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00440110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

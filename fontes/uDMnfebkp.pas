@@ -59,10 +59,11 @@ type
     property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
 
     function fConexaoBD: Boolean;
+    procedure pIniPath;
     procedure pConecta;
     procedure pClearParams;
     procedure pReadParams;
-    procedure pReadDriver;
+    procedure pWriteParams;
 
     constructor Create(pConn : TFDConnection; pDriver : TFDPhysFBDriverLink); overload;
   end;
@@ -210,6 +211,7 @@ begin
 //  inherited;
   FConn := pConn;
   FDriver := pDriver;
+  pIniPath;
 end;
 
 function TConecxaoBD.fConexaoBD: Boolean;
@@ -269,17 +271,28 @@ end;
 
     FConn.Open;
     Result := FConn.Connected;
+    FConectado := Result;
   except
+
     on E: Exception do
        begin
+         FConectado := False;
          ShowMessage(e.Message);
        end;
   end;
 end;
 
+procedure TConecxaoBD.pIniPath;
+begin
+  FIniFile := fArqIni;
+end;
+
 procedure TConecxaoBD.pClearParams;
 begin
   FConn.Params.Clear;
+  FDriver.Embedded := False;
+  FDriver.VendorHome := '';
+  FDriver.VendorLib := '';
 end;
 
 procedure TConecxaoBD.pConecta;
@@ -290,37 +303,42 @@ begin
 end;
 
 
-procedure TConecxaoBD.pReadDriver;
+procedure TConecxaoBD.pReadParams;
+var wSessao : string;
 begin
-  FVendorLib := FDriver.VendorLib;
-  FVendorHome := FDriver.VendorHome;
-  FEmbedded   := FDriver.Embedded;
+  wSessao := fNomePC;
+  FUserName     := getINI(FIniFile, wSessao, 'User_Name');
+  FPassword     := getINI(FIniFile, wSessao, 'Password');
+  FDataBase     := getINI(FIniFile, wSessao, 'Database');
+  FSQLDialect   := getINI(FIniFile, wSessao, 'SQLDialect');
+  FDriverID     := getINI(FIniFile, wSessao, 'DriverID');
+  FCharacterSet := getINI(FIniFile, wSessao, 'CharacterSet');
+  FServer       := getINI(FIniFile, wSessao, 'Server');
+  FProtocol     := getINI(FIniFile, wSessao, 'Protocol');
+  FPort         := getINI(FIniFile, wSessao, 'Port');
+  FVendorLib    := getINI(FIniFile, wSessao, 'VendorLib');
+  FVendorHome   := getINI(FIniFile, wSessao, 'VendorHome');
+  FEmbedded     := StrToBoolDef(getINI(FIniFile, wSessao, 'Embedded'),false);
 end;
 
-procedure TConecxaoBD.pReadParams;
+procedure TConecxaoBD.pWriteParams;
+var wSessao : string;
 begin
-  FUserName     :=  Conn.Params.Values['User_Name'];
-  FPassword     :=  Conn.Params.Values['Password'];
-  FDataBase     :=  Conn.Params.Values['Database'];
-  FSQLDialect   :=  Conn.Params.Values['SQLDialect'];
-  FDriverID     :=  Conn.Params.Values['DriverID'];
-  FCharacterSet :=  Conn.Params.Values['CharacterSet'];
-  FServer       :=  Conn.Params.Values['Server'];
-  FProtocol     :=  Conn.Params.Values['Protocol'];
-  FPort         :=  Conn.Params.Values['Port'];
+ wSessao := fNomePC;
+ setINI(FIniFile, wSessao, 'User_Name'     ,FUserName     );
+ setINI(FIniFile, wSessao, 'Password'      ,FPassword     );
+ setINI(FIniFile, wSessao, 'Database'      ,FDataBase     );
+ setINI(FIniFile, wSessao, 'SQLDialect'    ,FSQLDialect   );
+ setINI(FIniFile, wSessao, 'DriverID'      ,FDriverID     );
+ setINI(FIniFile, wSessao, 'CharacterSet'  ,FCharacterSet );
+ setINI(FIniFile, wSessao, 'Server'        ,FServer       );
+ setINI(FIniFile, wSessao, 'Protocol'      ,FProtocol     );
+ setINI(FIniFile, wSessao, 'Port'          ,FPort         );
+ setINI(FIniFile, wSessao, 'VendorLib'     ,FVendorLib    );
+ setINI(FIniFile, wSessao, 'VendorHome'    ,FVendorHome   );
+ setINI(FIniFile, wSessao, 'Embedded'      ,BoolToStr(FEmbedded));
 end;
 
 end.
 
-//:= getINI(fArqIni, 'MAXXML',     'Password', '');
-//:= getINI(fArqIni, 'MAXXML',     'Database', '');
-//:= getINI(fArqIni, 'MAXXML',     'User_Name', '');
-//:= '3';
-//:= getINI(fArqIni, 'MAXXML',     'DriverId', '');
-//:= getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
-//:= getINI(fArqIni, 'MAXXML',    'VendorLib', '');
-//:= getINI(fArqIni, 'MAXXML',   'VendorHome', '');
-//:= getINI(fArqIni, 'MAXXML',   'Embedded', '');
-//:= getINI(fArqIni,   'MAXXML', 'Server','');
-//:= getINI(fArqIni, 'MAXXML', 'Protocol', '');
-//:= getINI(fArqIni,     'MAXXML', 'Port', '');
+

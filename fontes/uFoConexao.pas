@@ -40,6 +40,7 @@ type
     btnConectar1: TButton;
     edServerName: TLabeledEdit;
     btnPing: TButton;
+    btnSalvaIni: TToolButton;
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -51,6 +52,7 @@ type
     procedure btnConectar1Click(Sender: TObject);
     procedure btnPingClick(Sender: TObject);
     procedure cbbTipoConChange(Sender: TObject);
+    procedure btnSalvaIniClick(Sender: TObject);
   private
     { Private declarations }
     wRemote :boolean;
@@ -96,6 +98,8 @@ begin
     SQLDialect   := '3';
     DriverID     := 'FB';
     CharacterSet := 'WIN1252';
+    Protocol     := 'Local';
+    VendorLib    := 'FBclient.dll'
   end;
 end;
 
@@ -134,14 +138,21 @@ end;
 
 procedure TfoConexao.btnConectar1Click(Sender: TObject);
 begin
-  //
+
+
   case cbbTipoCon.ItemIndex of
    0: pConLocal;
    1: ConecxaoBD.TipoCon := tcLocalEmbed;
    2: ConecxaoBD.TipoCon := tcRemote;
   end;
 
+  ConecxaoBD.pWriteParams;
   ConecxaoBD.pConecta;
+
+  if ConecxaoBD.Conectado then
+    stat1.Panels[1].Text := 'Conectado!'
+  else
+    stat1.Panels[1].Text := 'Desconectado!'
 end;
 
 procedure TfoConexao.btnFindBDClick(Sender: TObject);
@@ -169,14 +180,19 @@ begin
   if fPingIP(wHost) then
   begin
     btnConectar1.Enabled := true;
-    stat1.Panels[1].Text := 'Ping('+wHost+') Ok!';
+    stat1.Panels[1].Text := 'Ping Ok!';
   end
   else
   begin
-    stat1.Panels[1].Text := 'Falha no Ping('+wHost+')!';
+    stat1.Panels[1].Text := 'Falha no Ping!';
     btnConectar1.Enabled := false;
   end;
 
+end;
+
+procedure TfoConexao.btnSalvaIniClick(Sender: TObject);
+begin
+  ConecxaoBD.pWriteParams;
 end;
 
 procedure TfoConexao.cbbTipoConChange(Sender: TObject);
@@ -236,7 +252,6 @@ begin
      ConecxaoBD := TConecxaoBD.Create;
 
  ConecxaoBD.pReadParams;
- ConecxaoBD.pReadDriver;
 end;
 
 procedure TfoConexao.FormKeyDown(Sender: TObject; var Key: Word;
@@ -274,21 +289,19 @@ begin
   pgcConfig.TabIndex := 0;
 
   if ConecxaoBD.Conectado then
-    stat1.Panels[1].Text := 'Conectado'
+    stat1.Panels[1].Text := 'Conectado!'
   else
-    stat1.Panels[1].Text := 'Desconectado';
+    stat1.Panels[1].Text := 'Desconectado!';
 
   btnConectar1.Enabled := not ConecxaoBD.Conectado;
 end;
 
 procedure TfoConexao.pLerParametros;
 begin
-  if FileExists(ChangeFileExt(Application.ExeName, '.INI')) then
-  begin
-    edUsuarioBD.Text    := ConecxaoBD.UserName;
-    edSenhaBD.Text      := ConecxaoBD.Password;
-    edDataBase.Text     := ConecxaoBD.Database;
-  end;
+  ConecxaoBD.pReadParams;
+  edUsuarioBD.Text    := ConecxaoBD.UserName;
+  edSenhaBD.Text      := ConecxaoBD.Password;
+  edDataBase.Text     := ConecxaoBD.Database;
 end;
 
 procedure TfoConexao.pLocalRemote;

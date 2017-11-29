@@ -11,9 +11,8 @@ object DM_NFEDFE: TDM_NFEDFE
       'Database=C:\MAX\MAXXML\BACKUPXML.FDB'
       '|Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
-      'Protocol=TCPIP'
-      'Server=ANDERSONVM-PC'
-      'DriverID=FBEmbed')
+      'Protocol=Local'
+      'DriverID=FB')
     LoginPrompt = False
     Left = 28
     Top = 26

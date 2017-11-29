@@ -16,14 +16,19 @@ File_13=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\d
 File_14=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.FB.pas',0,1,370,1,380,0,0,,
 
 [Modules]
-Module0=J:\projeto\MaxXML.dproj
-Module1=J:\fontes\uFoPrincipal.pas
-Module2=J:\fontes\uDMnfebkp.pas
-Module3=J:\fontes\classes\Lm_bkpdfe.pas
-Module4=J:\fontes\uRotinas.pas
-Module5=J:\fontes\uMetodosUteis.pas
+Module0=J:\fontes\uMetodosUteis.pas
+Module1=J:\projeto\MaxXML.dproj
+Module2=J:\fontes\uFoPrincipal.pas
+Module3=J:\fontes\uDMnfebkp.pas
+Module4=J:\fontes\classes\Lm_bkpdfe.pas
+Module5=J:\fontes\uRotinas.pas
 Count=6
 EditWindowCount=1
+
+[J:\fontes\uMetodosUteis.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
 
 [J:\projeto\MaxXML.dproj]
 ModuleType=TBaseProject
@@ -48,14 +53,9 @@ ModuleType=TSourceModule
 FormState=0
 FormOnTop=0
 
-[J:\fontes\uMetodosUteis.pas]
-ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
-
 [EditWindow0]
 ViewCount=6
-CurrentEditView=J:\projeto\MaxXML.dpr
+CurrentEditView=J:\fontes\uMetodosUteis.pas
 View0=0
 View1=1
 View2=2
@@ -118,7 +118,7 @@ CustomEditViewType=TEditView
 Module=J:\projeto\MaxXML.dpr
 CursorX=15
 CursorY=111
-TopLine=109
+TopLine=94
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -139,11 +139,11 @@ EditViewName=J:\fontes\uRotinas.pas
 CustomEditViewType=TEditView
 Module=J:\fontes\uMetodosUteis.pas
 CursorX=1
-CursorY=526
-TopLine=512
+CursorY=329
+TopLine=288
 LeftCol=1
 Elisions=
-Bookmarks={1,668,1}
+Bookmarks={1,698,1}
 EditViewName=J:\fontes\uMetodosUteis.pas
 
 [View5]

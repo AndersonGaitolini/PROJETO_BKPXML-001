@@ -44,8 +44,9 @@ Const
   function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
   function fIsNumeric(pStr : String) : Boolean;
   procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
-  procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
-  function getINI(pIniFilePath, prSessao, prSubSessao, prValor:string): string;
+  procedure setINI(pIniFilePath, prSessao, prSubSessao: string; prValor: string = '');
+  function getINI(pIniFilePath, prSessao, prSubSessao: string; prValorDefault: string = ''): string;
+
   function fPingIP(pHost : String) :boolean;
 //  function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
   function fArqIni: string;
@@ -1092,7 +1093,7 @@ end;
 //  end;
 //end;
 
-procedure setINI(pIniFilePath, prSessao, prSubSessao, prValor:string);
+procedure setINI(pIniFilePath, prSessao, prSubSessao: string; prValor: string ='');
 var
   wINI : TIniFile;
 begin
@@ -1104,13 +1105,13 @@ begin
   end;
 end;
 
-function getINI(pIniFilePath, prSessao, prSubSessao, prValor:string): string;
+function getINI(pIniFilePath, prSessao, prSubSessao: string; prValorDefault: string = ''): string;
 var
   wINI : TIniFile;
 begin
   wINI := TIniFile.Create(pIniFilePath);
   try
-    Result := wINI.ReadString(prSessao, prSubSessao, '');
+    Result := wINI.ReadString(prSessao, prSubSessao, prValorDefault);
   finally
     wINI.Free;
   end;
@@ -1120,8 +1121,8 @@ function fArqIni: string;
 begin
   Result := ExtractFileDir(Application.ExeName) +'\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));;
 
-  if not FileExists(Result) then
-    setINI(Result,'','','');
+//  if not FileExists(Result) then
+//    setINI(Result,'',ExtractName(Result),'');
 end;
 
 { TConvert }
