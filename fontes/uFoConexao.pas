@@ -58,6 +58,7 @@ type
     procedure btnSalvaIniClick(Sender: TObject);
   private
     { Private declarations }
+    wPress: Boolean;
     wRemote :boolean;
     function validacampos(pForm : TForm): boolean;
     function LimpaCampos(pForm : TForm): boolean;
@@ -66,7 +67,8 @@ type
     procedure pLerParametros;
     procedure pPreemcheCampos;
     procedure pLocalRemote;
-
+    procedure pShowBotaoConectar;
+    procedure pShowStatusBar;
     procedure pConLocal;
     procedure pConLocalEmbedded;
     procedure pConRemote;
@@ -138,9 +140,6 @@ procedure TfoConexao.pConRemote;
 begin
   with ConecxaoBD do
   begin
-    if fServiceStart(fNomePC,'FirebirdServerDefaultInstance') then
-      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
-                  'Alt+ R e digite '+ QuotedStr('services.msc'));
     TipoCon      := tcRemote;
     UserName     := trim(LowerCase(edUsuarioBD.Text));
     Password     := trim(LowerCase(edSenhaBD.Text));
@@ -156,23 +155,31 @@ begin
 end;
 
 procedure TfoConexao.btnConectar1Click(Sender: TObject);
+
 begin
+  if ConecxaoBD.Conectado  then
+  begin
+   DM_NFEDFE.conConexaoFD.Close;
+   DM_NFEDFE.conConexaoFD.Connected := False;
+   ConecxaoBD.Conectado := False;
 
-
-  case cbbTipoCon.ItemIndex of
-   0: pConLocal;
-   1: pConLocalEmbedded;
-   2: pConRemote;
-  end;
-
-  ConecxaoBD.pWriteParams;
-  ConecxaoBD.pConecta;
-
-  if ConecxaoBD.Conectado then
-    stat1.Panels[1].Text := 'Conectado!'
+   pShowBotaoConectar;
+   pShowStatusBar;
+  end
   else
-    stat1.Panels[1].Text := 'Desconectado!';
+  begin
+    case cbbTipoCon.ItemIndex of
+     0: pConLocal;
+     1: pConLocalEmbedded;
+     2: pConRemote;
+    end;
 
+    ConecxaoBD.pWriteParams;
+    ConecxaoBD.pConecta;
+
+    pShowBotaoConectar;
+    pShowStatusBar;
+  end;
 //  btnConectar1.Enabled := not ConecxaoBD.Conectado;
 end;
 
@@ -305,6 +312,7 @@ end;
 
 procedure TfoConexao.FormShow(Sender: TObject);
 begin
+
   pLerParametros;
   pgcConfig.TabIndex := 0;
   if (ConecxaoBD.Protocol = 'TCPIP') then
@@ -318,11 +326,8 @@ begin
   edServerName.Visible := cbbTipoCon.ItemIndex = 2;
   btnPing.Visible := cbbTipoCon.ItemIndex = 2;
 
-  if ConecxaoBD.Conectado then
-    stat1.Panels[1].Text := 'Conectado!'
-  else
-    stat1.Panels[1].Text := 'Desconectado!';
-
+  pShowBotaoConectar;
+  pShowStatusBar;
 //  btnConectar1.Enabled := not ConecxaoBD.Conectado;
 end;
 
@@ -421,6 +426,22 @@ begin
     setINI(wIniFile, 'MAXXML', 'User_Name',   Trim(edUsuarioBD.Text   ));
     setINI(wIniFile, 'MAXXML', 'Password',   Trim(edSenhaBD.Text     ));
     setINI(wIniFile, 'MAXXML', 'Database',   Trim(edDataBase.Text    ));
+end;
+
+procedure TfoConexao.pShowBotaoConectar;
+begin
+  if ConecxaoBD.Conectado then
+    btnConectar1.Caption := 'Conectado!'
+  else
+    btnConectar1.Caption := 'Conectar..'
+end;
+
+procedure TfoConexao.pShowStatusBar;
+begin
+  if ConecxaoBD.Conectado then
+    stat1.Panels[1].Text := 'Conexão ativa!'
+  else
+    stat1.Panels[1].Text := 'Conexão inativa!';
 end;
 
 function TfoConexao.validacampos(pForm : TForm): boolean;

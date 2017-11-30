@@ -33,8 +33,8 @@ type
     FPort         : String;
     FIniFile      : String;
     FTipoCon      : TTipoConexao;
-    FConn         : TFDConnection;
-    FDriver       : TFDPhysFBDriverLink;
+//    FConn         : TFDConnection;
+//    FDriver       : TFDPhysFBDriverLink;
   protected
     { protected declarations }
 
@@ -55,8 +55,8 @@ type
     property Protocol     : String       read  FProtocol     write FProtocol    ;
     property Port         : String       read  FPort         write FPort        ;
     property TipoCon      : TTipoConexao read  FTipoCon      write FTipoCon;
-    property Conn         : TFDConnection read FConn write FConn;
-    property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
+//    property Conn         : TFDConnection read FConn write FConn;
+//    property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
 
     function fConexaoBD: Boolean;
     procedure pIniPath;
@@ -65,7 +65,7 @@ type
     procedure pReadParams;
     procedure pWriteParams;
 
-    constructor Create(pConn : TFDConnection; pDriver : TFDPhysFBDriverLink); overload;
+    constructor Create; overload;
   end;
 
 type
@@ -161,7 +161,7 @@ uses
 
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
-  ConecxaoBD := TConecxaoBD.Create(conConexaoFD, fddrfbDriver);
+  ConecxaoBD := TConecxaoBD.Create;
   Dao := TDaoFD.Create(conConexaoFD, fdtrTransacao);
   sqlBkpDfe.Connection := conConexaoFD;
   tabConfigpadrao := TConfigpadrao.create;
@@ -205,13 +205,19 @@ end;
 
 { TConecxaoBD }
 
-constructor TConecxaoBD.Create(pConn: TFDConnection;
-  pDriver: TFDPhysFBDriverLink);
+//constructor TConecxaoBD.Create(pConn: TFDConnection;
+//  pDriver: TFDPhysFBDriverLink);
+//begin
+////  inherited;
+//  FConn := pConn;
+//  FDriver := pDriver;
+//  pIniPath;
+//end;
+
+
+constructor TConecxaoBD.Create;
 begin
-//  inherited;
-  FConn := pConn;
-  FDriver := pDriver;
-  pIniPath;
+
 end;
 
 function TConecxaoBD.fConexaoBD: Boolean;
@@ -224,43 +230,52 @@ wLog :Boolean;
 
 procedure pConLocal;
 begin
-  FConn.Params.Values['User_Name']    := FUserName;
-  FConn.Params.Values['Password']     := FPassword;
-  FConn.Params.Values['Database']     := FDataBase;
-  FConn.Params.Values['SQLDialect']   := FSQLDialect;
-  FConn.Params.Values['DriverID']     := FDriverID;
-  FConn.Params.Values['CharacterSet'] := FCharacterSet;
-  FDriver.VendorLib                   := FVendorLib;
-  FDriver.VendorHome                  := FVendorHome;
-  FDriver.Embedded                    := FEmbedded;
+  with DM_NFEDFE do
+  begin
+    conConexaoFD.Params.Values['User_Name']    := FUserName;
+    conConexaoFD.Params.Values['Password']     := FPassword;
+    conConexaoFD.Params.Values['Database']     := FDataBase;
+    conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+    conConexaoFD.Params.Values['DriverID']     := FDriverID;
+    conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+    fddrfbDriver.VendorLib                     := FVendorLib;
+    fddrfbDriver.VendorHome                    := FVendorHome;
+    fddrfbDriver.Embedded                      := FEmbedded;
+  end;
 end;
 
 procedure pConLocalEmbedded;
 begin
-  FConn.Params.Values['User_Name']    := FUserName;
-  FConn.Params.Values['Password']     := FPassword;
-  FConn.Params.Values['Database']     := FDataBase;
-  FConn.Params.Values['SQLDialect']   := FSQLDialect;
-  FConn.Params.Values['DriverID']     := FDriverID;
-  FConn.Params.Values['CharacterSet'] := FCharacterSet;
-  FConn.Params.Values['Protocol']     := FProtocol;
-  FDriver.VendorLib                   := FVendorLib;
-  FDriver.VendorHome                  := FVendorHome;
-  FDriver.Embedded                    := FEmbedded;
+  with DM_NFEDFE do
+  begin
+    conConexaoFD.Params.Values['User_Name']    := FUserName;
+    conConexaoFD.Params.Values['Password']     := FPassword;
+    conConexaoFD.Params.Values['Database']     := FDataBase;
+    conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+    conConexaoFD.Params.Values['DriverID']     := FDriverID;
+    conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+    conConexaoFD.Params.Values['Protocol']     := FProtocol;
+    fddrfbDriver.VendorLib                   := FVendorLib;
+    fddrfbDriver.VendorHome                  := FVendorHome;
+    fddrfbDriver.Embedded                    := FEmbedded;
+  end;
 end;
 
 procedure pConRemote;
 begin
-  FConn.Params.Values['User_Name']    := FUserName;
-  FConn.Params.Values['Password']     := FPassword;
-  FConn.Params.Values['Database']     := FDataBase;
-  FConn.Params.Values['SQLDialect']   := FSQLDialect;
-  FConn.Params.Values['DriverID']     := FDriverID;
-  FConn.Params.Values['CharacterSet'] := FCharacterSet;
-  FConn.Params.Values['Protocol']     := FProtocol;
-  FConn.Params.Values['Server']       := FServer;
-  FConn.Params.Values['Protocol']     := FProtocol;
-  FDriver.VendorLib                   := FVendorLib;
+  with DM_NFEDFE do
+  begin
+    conConexaoFD.Params.Values['User_Name']    := FUserName;
+    conConexaoFD.Params.Values['Password']     := FPassword;
+    conConexaoFD.Params.Values['Database']     := FDataBase;
+    conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+    conConexaoFD.Params.Values['DriverID']     := FDriverID;
+    conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+    conConexaoFD.Params.Values['Protocol']     := FProtocol;
+    conConexaoFD.Params.Values['Server']       := FServer;
+    conConexaoFD.Params.Values['Protocol']     := FProtocol;
+    fddrfbDriver.VendorLib                   := FVendorLib;
+  end;
 end;
 
 var I:Integer;
@@ -281,11 +296,11 @@ begin
 //      ShowMessage(InttoStr(I)+' - '+ConecxaoBD.Driver.Services[I].Name);
 
     if fCloseFile(FDataBase) then
-      FConn.Open
+     DM_NFEDFE.conConexaoFD.Open
     else
       Result := False;
 
-    Result := FConn.Connected;
+    Result := DM_NFEDFE.conConexaoFD.Connected;
     FConectado := Result;
   except
     on E: Exception do
@@ -303,16 +318,16 @@ end;
 
 procedure TConecxaoBD.pClearParams;
 begin
-  FConn.Params.Clear;
-  FDriver.Embedded := False;
-  FDriver.VendorHome := '';
-  FDriver.VendorLib := '';
+  DM_NFEDFE.conConexaoFD.Params.Clear;
+  DM_NFEDFE.fddrfbDriver.Embedded := False;
+  DM_NFEDFE.fddrfbDriver.VendorHome := '';
+  DM_NFEDFE.fddrfbDriver.VendorLib := '';
 end;
 
 procedure TConecxaoBD.pConecta;
 begin
-  FConn.Connected := false;
-  FConn.Close;
+  DM_NFEDFE.conConexaoFD.Connected := false;
+  DM_NFEDFE.conConexaoFD.Close;
   Conectado := fConexaoBD;
 end;
 

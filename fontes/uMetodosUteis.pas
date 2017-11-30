@@ -1135,7 +1135,8 @@ var
 begin
   wINI := TIniFile.Create(pIniFilePath);
   try
-    wINI.WriteString(prSessao, prSubSessao, prValor);
+    if fCloseFile(pIniFilePath) then
+      wINI.WriteString(prSessao, prSubSessao, prValor);
   finally
     wINI.Free;
   end;

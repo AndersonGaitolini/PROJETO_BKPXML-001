@@ -4,8 +4,8 @@ object foConexao: TfoConexao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Configura'#231#245'es do banco de dados'
-  ClientHeight = 291
-  ClientWidth = 450
+  ClientHeight = 287
+  ClientWidth = 373
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -27,23 +27,30 @@ object foConexao: TfoConexao
   object pnlConfig: TPanel
     Left = 0
     Top = 37
-    Width = 450
-    Height = 254
+    Width = 373
+    Height = 250
     Align = alClient
     TabOrder = 2
+    ExplicitWidth = 450
+    ExplicitHeight = 254
     object pgcConfig: TPageControl
       Left = 1
       Top = 1
-      Width = 448
-      Height = 233
+      Width = 371
+      Height = 229
       Hint = 'Configura par'#226'metros do banco de dados'
       ActivePage = tsConfigBD
       Align = alClient
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
+      ExplicitWidth = 448
+      ExplicitHeight = 233
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
+        ExplicitLeft = -44
+        ExplicitTop = 21
+        ExplicitWidth = 463
         object lbStatusConn: TLabel
           Left = 94
           Top = 343
@@ -59,7 +66,7 @@ object foConexao: TfoConexao
           Caption = 'Perfis de Conex'#227'o'
         end
         object lbTipoCon: TLabel
-          Left = 185
+          Left = 174
           Top = 18
           Width = 77
           Height = 12
@@ -82,7 +89,7 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Usu'#225'rio'
-          TabOrder = 0
+          TabOrder = 2
         end
         object edSenhaBD: TLabeledEdit
           AlignWithMargins = True
@@ -101,13 +108,13 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Senha'
-          TabOrder = 1
+          TabOrder = 3
         end
         object edDataBase: TLabeledEdit
           AlignWithMargins = True
-          Left = 13
+          Left = 14
           Top = 110
-          Width = 317
+          Width = 284
           Height = 20
           Margins.Left = 2
           Margins.Top = 2
@@ -120,31 +127,23 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Banco de dados'
-          TabOrder = 2
+          TabOrder = 4
         end
         object btnFindBD: TButton
-          Left = 335
+          Left = 303
           Top = 108
           Width = 27
           Height = 25
           Caption = '...'
-          TabOrder = 3
+          TabOrder = 5
           OnClick = btnFindBDClick
         end
-        object btnConectar: TButton
-          Left = 13
-          Top = 338
-          Width = 75
-          Height = 25
-          Caption = '&Conectar'
-          TabOrder = 4
-        end
         object cbbTipoCon: TComboBox
-          Left = 185
+          Left = 174
           Top = 36
-          Width = 145
+          Width = 156
           Height = 20
-          TabOrder = 5
+          TabOrder = 1
           Text = 'Local'
           OnChange = cbbTipoConChange
           Items.Strings = (
@@ -155,11 +154,15 @@ object foConexao: TfoConexao
         end
         object btnConectar1: TButton
           Left = 13
-          Top = 179
-          Width = 75
+          Top = 172
+          Width = 204
           Height = 25
           Caption = 'Conectar'
-          TabOrder = 6
+          DoubleBuffered = False
+          HotImageIndex = 0
+          Images = ilCadastro
+          ParentDoubleBuffered = False
+          TabOrder = 8
           OnClick = btnConectar1Click
         end
         object edServerName: TLabeledEdit
@@ -179,13 +182,13 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Servername / IP'
-          TabOrder = 7
+          TabOrder = 6
         end
         object btnPing: TButton
           Left = 173
           Top = 145
-          Width = 64
-          Height = 24
+          Width = 45
+          Height = 25
           Caption = 'Ping'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -193,7 +196,7 @@ object foConexao: TfoConexao
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 8
+          TabOrder = 7
           OnClick = btnPingClick
         end
         object cbbPerfilCon: TComboBox
@@ -202,7 +205,7 @@ object foConexao: TfoConexao
           Width = 155
           Height = 20
           ItemIndex = 0
-          TabOrder = 9
+          TabOrder = 0
           Text = 'MAXXML'
           OnChange = cbbTipoConChange
           Items.Strings = (
@@ -212,8 +215,8 @@ object foConexao: TfoConexao
     end
     object stat1: TStatusBar
       Left = 1
-      Top = 234
-      Width = 448
+      Top = 230
+      Width = 371
       Height = 19
       Panels = <
         item
@@ -227,20 +230,23 @@ object foConexao: TfoConexao
         item
           Width = 50
         end>
+      ExplicitTop = 234
+      ExplicitWidth = 448
     end
   end
   object pnlMenu: TPanel
     Left = 0
     Top = 36
-    Width = 450
+    Width = 373
     Height = 1
     Align = alTop
     TabOrder = 1
+    ExplicitWidth = 450
   end
   object jtobMenuConfig: TJvToolBar
     Left = 0
     Top = 0
-    Width = 450
+    Width = 373
     Height = 36
     ButtonHeight = 35
     ButtonWidth = 74
@@ -248,6 +254,7 @@ object foConexao: TfoConexao
     Images = ilCadastro
     ShowCaptions = True
     TabOrder = 0
+    ExplicitWidth = 450
     object btnIniFile: TToolButton
       Left = 0
       Top = 0
@@ -271,14 +278,14 @@ object foConexao: TfoConexao
     end
   end
   object dlgOpenDir: TOpenDialog
-    Left = 403
-    Top = 130
+    Left = 323
+    Top = 2
   end
   object ilCadastro: TImageList
-    Left = 400
-    Top = 84
+    Left = 272
+    Top = 4
     Bitmap = {
-      494C010104000C004C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00500110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

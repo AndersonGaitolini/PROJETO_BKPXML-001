@@ -13,7 +13,6 @@ object DM_NFEDFE: TDM_NFEDFE
       'Port=3050'
       'Protocol=Local'
       'DriverID=FB')
-    Connected = True
     LoginPrompt = False
     Left = 28
     Top = 80
