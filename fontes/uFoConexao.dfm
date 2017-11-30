@@ -31,8 +31,6 @@ object foConexao: TfoConexao
     Height = 250
     Align = alClient
     TabOrder = 2
-    ExplicitWidth = 450
-    ExplicitHeight = 254
     object pgcConfig: TPageControl
       Left = 1
       Top = 1
@@ -44,13 +42,8 @@ object foConexao: TfoConexao
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
-      ExplicitWidth = 448
-      ExplicitHeight = 233
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
-        ExplicitLeft = -44
-        ExplicitTop = 21
-        ExplicitWidth = 463
         object lbStatusConn: TLabel
           Left = 94
           Top = 343
@@ -131,9 +124,9 @@ object foConexao: TfoConexao
         end
         object btnFindBD: TButton
           Left = 303
-          Top = 108
+          Top = 110
           Width = 27
-          Height = 25
+          Height = 20
           Caption = '...'
           TabOrder = 5
           OnClick = btnFindBDClick
@@ -143,19 +136,19 @@ object foConexao: TfoConexao
           Top = 36
           Width = 156
           Height = 20
+          ItemIndex = 0
           TabOrder = 1
           Text = 'Local'
           OnChange = cbbTipoConChange
           Items.Strings = (
             'Local'
             'Local(Embarcado)'
-            'Remoto'
-            'Remoto(Embarcado)')
+            'Remoto')
         end
         object btnConectar1: TButton
-          Left = 13
-          Top = 172
-          Width = 204
+          Left = 14
+          Top = 174
+          Width = 317
           Height = 25
           Caption = 'Conectar'
           DoubleBuffered = False
@@ -167,9 +160,9 @@ object foConexao: TfoConexao
         end
         object edServerName: TLabeledEdit
           AlignWithMargins = True
-          Left = 13
-          Top = 147
-          Width = 155
+          Left = 14
+          Top = 149
+          Width = 284
           Height = 20
           Margins.Left = 2
           Margins.Top = 2
@@ -185,10 +178,10 @@ object foConexao: TfoConexao
           TabOrder = 6
         end
         object btnPing: TButton
-          Left = 173
-          Top = 145
-          Width = 45
-          Height = 25
+          Left = 303
+          Top = 149
+          Width = 27
+          Height = 20
           Caption = 'Ping'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clBlack
@@ -230,8 +223,6 @@ object foConexao: TfoConexao
         item
           Width = 50
         end>
-      ExplicitTop = 234
-      ExplicitWidth = 448
     end
   end
   object pnlMenu: TPanel
@@ -241,7 +232,6 @@ object foConexao: TfoConexao
     Height = 1
     Align = alTop
     TabOrder = 1
-    ExplicitWidth = 450
   end
   object jtobMenuConfig: TJvToolBar
     Left = 0
@@ -254,7 +244,6 @@ object foConexao: TfoConexao
     Images = ilCadastro
     ShowCaptions = True
     TabOrder = 0
-    ExplicitWidth = 450
     object btnIniFile: TToolButton
       Left = 0
       Top = 0
@@ -285,7 +274,7 @@ object foConexao: TfoConexao
     Left = 272
     Top = 4
     Bitmap = {
-      494C010104000C00500110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00580110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

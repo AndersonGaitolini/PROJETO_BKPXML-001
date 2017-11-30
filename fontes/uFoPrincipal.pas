@@ -247,6 +247,11 @@ type
     procedure edConsultaSQLChange(Sender: TObject);
     procedure edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+
+//  protected
+//    procedure DoExecute; override;
+//    procedure DoSetUp; override;
+//    procedure DoTearDown; override;
   private
     { Private declarations }
     wValue: String;
@@ -254,7 +259,7 @@ type
     wVisible: boolean;
     wLastFieldFiltros : TFieldFiltros;
     wFetchALL :Boolean;
-
+    wPathXML : string;
     {Métodos da barra de progresso em threds}
     procedure DoMax(const PMax: Int64);
     procedure DoProgress (const PText: String; const PNumber: Cardinal);
@@ -271,8 +276,6 @@ type
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
     procedure pMenuFiltroData(pFieldFiltros : TFieldFiltros);
-
-
 
   public
     { Public declarations }
@@ -579,7 +582,7 @@ end;
 
 procedure TfoPrincipal.pRotinasProgress(pNomeMetodo: TExecuteMetodo);
 begin
-  if not Assigned(wRotinas) then
+//  if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
 
   with wRotinas do
@@ -588,6 +591,7 @@ begin
 
     case pNomeMetodo of
           emLoadXMLNFe: begin
+                          InitialDir := wPathXML;
                           statPrincipal.Panels[1].Text := '0.00%';
                         end;
 
@@ -610,6 +614,7 @@ begin
     OnProgress := DoProgress;
     OnTerminate := DoTerminate;
     wStartTime := Now;
+    //Inicia e suspende a  thread go go go...
     start;
   end;
 end;
@@ -1139,6 +1144,25 @@ begin
   dbgNfebkp.Refresh;
 end;
 
+//procedure TfoPrincipal.DoExecute;
+//begin
+//  if not Assigned(wRotinas) then
+//    inherited wRotinas.DoExecute();
+//end;
+//
+//procedure TfoPrincipal.DoSetUp;
+//begin
+//  if not Assigned(wRotinas) then
+//    inherited DoSetUp();
+//end;
+//
+//procedure TfoPrincipal.DoTearDown;
+//begin
+//  if not Assigned(wRotinas) then
+//    inherited DoTearDown();
+//end;
+
+
 procedure TfoPrincipal.DoMax(const PMax: Int64);
 begin
   statPrincipal.Panels[2].Text := 'Processando!';
@@ -1157,6 +1181,7 @@ end;
 
 procedure TfoPrincipal.DoTerminate(PSender: TObject);
 var wMSG: string;
+ wCardinal : cardinal;
 begin
 //  Application.MessageBox(PChar('Feito! '),PChar(Format('Processamento concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)])),MB_ICONINFORMATION);
   statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
@@ -1171,9 +1196,12 @@ begin
                       end;
   end;
 
+
+//  SuspendThread(Handle);
   statPrincipal.Panels[3].Text := wMSG;
   ProgressBar1.Step := 1;
   ProgressBar1.Position := 0;
+  wRotinas.Terminate;
 end;
 
 procedure TfoPrincipal.dtpDataFiltroFinKeyUp(Sender: TObject; var Key: Word;
@@ -1747,28 +1775,27 @@ end;
 
 procedure TfoPrincipal.pmRefazAutorizacaoTodosClick(Sender: TObject);
 var wPathInit : TStringList;
-    wPathMAX : string;
     wI : Integer;
     wColumn : TColumn;
 begin
    wPathInit := TStringList.Create;
    jopdDirDir := TJvSelectDirectory.Create(Application);
    try
-     wPathMAX := ExtractFileDir(ParamStr(0));
-     wPathMAX := Copy(wPathMAX, 1, LastDelimiter('\', wPathMAX));
-     if FileExists(wPathMAX+'Maxwin.exe') or (FileExists(wPathMAX+'Maxecv.exe')) then
-       wPathMAX := wPathMAX + 'DFE\XML\Envio\Processado';
+     wPathXML := ExtractFileDir(ParamStr(0));
+     wPathXML := Copy(wPathXML, 1, LastDelimiter('\', wPathXML));
+     if FileExists(wPathXML+'Maxwin.exe') or (FileExists(wPathXML+'Maxecv.exe')) then
+       wPathXML := wPathXML + 'DFE\XML\Envio\Processado';
 
-     if DirectoryExists(wPathMAX) then
-       jopdDirDir.InitialDir := wPathMAX
+     if DirectoryExists(wPathXML) then
+       jopdDirDir.InitialDir := wPathXML
      else
        jopdDirDir.InitialDir := GetCurrentDir;
 
      jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
     if jopdDirDir.Execute then
-      wRotinas.InitialDir := jopdDirDir.Directory;
+      wPathXML  := jopdDirDir.Directory;
 
-    if (wRotinas.InitialDir = '') OR (NOT DirectoryExists(wRotinas.InitialDir)) then
+    if (wPathXML = '') OR (NOT DirectoryExists(wPathXML)) then
       exit;
 
     pRotinasProgress(emLoadXMLNFe);

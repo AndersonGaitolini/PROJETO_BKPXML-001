@@ -41,7 +41,7 @@ uses
 
 var
  ShowResult : Byte;
- wMsg, wIniFile, wSenhaAtual, wPathMAX: string;
+ wMsg, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
  i,wTipo : integer;
  wMaxOK : boolean;
@@ -67,25 +67,24 @@ begin
 //  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
 //    if (FileExists(DM_NFEDFE.IniFile)) then
 
-    if not (ConecxaoBD.Conectado) then
-    begin
-      goto GotoLogin;
-    end
-    else
-    if (ParamCount = 0) then
-    begin
-      goto GotoLogin;
-    end
-    else
-      goto GotoTerminate;
+//   ConecxaoBD.pReadParams;
+//   ConecxaoBD.pConecta;
+//    if (ParamCount = 0) and (not (ConecxaoBD.Conectado)) then
+//    begin
+//      goto GotoLogin;
+//    end
+//    else
+//    if (ParamCount > 0) and (not (ConecxaoBD.Conectado)) then
+//    goto GotoTerminate;
 
   if (ParamCount = 0) then
   begin
+    ConecxaoBD.pReadParams;
+    ConecxaoBD.pConecta;
     GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
-
 
     Application.CreateForm(TfoLogin, foLogin);
     ShowResult := foLogin.ShowModal;
@@ -111,8 +110,10 @@ begin
   begin
     if ParamCount > 0 then
     for I := 0 to ParamCount do
-      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: '+ ParamStr(i),true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'CALL_PARAMETROS: '+ ParamStr(i),true);
 
+    ConecxaoBD.pReadParams;
+    ConecxaoBD.pConecta;
     if not ConecxaoBD.Conectado then
     begin
       Application.Terminate;
@@ -142,6 +143,9 @@ begin
    begin
      DM_NFEDFE.Dao.StartTransaction;
      try
+       ConecxaoBD.pReadParams;
+       ConecxaoBD.pConecta;
+
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'wPathMAX: True não logou');
        tabUsuarios.Id := Usuarios.daoUsuarios.fNextID(tabUsuarios);
        if DM_NFEDFE.Dao.Inserir(tabUsuarios) = 1 then
@@ -173,7 +177,7 @@ begin
 //    for I := 0 to ParamCount do
 //      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
 
-    if not ConexaoBD.Conectado then
+    if not ConecxaoBD.Conectado then
     begin
       Application.Terminate;
       exit;

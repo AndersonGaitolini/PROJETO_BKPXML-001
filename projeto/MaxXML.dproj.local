@@ -1,7 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2017/11/28 15:32:55.000.035,J:\fontes\uFoConexao.pas=J:\fontes\uFoConfiguracao.pas</Transaction>
-    <Transaction>2017/11/28 15:32:55.000.052,J:\fontes\uFoConexao.dfm=J:\fontes\uFoConfiguracao.dfm</Transaction>
+    <Transaction>2017/11/28 15:32:55.000.052,J:\fontes\uFoConfiguracao.dfm=J:\fontes\uFoConexao.dfm</Transaction>
+    <Transaction>2017/11/28 15:32:55.000.035,J:\fontes\uFoConfiguracao.pas=J:\fontes\uFoConexao.pas</Transaction>
+    <Transaction>2017/11/30 09:17:58.320,=J:\projeto\Unit1.pas</Transaction>
+    <Transaction>2017/11/30 09:22:52.764,J:\fontes\uEventedThreadRotinas.pas=J:\projeto\Unit1.pas</Transaction>
+    <Transaction>2017/11/30 09:36:07.109,J:\fontes\uEventedThreadRotinas.pas=</Transaction>
+    <Transaction>2017/11/30 09:37:14.420,=J:\fontes\uEventedThreadProgess.pas</Transaction>
+    <Transaction>2017/11/30 10:27:58.884,J:\fontes\uEventedThreadProgess.pas=</Transaction>
   </Transactions>
 </BorlandProject>

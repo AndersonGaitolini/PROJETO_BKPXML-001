@@ -265,8 +265,8 @@ object foPrincipal: TfoPrincipal
         220
         48)
       object Shape1: TShape
-        Left = -213
-        Top = -232
+        Left = -217
+        Top = -236
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -276,8 +276,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -96
-        Top = -204
+        Left = -100
+        Top = -208
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -287,8 +287,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -213
-        Top = -204
+        Left = -217
+        Top = -208
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -298,8 +298,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -96
-        Top = -190
+        Left = -100
+        Top = -194
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -310,8 +310,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -213
-        Top = -190
+        Left = -217
+        Top = -194
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -321,8 +321,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -96
-        Top = -231
+        Left = -100
+        Top = -235
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -332,8 +332,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -213
-        Top = -218
+        Left = -217
+        Top = -222
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -343,8 +343,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -197
-        Top = -232
+        Left = -201
+        Top = -236
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -353,8 +353,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -82
-        Top = -205
+        Left = -86
+        Top = -209
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -363,8 +363,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -197
-        Top = -204
+        Left = -201
+        Top = -208
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -373,8 +373,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -82
-        Top = -191
+        Left = -86
+        Top = -195
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -384,8 +384,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -197
-        Top = -190
+        Left = -201
+        Top = -194
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -394,8 +394,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -197
-        Top = -218
+        Left = -201
+        Top = -222
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -404,8 +404,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -82
-        Top = -232
+        Left = -86
+        Top = -236
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -414,8 +414,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -96
-        Top = -218
+        Left = -100
+        Top = -222
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -425,8 +425,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -82
-        Top = -219
+        Left = -86
+        Top = -223
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -899,7 +899,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 201
     Bitmap = {
-      494C01012C003C00B00220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C00B40220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7387,7 +7387,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 277
     Bitmap = {
-      494C010103000C00580210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C005C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF

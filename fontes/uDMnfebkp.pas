@@ -217,7 +217,7 @@ end;
 
 constructor TConecxaoBD.Create;
 begin
-
+  pIniPath;
 end;
 
 function TConecxaoBD.fConexaoBD: Boolean;
@@ -336,6 +336,7 @@ procedure TConecxaoBD.pReadParams;
 var wSessao : string;
 begin
   wSessao := fNomePC;
+  FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, wSessao, 'TipoCon'));
   FUserName     := getINI(FIniFile, wSessao, 'User_Name');
   FPassword     := getINI(FIniFile, wSessao, 'Password');
   FDataBase     := getINI(FIniFile, wSessao, 'Database');
@@ -354,6 +355,7 @@ procedure TConecxaoBD.pWriteParams;
 var wSessao : string;
 begin
  wSessao := fNomePC;
+ setINI(FIniFile, wSessao, 'TipoCon'       ,TConvert<TTipoConexao>.EnumConvertStr(FTipoCon));
  setINI(FIniFile, wSessao, 'User_Name'     ,FUserName     );
  setINI(FIniFile, wSessao, 'Password'      ,FPassword     );
  setINI(FIniFile, wSessao, 'Database'      ,FDataBase     );

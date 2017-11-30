@@ -1,7 +1,7 @@
 unit uRotinas;
 
 interface
-
+  {$M+}
 uses
  Configuracoes, Lm_bkpdfe,  Winapi.Windows, Winapi.Messages,
  System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
@@ -16,6 +16,11 @@ uses
  type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF, emSelecionaRows, emPescaXML);
 
  type TRotinas = class(TProgressThread)
+  strict protected
+    procedure DoExecute; override;
+    procedure DoSetUp; override;
+    procedure DoTearDown; override;
+
   private
     FMaximo : Int64;
     FResult : Int64;
@@ -25,6 +30,10 @@ uses
     FRefazAutorizacao : Boolean;
     FExecuteMetodo : TExecuteMetodo;
 
+    FOnExecute: TNotifyEvent;
+    FOnSetUp: TNotifyEvent;
+    FOnTearDown: TNotifyEvent;
+
   public
     property Result: Int64                 read FResult;
     property Maximo: Int64                 read FMaximo write FMaximo;
@@ -32,6 +41,10 @@ uses
     property InitialDir: String            read FInitialDir write FInitialDir;
     property RefazAutorizacao: Boolean     read FRefazAutorizacao write FRefazAutorizacao;
     property ExecuteMetodo: TExecuteMetodo read FExecuteMetodo write FExecuteMetodo;
+
+    property OnExecute: TNotifyEvent read FOnExecute write FOnExecute;
+    property OnSetUp: TNotifyEvent read FOnSetUp write FOnSetUp;
+    property OnTearDown: TNotifyEvent read FOnTearDown write FOnTearDown;
 
     procedure Execute; override; //Demo
 
@@ -70,10 +83,15 @@ uses
     procedure pDecompressFiles(const Filename, DestDirectory : String);
     procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
       Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
-
-
   end;
 
+  // in case you want to use RTTI
+  TEventedThread = class(TRotinas)
+  published
+    property OnExecute;
+    property OnSetUp;
+    property OnTearDown;
+  end;
 
 const
   SHCONTCH_NOPROGRESSBOX = 4;
@@ -1816,6 +1834,37 @@ begin
     end;
 end;
 
+procedure TRotinas.DoExecute;
+var
+  TheOnExecute: TNotifyEvent;
+begin
+  inherited;
+  TheOnExecute := OnExecute;
+  if Assigned(TheOnExecute) then
+    TheOnExecute(Self);
+end;
+
+procedure TRotinas.DoSetUp;
+var
+  TheOnSetUp: TNotifyEvent;
+begin
+  inherited;
+  TheOnSetUp := OnSetUp;
+  if Assigned(TheOnSetUp) then
+    TheOnSetUp(Self);
+end;
+
+procedure TRotinas.DoTearDown;
+var
+  TheOnTearDown: TNotifyEvent;
+begin
+  inherited;
+  TheOnTearDown := OnTearDown;
+  if Assigned(TheOnTearDown) then
+    TheOnTearDown(Self);
+end;
+
+
 procedure TRotinas.Execute;
 
   procedure pExecuteLoadXMLNFe;
@@ -1857,7 +1906,10 @@ begin
         emSelecionaRows : pExecuteSelecionaLinhaGrid;
     end;
   finally
+//        if Terminated then
+//    SuspendThread(Handle);
     CoInitializeEx(nil,0);
+
   end;
 end;
 

@@ -58,8 +58,6 @@ type
     procedure btnSalvaIniClick(Sender: TObject);
   private
     { Private declarations }
-    wPress: Boolean;
-    wRemote :boolean;
     function validacampos(pForm : TForm): boolean;
     function LimpaCampos(pForm : TForm): boolean;
     procedure pMontaListaPerfil;
@@ -88,6 +86,8 @@ var
   foConexao : TfoConexao;
   wPathAux: string;
   SavStr : String;
+
+
 implementation
 
 
@@ -115,12 +115,15 @@ begin
 end;
 
 procedure TfoConexao.pConLocalEmbedded;
+var wPath : string;
+label GotoEdit;
 begin
   with ConecxaoBD do
   begin
-    if fServiceStop(fNomePC,'FirebirdServerDefaultInstance') then
-      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser parado!'+#13#13+
-                  'Alt+ R e digite '+ QuotedStr('services.msc'));
+    fServiceStop(fNomePC,'FirebirdServerDefaultInstance');
+//    if fServiceStop(fNomePC,'FirebirdServerDefaultInstance') then
+//      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser parado!'+#13#13+
+//                  'Alt+ R e digite '+ QuotedStr('services.msc'));
 
     TipoCon := tcLocalEmbed;
     UserName     := trim(LowerCase(edUsuarioBD.Text));
@@ -129,15 +132,43 @@ begin
     SQLDialect   := '3';
     DriverID     := 'FBEmbed';
     CharacterSet := 'WIN1252';
-    VendorLib    := 'fbembed.dll';
-    VendorHome   := ExtractFileDir(Application.ExeName)+'\fb\';
+    wPath := Trim(UpperCase(edServerName.Text));
+    if (cbbTipoCon.ItemIndex = 1) and (FileExists(wPath)) then
+    begin
+      VendorLib := ExtractFileName(wPath);
+      wPath := ExtractFileDir(wPath);
+      if Pos('\BIN', wPath) > 0 then
+        delete(wPath, Pos('\BIN', wPath), length(wPath));
+      if DirectoryExists(wPath) then
+        VendorHome := wPath
+      else
+      begin
+        goto GotoEdit;
+      end;
+    end
+    else
+    if (cbbTipoCon.ItemIndex = 1)then
+    begin
+      GotoEdit:
+      if (edServerName.CanFocus) then
+      begin
+        edServerName.SetFocus;
+        edServerName.SelStart := Length(Trim(edServerName.Text));
+        stat1.Panels[1].Text := 'Arquivo não existe!';
+        exit;
+      end;
+    end;
+//    VendorLib    := 'fbembed.dll';
+//    VendorHome   := ExtractFileDir(Application.ExeName)+'\fb\';
     Protocol     := 'Local';
     Embedded     := true;
   end;
 end;
 
 procedure TfoConexao.pConRemote;
+
 begin
+  fServiceStart(fNomePC,'FirebirdServerDefaultInstance');
   with ConecxaoBD do
   begin
     TipoCon      := tcRemote;
@@ -155,7 +186,6 @@ begin
 end;
 
 procedure TfoConexao.btnConectar1Click(Sender: TObject);
-
 begin
   if ConecxaoBD.Conectado  then
   begin
@@ -187,7 +217,9 @@ procedure TfoConexao.btnFindBDClick(Sender: TObject);
 begin
  dlgOpenDir := TOpenDialog.Create(Application);
  dlgOpenDir.DefaultExt := 'FDB';
- dlgOpenDir.InitialDir := GetCurrentDir;
+ dlgOpenDir.Filter := 'Firebird | *.*fdb';
+ dlgOpenDir.FilterIndex := 0;
+ dlgOpenDir.InitialDir := Application.GetNamePath;
  dlgOpenDir.FileName := 'BACKUPXML.FDB';
 
  if dlgOpenDir.Execute then
@@ -204,15 +236,33 @@ end;
 procedure TfoConexao.btnPingClick(Sender: TObject);
 var wHost: string;
 begin
-  wHost := Trim(UpperCase(edServerName.Text));
-  if fPingIP(wHost) then
-  begin
-    stat1.Panels[1].Text := 'Ping Ok!';
-  end
-  else
-  begin
-    stat1.Panels[1].Text := 'Falha no Ping!';
+
+  case cbbTipoCon.ItemIndex of
+    2: begin
+          wHost := Trim(UpperCase(edServerName.Text));
+          if fPingIP(wHost) then
+            stat1.Panels[1].Text := 'Ping Ok!'
+          else
+            stat1.Panels[1].Text := 'Falha no Ping!';
+       end;
+
+    1:  begin
+           dlgOpenDir := TOpenDialog.Create(Application);
+           dlgOpenDir.DefaultExt := 'DLL';
+           dlgOpenDir.Filter := 'DLL | *.*dll';
+           dlgOpenDir.FilterIndex := 0;
+           dlgOpenDir.InitialDir := Application.GetNamePath;
+           dlgOpenDir.FileName := 'fbembed.dll';
+
+           if dlgOpenDir.Execute then
+           begin
+             edServerName.Text := dlgOpenDir.FileName;
+           end;
+        end;
   end;
+
+
+
 
 end;
 
@@ -223,10 +273,44 @@ end;
 
 procedure TfoConexao.cbbTipoConChange(Sender: TObject);
 begin
-  edServerName.Visible := cbbTipoCon.ItemIndex = 2;
-  btnPing.Visible := cbbTipoCon.ItemIndex = 2;
-  edServerName.Text := Trim(UpperCase(fNomePC));
+   DM_NFEDFE.conConexaoFD.Close;
+   DM_NFEDFE.conConexaoFD.Connected := False;
+   ConecxaoBD.Conectado := False;
+
+   pShowBotaoConectar;
+   pShowStatusBar;
+
+  case cbbTipoCon.ItemIndex of
+    2: begin
+         edServerName.Visible := true;
+         edServerName.EditLabel.Caption := 'Servername / IP';
+         edServerName.Text := ConecxaoBD.Server;
+         btnPing.Visible := true;
+         btnPing.Caption := 'Ping!';
+       end;
+
+    1:  begin
+          edServerName.Visible := true;
+          edServerName.EditLabel.Caption := 'Caminho do '+ QuotedStr('fbembed.dll');
+          edServerName.Text := ConecxaoBD.VendorHome + '\BIN\' +ConecxaoBD.VendorLib;
+          btnPing.Visible := true;
+          btnPing.Caption := '...';
+        end;
+
+     0:  begin
+           edServerName.Visible := false;
+           edServerName.EditLabel.Caption := 'Servername / IP';
+           edServerName.Text := ConecxaoBD.Server;
+           btnPing.Visible := false;
+           btnPing.Caption := '...';
+         end;
+
+
+
+  end;
+
 end;
+
 
 //procedure TfoConfiguracao.edNFCePathEnvioExit(Sender: TObject);
 //begin
@@ -315,16 +399,15 @@ begin
 
   pLerParametros;
   pgcConfig.TabIndex := 0;
-  if (ConecxaoBD.Protocol = 'TCPIP') then
-    cbbTipoCon.ItemIndex := 2
-  else
-  if (ConecxaoBD.Protocol= 'LOCAL') and (ConecxaoBD.Embedded) then
-    cbbTipoCon.ItemIndex := 1
-  else
-    cbbTipoCon.ItemIndex := 0;
 
-  edServerName.Visible := cbbTipoCon.ItemIndex = 2;
-  btnPing.Visible := cbbTipoCon.ItemIndex = 2;
+  case ConecxaoBD.TipoCon of
+    tcLocal : cbbTipoCon.ItemIndex := 0;
+    tcLocalEmbed : cbbTipoCon.ItemIndex := 1;
+    tcRemote : cbbTipoCon.ItemIndex := 2;
+  end;
+
+  edServerName.Visible := cbbTipoCon.ItemIndex in [1..2];
+  btnPing.Visible := cbbTipoCon.ItemIndex in [1..2];
 
   pShowBotaoConectar;
   pShowStatusBar;
@@ -333,10 +416,23 @@ end;
 
 procedure TfoConexao.pLerParametros;
 begin
-  ConecxaoBD.pReadParams;
   edUsuarioBD.Text    := ConecxaoBD.UserName;
   edSenhaBD.Text      := ConecxaoBD.Password;
   edDataBase.Text     := ConecxaoBD.Database;
+  case ConecxaoBD.TipoCon of
+
+    tcLocal      : cbbTipoCon.ItemIndex := 0;
+    tcLocalEmbed : begin
+                     cbbTipoCon.ItemIndex := 1;
+                     edServerName.Text := ConecxaoBD.VendorHome + '\BIN\' +ConecxaoBD.VendorLib;
+                   end;
+
+    tcRemote     : begin
+                    cbbTipoCon.ItemIndex := 2;
+                    edServerName.Text := ConecxaoBD.Server;
+                   end;
+
+  end;
 end;
 
 procedure TfoConexao.pLocalRemote;
