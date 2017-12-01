@@ -295,10 +295,10 @@ begin
 //    for I := 0 to ConecxaoBD.Driver.ServicesCount-1 do
 //      ShowMessage(InttoStr(I)+' - '+ConecxaoBD.Driver.Services[I].Name);
 
-    if fCloseFile(FDataBase) then
-     DM_NFEDFE.conConexaoFD.Open
-    else
-      Result := False;
+//    if fCloseFile(FDataBase) then
+     DM_NFEDFE.conConexaoFD.Open;
+//    else
+//      Result := False;
 
     Result := DM_NFEDFE.conConexaoFD.Connected;
     FConectado := Result;
@@ -336,7 +336,7 @@ procedure TConecxaoBD.pReadParams;
 var wSessao : string;
 begin
   wSessao := fNomePC;
-  FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, wSessao, 'TipoCon'));
+  FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, wSessao, 'TipoCon','tcLocal'));
   FUserName     := getINI(FIniFile, wSessao, 'User_Name');
   FPassword     := getINI(FIniFile, wSessao, 'Password');
   FDataBase     := getINI(FIniFile, wSessao, 'Database');

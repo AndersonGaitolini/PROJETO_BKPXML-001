@@ -1,29 +1,67 @@
 ﻿[Closed Files]
-File_0=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas',0,1,3482,1,3493,0,0,,
-File_1=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.Forms.pas',0,1,4004,1,4015,0,0,{{1716,4}
-File_2=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBBase.pas',0,1,1611,1,1628,0,0,,
-File_3=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBWrapper.pas',0,1,2875,1,2888,0,0,,
+File_0=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBBase.pas',0,1,1578,1,1593,0,0,,
+File_1=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.IBWrapper.pas',0,1,2863,1,2880,0,0,,
+File_2=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.IniFiles.pas',0,1,153,1,166,0,0,,
+File_3=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.Forms.pas',0,1,4004,1,4015,0,0,{{1716,4}
 File_4=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Stan.Consts.pas',0,1,43,12,97,0,0,,
 File_5=TSourceModule,'D:\Arquivos de programas\Embarcadero\Studio\16.0\source\data\firedac\FireDAC.Phys.FBDef.pas',0,1,94,33,110,0,0,,
 File_6=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\Data.DB.pas',0,1,3573,1,3584,0,0,,
 File_7=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Comp.Client.pas',0,1,4151,1,4160,0,0,,
-File_8=TSourceModule,'J:\fontes\uMetodosUteis.pas',0,1,1109,1,1113,0,0,,{1
-File_9=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,3838,1,3854,0,0,{{1651,4}
-File_10=TSourceModule,'J:\fontes\ORM\DaoFD.pas',0,1,492,1,508,0,0,,
-File_11=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Comp.DataSet.pas',0,1,3104,1,3117,0,0,,
-File_12=TSourceModule,'J:\fontes\uProgressThread.pas',0,1,13,3,12,0,0,,
-File_13=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas',0,1,15164,1,15162,0,0,,
+File_8=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\VCL\Vcl.StdCtrls.pas',0,1,3838,1,3854,0,0,{{1651,4}
+File_9=TSourceModule,'J:\fontes\ORM\DaoFD.pas',0,1,492,1,508,0,0,,
+File_10=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Comp.DataSet.pas',0,1,3104,1,3117,0,0,,
+File_11=TSourceModule,'J:\fontes\uProgressThread.pas',0,1,13,3,12,0,0,,
+File_12=TSourceModule,'d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\common\System.Classes.pas',0,1,15164,1,15162,0,0,,
 
 [Modules]
-Module0=J:\projeto\MaxXML.dproj
-Module1=J:\fontes\ufoLogin.pas
-Module2=J:\fontes\uFoConexao.pas
-Module3=J:\fontes\uRotinas.pas
-Module4=J:\fontes\uFoPrincipal.pas
-Module5=J:\fontes\uDMnfebkp.pas
-Module6=J:\fontes\classes\Lm_bkpdfe.pas
-Count=7
+Module0=J:\fontes\uFoConexao.pas
+Module1=d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas
+Module2=J:\fontes\uDMnfebkp.pas
+Module3=J:\fontes\uMetodosUteis.pas
+Module4=d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas
+Module5=J:\fontes\uRotinas.pas
+Module6=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\win\Winapi.Windows.pas
+Module7=J:\projeto\MaxXML.dproj
+Module8=J:\fontes\ufoLogin.pas
+Module9=J:\fontes\uFoPrincipal.pas
+Module10=J:\fontes\classes\Lm_bkpdfe.pas
+Count=11
 EditWindowCount=1
+
+[J:\fontes\uFoConexao.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[J:\fontes\uDMnfebkp.pas]
+ModuleType=TSourceModule
+FormState=1
+FormOnTop=0
+
+[J:\fontes\uMetodosUteis.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[J:\fontes\uRotinas.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
+
+[d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\win\Winapi.Windows.pas]
+ModuleType=TSourceModule
+FormState=0
+FormOnTop=0
 
 [J:\projeto\MaxXML.dproj]
 ModuleType=TBaseProject
@@ -33,22 +71,7 @@ ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
 
-[J:\fontes\uFoConexao.pas]
-ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
-
-[J:\fontes\uRotinas.pas]
-ModuleType=TSourceModule
-FormState=0
-FormOnTop=0
-
 [J:\fontes\uFoPrincipal.pas]
-ModuleType=TSourceModule
-FormState=1
-FormOnTop=0
-
-[J:\fontes\uDMnfebkp.pas]
 ModuleType=TSourceModule
 FormState=1
 FormOnTop=0
@@ -63,8 +86,8 @@ FormState=1
 FormOnTop=0
 
 [EditWindow0]
-ViewCount=7
-CurrentEditView=J:\projeto\MaxXML.dpr
+ViewCount=11
+CurrentEditView=J:\fontes\uFoConexao.pas
 View0=0
 View1=1
 View2=2
@@ -72,6 +95,10 @@ View3=3
 View4=4
 View5=5
 View6=6
+View7=7
+View8=8
+View9=9
+View10=10
 PercentageSizes=1
 Create=1
 Visible=1
@@ -126,9 +153,9 @@ EditViewName=J:\fontes\classes\Lm_bkpdfe.pas
 [View2]
 CustomEditViewType=TEditView
 Module=J:\projeto\MaxXML.dpr
-CursorX=15
-CursorY=91
-TopLine=72
+CursorX=1
+CursorY=60
+TopLine=49
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -148,9 +175,9 @@ EditViewName=J:\fontes\ufoLogin.pas
 [View4]
 CustomEditViewType=TEditView
 Module=J:\fontes\uRotinas.pas
-CursorX=22
-CursorY=1649
-TopLine=1642
+CursorX=31
+CursorY=599
+TopLine=587
 LeftCol=1
 Elisions=
 Bookmarks={1,835,1}
@@ -160,8 +187,8 @@ EditViewName=J:\fontes\uRotinas.pas
 CustomEditViewType=TEditView
 Module=J:\fontes\uDMnfebkp.pas
 CursorX=1
-CursorY=303
-TopLine=292
+CursorY=328
+TopLine=317
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -169,10 +196,54 @@ EditViewName=J:\fontes\uDMnfebkp.pas
 
 [View6]
 CustomEditViewType=TEditView
+Module=d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas
+CursorX=1
+CursorY=3302
+TopLine=3285
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas
+
+[View7]
+CustomEditViewType=TEditView
+Module=J:\fontes\uMetodosUteis.pas
+CursorX=1
+CursorY=1164
+TopLine=1153
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=J:\fontes\uMetodosUteis.pas
+
+[View8]
+CustomEditViewType=TEditView
+Module=d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas
+CursorX=1
+CursorY=9283
+TopLine=9272
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\RTL\SYS\System.SysUtils.pas
+
+[View9]
+CustomEditViewType=TEditView
+Module=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\win\Winapi.Windows.pas
+CursorX=30
+CursorY=8410
+TopLine=8397
+LeftCol=1
+Elisions=
+Bookmarks=
+EditViewName=d:\arquivos de programas\embarcadero\studio\16.0\source\rtl\win\Winapi.Windows.pas
+
+[View10]
+CustomEditViewType=TEditView
 Module=J:\fontes\uFoConexao.pas
 CursorX=1
-CursorY=297
-TopLine=286
+CursorY=208
+TopLine=280
 LeftCol=1
 Elisions=
 Bookmarks=
@@ -193,29 +264,28 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=330
 LRDockWidth=20410
 Dockable=1
 StayOnTop=0
 
 [Breakpoints]
-Count=11
+Count=10
 Breakpoint0='J:\fontes\uRotinas.pas',992,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint1='J:\fontes\uRotinas.pas',1036,'',0,1,'',1,0,0,'',1,'','','',0,''
 Breakpoint2='d:\arquivos de programas\embarcadero\studio\16.0\SOURCE\XML\Xml.XMLDoc.pas',2680,'',0,0,'',1,0,0,'',1,'','','',0,''
 Breakpoint3='J:\fontes\uRotinas.pas',1661,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint4='J:\fontes\uFoConexao.pas',149,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint5='D:\Arquivos de programas\Embarcadero\Studio\16.0\source\data\firedac\FireDAC.Phys.FBDef.pas',102,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint6='d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas',3493,'',0,0,'',1,0,0,'',1,'','','',0,''
-Breakpoint7='J:\fontes\uFoConexao.pas',140,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint8='J:\fontes\uFoConexao.pas',287,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint9='J:\fontes\uDMnfebkp.pas',274,'',0,1,'',1,0,0,'',1,'','','',0,''
-Breakpoint10='J:\projeto\MaxXML.dpr',87,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint4='D:\Arquivos de programas\Embarcadero\Studio\16.0\source\data\firedac\FireDAC.Phys.FBDef.pas',102,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint5='d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas',3493,'',0,0,'',1,0,0,'',1,'','','',0,''
+Breakpoint6='J:\fontes\uFoConexao.pas',287,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint7='J:\fontes\uDMnfebkp.pas',274,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint8='J:\fontes\uFoConexao.pas',201,'',0,1,'',1,0,0,'',1,'','','',0,''
+Breakpoint9='d:\arquivos de programas\embarcadero\studio\16.0\source\data\firedac\FireDAC.Phys.pas',3319,'',0,1,'',1,0,0,'',1,'','','',0,''
 
 [EmbarcaderoWin32Debugger_AddressBreakpoints]
 Count=0
@@ -336,11 +406,16 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1562
 ClientHeight=4106
-TBDockHeight=8657
+TBDockHeight=6641
 LRDockWidth=1562
 Dockable=1
 StayOnTop=0
-SplitPos=77
+SplitPos=64
+
+[PropInspDesignerSelection]
+ArrangeBy=Name
+SelectedItem=Name,Action
+ExpandedItems="LiveBindings Designer=0",Images=0,LiveBindings=0
 
 [ModelViewTool]
 PercentageSizes=1
@@ -351,11 +426,11 @@ State=0
 Left=0
 Top=0
 Width=1494
-Height=8314
+Height=6299
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1494
-ClientHeight=8314
+ClientHeight=6299
 TBDockHeight=7452
 LRDockWidth=7959
 Dockable=1
@@ -368,7 +443,7 @@ Visible=0
 Docked=1
 State=0
 Left=-80
-Top=-106
+Top=-102
 Width=2773
 Height=4791
 MaxLeft=-1
@@ -427,11 +502,11 @@ State=0
 Left=0
 Top=0
 Width=1953
-Height=8314
+Height=6299
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1953
-ClientHeight=8314
+ClientHeight=6299
 TBDockHeight=9087
 LRDockWidth=3770
 Dockable=1
@@ -443,8 +518,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=-871
-Top=-106
+Left=-809
+Top=-36
 Width=4268
 Height=9468
 MaxLeft=-1
@@ -463,7 +538,7 @@ Visible=0
 Docked=1
 State=0
 Left=-947
-Top=-106
+Top=178
 Width=410
 Height=558
 MaxLeft=-1
@@ -487,11 +562,11 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=634
 LRDockWidth=7432
 Dockable=1
@@ -506,11 +581,11 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=330
 LRDockWidth=11113
 Dockable=1
@@ -529,11 +604,11 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=2345
 LRDockWidth=5225
 Dockable=1
@@ -548,11 +623,11 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=3156
 LRDockWidth=5225
 Dockable=1
@@ -566,11 +641,11 @@ Docked=1
 State=0
 Left=0
 Top=0
-Width=3506
+Width=2334
 Height=1914
 MaxLeft=-1
 MaxTop=-1
-ClientWidth=3506
+ClientWidth=2334
 ClientHeight=1914
 TBDockHeight=3536
 LRDockWidth=4238
@@ -632,11 +707,11 @@ State=0
 Left=0
 Top=0
 Width=1035
-Height=8314
+Height=6299
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=1035
-ClientHeight=8314
+ClientHeight=6299
 TBDockHeight=7452
 LRDockWidth=10723
 Dockable=1
@@ -648,8 +723,8 @@ Create=1
 Visible=0
 Docked=1
 State=0
-Left=0
-Top=0
+Left=200
+Top=626
 Width=4277
 Height=4892
 MaxLeft=-1
@@ -670,11 +745,11 @@ State=0
 Left=0
 Top=0
 Width=5732
-Height=1825
+Height=1736
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=1825
+ClientHeight=1736
 TBDockHeight=2357
 LRDockWidth=13105
 Dockable=1
@@ -780,14 +855,14 @@ Visible=0
 Docked=1
 State=0
 Left=0
-Top=0
+Top=23
 Width=5732
-Height=2167
+Height=2079
 MaxLeft=-1
 MaxTop=-1
 ClientWidth=5732
-ClientHeight=2167
-TBDockHeight=2167
+ClientHeight=2079
+TBDockHeight=2079
 LRDockWidth=5732
 Dockable=1
 StayOnTop=0
@@ -811,7 +886,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1494
 ClientHeight=6946
-TBDockHeight=8657
+TBDockHeight=6641
 LRDockWidth=1494
 Dockable=1
 StayOnTop=0
@@ -835,7 +910,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1562
 ClientHeight=1812
-TBDockHeight=8657
+TBDockHeight=6641
 LRDockWidth=1562
 Dockable=1
 StayOnTop=0
@@ -859,7 +934,7 @@ MaxLeft=-1
 MaxTop=-1
 ClientWidth=1494
 ClientHeight=0
-TBDockHeight=8657
+TBDockHeight=6641
 LRDockWidth=1494
 Dockable=1
 StayOnTop=0

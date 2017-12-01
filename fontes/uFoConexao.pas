@@ -136,10 +136,10 @@ begin
     if (cbbTipoCon.ItemIndex = 1) and (FileExists(wPath)) then
     begin
       VendorLib := ExtractFileName(wPath);
-      wPath := ExtractFileDir(wPath);
+      wPath := IncludeTrailingPathDelimiter(ExtractFileDir(wPath));
       if Pos('\BIN', wPath) > 0 then
         delete(wPath, Pos('\BIN', wPath), length(wPath));
-      if DirectoryExists(wPath) then
+      if DirectoryExists(IncludeTrailingPathDelimiterw(Path)) then
         VendorHome := wPath
       else
       begin
@@ -292,7 +292,7 @@ begin
     1:  begin
           edServerName.Visible := true;
           edServerName.EditLabel.Caption := 'Caminho do '+ QuotedStr('fbembed.dll');
-          edServerName.Text := ConecxaoBD.VendorHome + '\BIN\' +ConecxaoBD.VendorLib;
+          edServerName.Text :=  IncludeTrailingPathDelimiter(ConecxaoBD.VendorHome)  + 'BIN\' +ConecxaoBD.VendorLib;
           btnPing.Visible := true;
           btnPing.Caption := '...';
         end;
@@ -424,7 +424,7 @@ begin
     tcLocal      : cbbTipoCon.ItemIndex := 0;
     tcLocalEmbed : begin
                      cbbTipoCon.ItemIndex := 1;
-                     edServerName.Text := ConecxaoBD.VendorHome + '\BIN\' +ConecxaoBD.VendorLib;
+                     edServerName.Text := IncludeTrailingPathDelimiter(ConecxaoBD.VendorHome) + 'BIN\' +ConecxaoBD.VendorLib;
                    end;
 
     tcRemote     : begin

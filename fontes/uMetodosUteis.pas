@@ -30,6 +30,8 @@ Const
  clXmlDefeito = clBlue;
  clNaoIdent = clNavy;
 
+var ArrayCardi : array of cardinal;
+
 
   type
     TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
@@ -96,6 +98,7 @@ Const
   function fServiceStop(sMachine,sService : string ) : boolean;
   function fServiceStart(sMachine, sService : string ) : boolean;
   procedure pAppTerminate;
+  function fSetAtribute(pPath: string; pAtribute: Cardinal): Boolean;
 
   var
    wOpe : TOperacao = opNil;
@@ -828,16 +831,14 @@ end;
 
 function fCloseFile(pSource: string): boolean;
 var wHandle : THandle;
+    wFileSize: Cardinal;
 begin
   Result := false;
   try
-    Result := FileExists(pSource);
-    if Result then
-    begin
-      wHandle := FindWindow( 0,pWideChar(pSource));
-      FileClose(wHandle);
-      Result := True;
-    end;
+    wHandle := FindWindow(0,pWideChar(pSource));
+    wFileSize := GetFileSize(wHandle,nil);
+    Result := UnlockFile(wHandle,0,0,wFileSize,0);
+    FileClose(wHandle);
   except //on E: Exception do
   end;
 end;
@@ -1129,13 +1130,41 @@ end;
 //  end;
 //end;
 
+function fSetAtribute(pPath: string; pAtribute: Cardinal):Boolean;
+var
+  Attributes: Word;
+begin
+
+    Attributes := FileGetAttr(pPath);
+    result := FileSetAttr(pPath, pAtribute) > 0;
+
+//   (Attributes and faReadOnly) = faReadOnly;
+//   (Attributes and faArchive)  = faArchive;
+//   (Attributes and faSysFile)  = faSysFile;
+//   (Attributes and faHidden)   = faHidden;
+//   NewAttributes := Attributes;
+//      { start with original attributes }
+//        NewAttributes := NewAttributes or faReadOnly;
+//        NewAttributes := NewAttributes and not faReadOnly;
+//        NewAttributes := NewAttributes or faArchive;
+//        NewAttributes := NewAttributes and not faArchive;
+//        NewAttributes := NewAttributes or faSysFile;
+//        NewAttributes := NewAttributes and not faSysFile;
+//        NewAttributes := NewAttributes or faHidden;
+//        NewAttributes := NewAttributes and not faHidden;
+
+
+         { ...write the new values }
+end;
+
 procedure setINI(pIniFilePath, prSessao, prSubSessao: string; prValor: string ='');
 var
   wINI : TIniFile;
 begin
   wINI := TIniFile.Create(pIniFilePath);
   try
-    if fCloseFile(pIniFilePath) then
+    if FileExists(pIniFilePath) then
+      fCloseFile(pIniFilePath);
       wINI.WriteString(prSessao, prSubSessao, prValor);
   finally
     wINI.Free;
