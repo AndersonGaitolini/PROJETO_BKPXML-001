@@ -217,12 +217,15 @@ object foConexao: TfoConexao
           Width = 50
         end
         item
-          Text = 'Desconectado'
-          Width = 150
+          Text = 'Conex'#227'o inativa!'
+          Width = 100
         end
         item
+          Text = 'Servi'#231'o do Firebird est'#225' parado!'
           Width = 50
         end>
+      ExplicitLeft = 2
+      ExplicitTop = 229
     end
   end
   object pnlMenu: TPanel
@@ -274,7 +277,7 @@ object foConexao: TfoConexao
     Left = 272
     Top = 4
     Bitmap = {
-      494C010104000C005C0110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00640110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

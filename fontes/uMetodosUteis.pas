@@ -30,8 +30,25 @@ Const
  clXmlDefeito = clBlue;
  clNaoIdent = clNavy;
 
-var ArrayCardi : array of cardinal;
+  cnMaxServices = 4096;
+  SERVICE_KERNEL_DRIVER       = $00000001;
+  SERVICE_FILE_SYSTEM_DRIVER  = $00000002;
+  SERVICE_ADAPTER             = $00000004;
+  SERVICE_RECOGNIZER_DRIVER   = $00000008;
 
+  SERVICE_DRIVER = (SERVICE_KERNEL_DRIVER or SERVICE_FILE_SYSTEM_DRIVER or SERVICE_RECOGNIZER_DRIVER);
+
+  SERVICE_WIN32_OWN_PROCESS   = $00000010;
+  SERVICE_WIN32_SHARE_PROCESS = $00000020;
+  SERVICE_WIN32 = (SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS);
+
+  SERVICE_INTERACTIVE_PROCESS = $00000100;
+
+  SERVICE_TYPE_ALL = (SERVICE_WIN32 or SERVICE_ADAPTER or SERVICE_DRIVER  or SERVICE_INTERACTIVE_PROCESS);
+
+type
+  TSvcA = array[0..cnMaxServices] of TEnumServiceStatus;
+  PSvcA = ^TSvcA;
 
   type
     TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
@@ -42,7 +59,7 @@ var ArrayCardi : array of cardinal;
   Type
   TGenerico = 0..255;
 
-   TConvert<T:record> = class
+   TConvert<T:Record> = class
      private
      public
        class procedure PopulateListEnum(AList: TStrings);
@@ -97,6 +114,11 @@ var ArrayCardi : array of cardinal;
 
   function fServiceStop(sMachine,sService : string ) : boolean;
   function fServiceStart(sMachine, sService : string ) : boolean;
+  function fServiceGetList(sMachine : string; dwServiceType, dwServiceState : DWord; var slServicesList : TStringList): Boolean;
+
+  function ServiceRunning(sMachine, sService: PChar): Boolean;
+  function ServiceGetStatus(sMachine, sService: PChar): DWORD;
+
   procedure pAppTerminate;
   function fSetAtribute(pPath: string; pAtribute: Cardinal): Boolean;
 
@@ -1165,7 +1187,8 @@ begin
   try
     if FileExists(pIniFilePath) then
       fCloseFile(pIniFilePath);
-      wINI.WriteString(prSessao, prSubSessao, prValor);
+
+    wINI.WriteString(prSessao, prSubSessao, prValor);
   finally
     wINI.Free;
   end;
@@ -1206,7 +1229,7 @@ class procedure TConvert<T>.PopulateListEnum(AList: TStrings);
        Enum:=GetEnumValue(TypeInfo(T),StrTexto);
        AList.Add(StrTexto);
        inc(i);
-       until Enum < 0 ;
+     until Enum < 0 ;
        AList.Delete(pred(AList.Count));
    except;
      raise EConvertError.Create(
@@ -1250,6 +1273,94 @@ class function TConvert<T>.EnumConvertStr(const eEnum:T): String;
  begin
    Application.Terminate;
  end;
+
+function fServiceGetList(sMachine : string; dwServiceType, dwServiceState : DWord; var slServicesList : TStringList): Boolean;
+var
+  j : integer;
+  schm : SC_Handle;
+  nBytesNeeded, nServices, nResumeHandle : DWord;
+  ssa : PSvcA;
+  wSL : TStringList;
+
+  SCManHandle, Svchandle : SC_HANDLE;
+  {Nome do computador onde esta localizado o serviço}
+  sComputerNameEx : string;
+  chrComputerName : array[0..255] of char;
+  cSize           : Cardinal;
+begin
+  wSL := TStringList.Create;
+  try
+    Result := false;
+
+    if (sMachine = '') then
+    begin
+      {Caso não tenha sido declarado captura o nome do computador local}
+      FillChar(chrComputerName, SizeOf(chrComputerName), #0);
+      GetComputerName(chrComputerName, cSize);
+      sComputerNameEx:=chrComputerName;
+    end
+    else
+      sComputerNameEx := sMachine;
+
+    schm := OpenSCManager(PChar(sComputerNameEx), nil, SC_MANAGER_ENUMERATE_SERVICE); //SC_MANAGER_ALL_ACCESS);
+
+    if(schm > 0)then
+    begin
+      nResumeHandle := 0;
+      New(ssa);
+
+      EnumServicesStatus(
+        schm,
+        dwServiceType,
+        dwServiceState,
+        ssa^[0],
+        SizeOf(ssa^),
+        nBytesNeeded,
+        nServices,
+        nResumeHandle );
+
+      for j := 0 to nServices-1 do
+        wSL.Add(StrPas(ssa^[j].lpDisplayName));
+
+      Result := true;
+      Dispose(ssa);
+      slServicesList := wSL;
+      CloseServiceHandle(schm);
+    end;
+  finally
+//    FreeAndNil(wSL);
+  end;
+end;
+
+function ServiceGetStatus(sMachine, sService: PChar): DWORD;
+var
+  SCManHandle, SvcHandle: SC_Handle;
+  SS: TServiceStatus;
+  dwStat: DWORD;
+begin
+  dwStat := 0;
+  // Open service manager handle.
+  SCManHandle := OpenSCManager(sMachine, nil, SC_MANAGER_CONNECT);
+  if (SCManHandle > 0) then
+  begin
+    SvcHandle := OpenService(SCManHandle, sService, SERVICE_QUERY_STATUS);
+    // if Service installed
+    if (SvcHandle > 0) then
+    begin
+      // SS structure holds the service status (TServiceStatus);
+      if (QueryServiceStatus(SvcHandle, SS) ) then
+        dwStat := ss.dwCurrentState;
+      CloseServiceHandle(SvcHandle);
+    end;
+    CloseServiceHandle(SCManHandle);
+  end;
+  Result := dwStat;
+end;
+
+function ServiceRunning(sMachine, sService: PChar): Boolean;
+begin
+  Result := SERVICE_RUNNING = ServiceGetStatus(sMachine, sService);
+end;
 
 
 function fServiceStart(sMachine, sService : string ) : boolean;

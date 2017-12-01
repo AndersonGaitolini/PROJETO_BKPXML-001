@@ -153,7 +153,7 @@ var
 implementation
 
 uses
-  Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs, uRotinas, Configuracoes, ConfigPadrao;
+  Usuarios, Lm_bkpdfe, uMetodosUteis, dialogs, uRotinas, Configuracoes, ConfigPadrao, uFoConexao;
 
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
@@ -273,6 +273,7 @@ begin
     conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
     conConexaoFD.Params.Values['Protocol']     := FProtocol;
     conConexaoFD.Params.Values['Server']       := FServer;
+    fPingIP(FServer);
     conConexaoFD.Params.Values['Protocol']     := FProtocol;
     fddrfbDriver.VendorLib                   := FVendorLib;
   end;
@@ -282,6 +283,7 @@ var I:Integer;
 begin
   Result := False;
   FConectado := False;
+  DM_NFEDFE.conConexaoFD.Close;
   try
     pClearParams;
     case TipoCon of
@@ -291,22 +293,27 @@ begin
     else
       Exit;
     end;
+   DM_NFEDFE.conConexaoFD.Open;
 
-//    for I := 0 to ConecxaoBD.Driver.ServicesCount-1 do
-//      ShowMessage(InttoStr(I)+' - '+ConecxaoBD.Driver.Services[I].Name);
-
-//    if fCloseFile(FDataBase) then
-     DM_NFEDFE.conConexaoFD.Open;
-//    else
-//      Result := False;
+   for I := 0 to ParamCount do
+     uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
 
     Result := DM_NFEDFE.conConexaoFD.Connected;
     FConectado := Result;
   except
     on E: Exception do
        begin
-//         FConectado := False;
-         ShowMessage(e.Message);
+         if not FConectado then
+         if not Assigned(foConexao) and (ParamCount > 0) and (StrToIntDef(Trim(ParamStr(1)),0) = 0) then
+         begin
+           foConexao := TfoConexao.Create(Application);
+           try
+            foConexao.ShowModal;
+           finally
+             if not FConectado then
+               Application.Terminate;
+           end;
+         end;
        end;
   end;
 end;

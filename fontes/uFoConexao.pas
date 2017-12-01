@@ -58,6 +58,7 @@ type
     procedure btnSalvaIniClick(Sender: TObject);
   private
     { Private declarations }
+    wListaServicos: TStringList;
     function validacampos(pForm : TForm): boolean;
     function LimpaCampos(pForm : TForm): boolean;
     procedure pMontaListaPerfil;
@@ -95,12 +96,13 @@ implementation
 
 
 procedure TfoConexao.pConLocal;
+const cFirebird = 'FirebirdServerDefaultInstance';
 begin
   with ConecxaoBD do
   begin
-    if fServiceStart(fNomePC,'FirebirdServerDefaultInstance') then
-      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
-                  'Alt+ R e digite '+ QuotedStr('services.msc'));
+//    fServiceStart(fNomePC,');
+//      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
+//                  'Alt+ R e digite '+ QuotedStr('services.msc'));
     TipoCon := tcLocal;
 
     UserName     := trim(LowerCase(edUsuarioBD.Text));
@@ -139,7 +141,8 @@ begin
       wPath := IncludeTrailingPathDelimiter(ExtractFileDir(wPath));
       if Pos('\BIN', wPath) > 0 then
         delete(wPath, Pos('\BIN', wPath), length(wPath));
-      if DirectoryExists(IncludeTrailingPathDelimiterw(Path)) then
+
+      if DirectoryExists(IncludeTrailingPathDelimiter(wPath)) then
         VendorHome := wPath
       else
       begin
@@ -168,7 +171,7 @@ end;
 procedure TfoConexao.pConRemote;
 
 begin
-  fServiceStart(fNomePC,'FirebirdServerDefaultInstance');
+//  fServiceStart(fNomePC,'FirebirdServerDefaultInstance');
   with ConecxaoBD do
   begin
     TipoCon      := tcRemote;
@@ -186,7 +189,14 @@ begin
 end;
 
 procedure TfoConexao.btnConectar1Click(Sender: TObject);
+//var wNomwPC : string;
 begin
+//  wNomwPC := fNomePC;
+//  wListaServicos := TStringList.Create;
+//  fServiceGetList(wNomwPC, SERVICE_TYPE_ALL, SERVICE_TYPE_ALL, wListaServicos);
+
+//  if Assigned(wListaServicos) then
+//     wListaServicos.SaveToFile( ChangeFileExt(Application.ExeName,'.log'));
   if ConecxaoBD.Conectado  then
   begin
    DM_NFEDFE.conConexaoFD.Close;
@@ -534,6 +544,17 @@ end;
 
 procedure TfoConexao.pShowStatusBar;
 begin
+  if cbbTipoCon.ItemIndex in [0,2] then
+  begin
+  if ServiceRunning(nil, 'FirebirdServerDefaultInstance') then
+    stat1.Panels[2].Text := 'Serviço do Firebird está rodando!'
+  else
+    stat1.Panels[2].Text :=  'Serviço do Firebird está parado!';
+  end
+  else
+   stat1.Panels[2].Text := 'Banco ' + QuotedStr('embarcado')+'.';
+
+
   if ConecxaoBD.Conectado then
     stat1.Panels[1].Text := 'Conexão ativa!'
   else

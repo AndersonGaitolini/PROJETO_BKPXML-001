@@ -170,8 +170,6 @@ var wID : integer;
     wSenhaDia : String;
 begin
   Result := false;
-
-
   with DM_NFEDFE.sqlUsuarios, prUsuario do
   begin
     wSenhaDia := fSenhaAtual('');

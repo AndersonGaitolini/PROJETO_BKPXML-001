@@ -64,6 +64,9 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
+  for I := 0 to ParamCount do
+    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
+
 //  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
 //    if (FileExists(DM_NFEDFE.IniFile)) then
 
@@ -97,7 +100,6 @@ begin
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
       tabUsuarios := SoapUsuario;
-//      FoPrincipal.statPrincipal.Panels[1].Text := wMsg;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end
@@ -108,16 +110,14 @@ begin
   else
   if wTipo = cXMLConsulta then
   begin
-    if ParamCount > 0 then
-    for I := 0 to ParamCount do
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'CALL_PARAMETROS: '+ ParamStr(i),true);
-
     ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
     if not ConecxaoBD.Conectado then
     begin
-      Application.Terminate;
-      exit;
+//      Application.CreateForm(TfoConexao, foConexao);
+//      if not ConecxaoBD.Conectado then
+        Application.Terminate;
+        exit;
     end;
 
     tabUsuarios.Usuario         := Trim(ParamStr(2));

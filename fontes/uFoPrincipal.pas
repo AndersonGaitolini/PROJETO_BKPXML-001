@@ -1188,7 +1188,11 @@ begin
   statPrincipal.Panels[2].Text := 'Concluído!';
   with wRotinas do
   case ExecuteMetodo of
-        emLoadXMLNFe: wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+        emLoadXMLNFe: begin
+                        wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+
+                        pUpdateCampoCNPJE;
+                      end;
         emExportaPDF: wMSG := Format('Total %d de %d Arquivos exportados - Tempo total: %s',[ProgressBar1.Position, ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
     emExportaLoteXML: wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
      emSelecionaRows: begin
