@@ -254,6 +254,10 @@ type
 //    procedure DoTearDown; override;
   private
     { Private declarations }
+
+    FLastColunm : integer;
+    FLastOrderBy: TOrdenaBy;
+
     wValue: String;
     wStartTime: TTime;
     wVisible: boolean;
@@ -282,15 +286,16 @@ type
     procedure pAtualizaGrid;
     function fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
     property FetchALL : Boolean read wFetchALL;
+    property LastColunm : integer read FLastColunm write FLastColunm;
+    property LastOrderBy: TOrdenaBy read FLastOrderBy write FLastOrderBy;
   published
     function OpenTabela:boolean;
   end;
 
 var
   foPrincipal : TfoPrincipal;
-  wLastColunm,AtualColunm,i  : Integer;
+  AtualColunm,i  : Integer;
   wUpDown,
-  wLastOrderBy: TOrdenaBy;
   wLastField : string;
   wLoadXML : TLoadXML;
   SLXMLEnv :TStringList;
@@ -384,7 +389,7 @@ begin
   fOpenFile('Selecione o XML de Envio', wFilename,['XML | *.*xml'],1);
   wRotinas.fLoadXMLNFe(tabConfiguracoes, txNFE_Env, false, wFilename);
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
 procedure TfoPrincipal.btnEnvioExtClick(Sender: TObject);
@@ -394,14 +399,14 @@ begin
   fOpenFile('Selecione o XML de Envio processado', wFilename,['XML | *.*xml'],1);
   wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt, False, wFilename);
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
 procedure TfoPrincipal.btnEnvioLoteClick(Sender: TObject);
 begin
   wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFE_EnvLote, True);
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy, CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
 procedure TfoPrincipal.btnFiltrarClick(Sender: TObject);
@@ -420,9 +425,9 @@ begin
      edConsultaSQL.SelStart := 1;
     end;
   end
-  else  
+  else
   begin
-   DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
+   DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, FLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
    if dbgNfebkp.DataSource.DataSet.RecordCount > 0 then
      edConsultaSQL.Clear;
   end;
@@ -457,7 +462,7 @@ begin
   if wRotinas.fLoadXMLNFe(tabConfiguracoes,txRet_Sai,True)> 0 then
   begin
     pDataFiltro;
-    DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+    DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
   end;
 end;
 
@@ -469,7 +474,7 @@ begin
     wProcess:= wRotinas.fNumProcessThreads;
     foXMLSimulcao.ShowModal;
     pDataFiltro;
-    DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+    DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
     LastColunm := dbgNfebkp.SelectedIndex;
   finally
     foXMLSimulcao.Free;
@@ -480,7 +485,7 @@ procedure TfoPrincipal.btnXMLEnvioExtLoteClick(Sender: TObject);
 begin
   wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExtLote, True);
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
+  DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
 procedure TfoPrincipal.cbbEmpCNPJChange(Sender: TObject);
@@ -545,7 +550,7 @@ procedure TfoPrincipal.pAtualizaGrid;
 begin
   pUpdateCampoCNPJE;
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, FLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
   dbgNfebkp.DataSource.DataSet.First;
 end;
@@ -605,7 +610,10 @@ begin
                         end;
 
        emSelecionaRows: begin
+                          if not Assigned(CNPJDOC) then
+                             CNPJDOC := TCNPJDOC.Create;
 
+                          Documento := CNPJDOC.Documento;
                         end;
 
     end;
@@ -892,7 +900,8 @@ begin
     if MessageDlg(wMsg, mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
      if wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
      begin
-       cbbEmpCNPJ.Clear;
+       pUpdateCampoCNPJE
+//       cbbEmpCNPJ.Clear;
      end;
   end;
  dbgNfebkp.Refresh;
@@ -914,7 +923,7 @@ begin
   if wListaSelecionados.Count <> dbgNfebkp.SelectedRows.Count then
     pSelecaoChave(wListaSelecionados);
 
-  if dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count then
+  if (dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count) and (dbgNfebkp.SelectedRows.Count = 1) then
   begin
     if MessageDlg('Você está prestes a deletar '+ IntToStr(wListaSelecionados.Count) +' arquivos.',
        mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
@@ -924,7 +933,7 @@ begin
   if wListaSelecionados.Count = 1 then
   begin
     if MessageDlg('Deseja excluir o arquivo XML ?', mtConfirmation, [mbNo, mbYes],0 ) = mrYes then
-      wRotinas.fDeleteObjetoXML(wListaSelecionados);
+      wRotinas.fDeleteObjetoXML(wListaSelecionados,  fGetCNPJPelaChave(wListaSelecionados.Strings[0]));
   end;
 
   dbgNfebkp.Refresh;
@@ -1124,22 +1133,22 @@ begin
   else
   wValue1 := wValueAux;
 
-  if wLastOrderBy = obyNone then
-    wLastOrderBy:= obyASCENDENTE;
+  if FLastOrderBy = obyNone then
+    FLastOrderBy:= obyASCENDENTE;
 
   wLastField := Column.FieldName;
-  DaoObjetoXML.pFiltraOrdena(wFieldOrd,wLastOrderBy,CNPJDOC.Documento,wLastField ,wDataINI, wDataFIN,'','');
+  DaoObjetoXML.pFiltraOrdena(wFieldOrd,FLastOrderBy,CNPJDOC.Documento,wLastField ,wDataINI, wDataFIN,'','');
 
-  if wLastOrderBy = obyASCENDENTE then
-    wLastOrderBy := obyDESCEDENTE
+  if FLastOrderBy = obyASCENDENTE then
+    FLastOrderBy := obyDESCEDENTE
   else
-   wLastOrderBy := obyASCENDENTE;
+   FLastOrderBy := obyASCENDENTE;
 
-  if wLastColunm >= 0 then
-    dbgNfebkp.Columns[wLastColunm].Title.Font.Style := [];
+  if FLastColunm >= 0 then
+    dbgNfebkp.Columns[FLastColunm].Title.Font.Style := [];
 
   dbgNfebkp.Columns[Column.Index].Title.Font.Style := [fsBold];
-  wLastColunm := Column.Index;
+  FLastColunm := Column.Index;
 
   dbgNfebkp.Refresh;
 end;
@@ -1302,7 +1311,7 @@ begin
      dtpDataFiltroFin.Date := dtpDataFiltroINI.Date;
 
   if dtpDataFiltroINI.Date <= dtpDataFiltroFin.Date then
-    DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, wLastOrderBy, CNPJDOC.Documento,wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+    DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, FLastOrderBy, CNPJDOC.Documento,wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
 end;
 
 procedure TfoPrincipal.dbgNfebkpColExit(Sender: TObject);
@@ -1503,7 +1512,7 @@ begin
     wRotinas := TRotinas.Create;
 
   DaoObjetoXML.pAtualizaTabela;
-  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.4';
+  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.5';
   pSetaCores;
   pIniciaGrid;
 //  pProgressBarStyle;
@@ -1533,8 +1542,8 @@ begin
   statPrincipal.Panels[3].Text := 'SOUIS, '+ FormatDateTime('dddd d, mmmm yyyy ',now);
 
   wLoadXML := lxNone;
-  wLastColunm := -1;
-  wLastOrderBy := obyNone;
+  FLastColunm := -1;
+  FLastOrderBy := obyNone;
 
   wListaSelecionados := TStringList.Create;
   pUpdateCampoCNPJE;
@@ -1556,7 +1565,7 @@ end;
 procedure TfoPrincipal.FormShow(Sender: TObject);
 begin
   pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, wLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, FLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
   wFetchALL := mmFetchAll.Checked;
 end;
@@ -1597,7 +1606,7 @@ begin
           wObjXML.Chave := dbgNfebkp.DataSource.DataSet.FieldByName('chave').AsString;
           if pAddObjet then
           begin
-            DaoObjetoXML.fConsultaObjXML(wObjXML,['chave']);
+            DaoObjetoXML.fConsObjXML4Exportar(wObjXML,['chave']);
             pLista.AddObject(wObjXML.Chave, wObjXML);
           end
           else
@@ -1605,6 +1614,8 @@ begin
         end;
       end;
     end;
+
+    if pLista.Count > 0 then
   end;
 end;
 
@@ -1626,6 +1637,7 @@ var
         Next;
       end;
     end;
+
   end;
 
 
@@ -1645,26 +1657,30 @@ var
         Prior;
       end;
     end;
+
   end;
 
 
 begin
   try
-  case pSelecao of
-    sgTodos  : begin
-                 wDataSet := DM_NFEDFE.Dao.ConsultaSql('select * from LM_BKPDFE');
-                 pSelectRows;
-               end;
+    case pSelecao of
+      sgTodos  : begin
+                   if pCNPJ = '*' then
+                     wDataSet := DM_NFEDFE.Dao.ConsultaSql('select * from LM_BKPDFE')
+                   else
+                     wDataSet := DM_NFEDFE.Dao.ConsultaSql('select * from LM_BKPDFE where CNPJ = '+ QuotedStr(pCNPJ));
+                   pSelectRowsFiltro;
+                 end;
 
-    sgNenhum : begin
-                 pRemoveSelTodasLinhas;
-               end;
+      sgNenhum : begin
+                   pRemoveSelTodasLinhas;
+                 end;
 
 
-    sgFiltro : begin
-                 pSelectRowsFiltro;
-               end;
-  end;
+      sgFiltro : begin
+                   pSelectRowsFiltro;
+                 end;
+    end;
   finally
 //    wDataSet.Free;
   end;

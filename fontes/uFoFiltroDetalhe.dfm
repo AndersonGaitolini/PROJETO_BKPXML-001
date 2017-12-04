@@ -1,47 +1,47 @@
 inherited foFiltroDetalahado: TfoFiltroDetalahado
   BorderIcons = [biSystemMenu]
   Caption = 'Filtro detalhado - MAXXML'
-  ClientHeight = 336
+  ClientHeight = 367
   ClientWidth = 377
   Position = poDesktopCenter
   OnCreate = FormCreate
   OnShow = FormShow
   ExplicitWidth = 393
-  ExplicitHeight = 375
+  ExplicitHeight = 406
   PixelsPerInch = 96
   TextHeight = 13
   object pnl1: TPanel
     Left = 0
     Top = 0
     Width = 377
-    Height = 336
+    Height = 367
     Align = alClient
     TabOrder = 0
-    ExplicitLeft = -1
+    ExplicitTop = 1
     object lbDataIni: TLabel
-      Left = 48
-      Top = 198
+      Left = 49
+      Top = 264
       Width = 94
       Height = 13
       Caption = 'Data emiss'#227'o Inicial'
     end
     object lbDataFIm: TLabel
-      Left = 197
-      Top = 198
+      Left = 198
+      Top = 264
       Width = 89
       Height = 13
       Caption = 'Data emiss'#227'o Final'
     end
     object lbA: TLabel
       Left = 180
-      Top = 222
+      Top = 290
       Width = 7
       Height = 13
       Caption = 'A'
     end
     object lbA1: TLabel
       Left = 181
-      Top = 94
+      Top = 163
       Width = 7
       Height = 13
       Caption = 'A'
@@ -61,73 +61,71 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
     end
     object lbStatusIni: TLabel
       Left = 201
-      Top = 111
+      Top = 180
       Width = 31
       Height = 13
       Caption = 'Status'
     end
     object lbOrdena: TLabel
-      Left = 162
-      Top = 243
+      Left = 49
+      Top = 92
       Width = 53
       Height = 13
       Caption = 'Ordena'#231#227'o'
     end
+    object lbCNPJEmpresa: TLabel
+      Left = 185
+      Top = 92
+      Width = 70
+      Height = 13
+      Caption = 'CNPJ Emitente'
+    end
     object edIdf_DocIni: TLabeledEdit
       Left = 49
-      Top = 90
+      Top = 159
       Width = 121
       Height = 21
       EditLabel.Width = 64
       EditLabel.Height = 13
       EditLabel.Caption = 'N'#186' NFe Inicial'
-      TabOrder = 1
+      MaxLength = 9
+      NumbersOnly = True
+      TabOrder = 0
       Text = '0001'
     end
     object edCNPJDest: TLabeledEdit
       Left = 49
-      Top = 127
+      Top = 196
       Width = 121
       Height = 21
       EditLabel.Width = 86
       EditLabel.Height = 13
       EditLabel.Caption = 'CNPJ Destinat'#225'rio'
-      TabOrder = 3
-      Text = '0.000.000.0001-00'
-    end
-    object edCNPJEmi: TLabeledEdit
-      Left = 49
-      Top = 53
-      Width = 121
-      Height = 21
-      EditLabel.Width = 70
-      EditLabel.Height = 13
-      EditLabel.Caption = 'CNPJ Emitente'
-      TabOrder = 0
+      TabOrder = 2
       Text = '0.000.000.0001-00'
     end
     object dtpDataFiltroINI: TDateTimePicker
       Left = 48
-      Top = 215
+      Top = 283
+      Width = 121
+      Height = 20
+      Date = 43006.636531076380000000
+      Time = 43006.636531076380000000
+      TabOrder = 4
+      OnExit = dtpDataFiltroINIExit
+    end
+    object dtpDataFiltroFin: TDateTimePicker
+      Left = 197
+      Top = 285
       Width = 121
       Height = 20
       Date = 43006.636531076380000000
       Time = 43006.636531076380000000
       TabOrder = 5
-      OnExit = dtpDataFiltroINIExit
-    end
-    object dtpDataFiltroFin: TDateTimePicker
-      Left = 197
-      Top = 217
-      Width = 121
-      Height = 20
-      Date = 43006.636531076380000000
-      Time = 43006.636531076380000000
-      TabOrder = 6
     end
     object btnOK: TBitBtn
-      Left = 151
-      Top = 287
+      Left = 157
+      Top = 321
       Width = 75
       Height = 25
       Caption = 'OK'
@@ -150,55 +148,57 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
         333A333333333333333338330000333333333333333333333333333333333333
         0000}
       NumGlyphs = 2
-      TabOrder = 7
+      TabOrder = 6
       OnClick = btnOKClick
     end
     object edIdf_DocFin: TLabeledEdit
       Left = 198
-      Top = 90
+      Top = 159
       Width = 121
       Height = 21
       EditLabel.Width = 59
       EditLabel.Height = 13
       EditLabel.Caption = 'N'#186' NFe Final'
-      TabOrder = 2
+      MaxLength = 9
+      NumbersOnly = True
+      TabOrder = 1
       Text = '0001'
     end
     object rgFiltroData: TRadioGroup
       Left = 48
-      Top = 157
+      Top = 223
       Width = 270
-      Height = 39
+      Height = 35
       Caption = 'Data'
-      TabOrder = 4
+      TabOrder = 3
     end
     object rbRecebimento: TRadioButton
-      Left = 225
-      Top = 169
+      Left = 227
+      Top = 234
       Width = 81
       Height = 17
       Caption = 'Recebimento'
-      TabOrder = 8
+      TabOrder = 7
     end
     object rbAlteracao: TRadioButton
-      Left = 133
-      Top = 169
+      Left = 135
+      Top = 234
       Width = 86
       Height = 17
       Caption = 'Altera'#231#227'o'
-      TabOrder = 9
+      TabOrder = 8
     end
     object rbEmissao: TRadioButton
-      Left = 67
-      Top = 169
+      Left = 69
+      Top = 234
       Width = 60
       Height = 17
       Caption = 'Emissao'
-      TabOrder = 10
+      TabOrder = 9
     end
     object jcbbStatus: TJvCheckedComboBox
       Left = 198
-      Top = 127
+      Top = 196
       Width = 121
       Height = 21
       CapSelectAll = '&Select all'
@@ -206,18 +206,20 @@ inherited foFiltroDetalahado: TfoFiltroDetalahado
       CapInvertAll = '&Invert all'
       Flat = False
       ParentFlat = False
+      TabOrder = 10
+    end
+    object cbbOrdenaCampo: TComboBox
+      Left = 46
+      Top = 111
+      Width = 123
+      Height = 21
       TabOrder = 11
     end
-    object jcbbOrdena: TJvCheckedComboBox
-      Left = 133
-      Top = 260
-      Width = 121
+    object cbbCNPJEmpresa: TComboBox
+      Left = 201
+      Top = 111
+      Width = 118
       Height = 21
-      CapSelectAll = '&Select all'
-      CapDeSelectAll = '&Deselect all'
-      CapInvertAll = '&Invert all'
-      Flat = False
-      ParentFlat = False
       TabOrder = 12
     end
   end

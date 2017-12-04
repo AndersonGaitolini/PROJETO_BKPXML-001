@@ -26,10 +26,10 @@ uses
     FResult : Int64;
     FResultMax : Int64;
     FLista : TStringList;
+    FDocumento : string;
     FInitialDir : String;
     FRefazAutorizacao : Boolean;
     FExecuteMetodo : TExecuteMetodo;
-
     FOnExecute: TNotifyEvent;
     FOnSetUp: TNotifyEvent;
     FOnTearDown: TNotifyEvent;
@@ -38,6 +38,7 @@ uses
     property Result: Int64                 read FResult;
     property Maximo: Int64                 read FMaximo write FMaximo;
     property Lista: TStringList            write FLista;
+    property Documento: string               read FDocumento write FDocumento;
     property InitialDir: String            read FInitialDir write FInitialDir;
     property RefazAutorizacao: Boolean     read FRefazAutorizacao write FRefazAutorizacao;
     property ExecuteMetodo: TExecuteMetodo read FExecuteMetodo write FExecuteMetodo;
@@ -50,9 +51,6 @@ uses
 
     procedure pProgress(pText : string; pNumber: cardinal);
     procedure pLeituradaNFE;
-    function fGetIdf_DocPelaChave(pChave: string):Integer;
-    function fGetCNPJPelaChave(pChave: string):string;
-    function fGetDataXMLPelaChave(pChave: string): TDate;
 
     //Métodos para importar e exportar arquivos XML
     function fExportaLoteXML(pLista: TStringList):Int64;
@@ -450,7 +448,7 @@ begin
           ObjetoXML:= TLm_bkpdfe.Create;
           ObjetoXML.Chave := pLista.Strings[i];
 
-          if DaoObjetoXML.fConsultaObjXML(ObjetoXML, ['chave']) then
+          if DaoObjetoXML.fConsObjXML4Exportar(ObjetoXML, ['chave']) then
           begin
             if (ObjetoXML.Protocolocanc <> '') and (ObjetoXML.Protocoloaut <> '') then
             begin
@@ -1568,143 +1566,6 @@ begin
 end;
 
 
-function TRotinas.fGetIdf_DocPelaChave(pChave: string):integer;
-var wLen : Integer;
-begin
-  Result := 0;
-  if pChave= '' then
-    exit;
-  wLen := Length(pChave);
-  if (wLen = 44) then
-  begin
-    pChave := Copy(pChave, 26,9);
-    Result := StrToIntDef(pChave,0);
-    exit;
-  end;
-
-  if (wLen = 52) and (pos('Can_',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 30,9);
-    Result := StrToIntDef(pChave,0);
-    exit;
-  end;
-
-  if (wLen = 53) and (pos('Inut_',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 31,9);
-    Result := StrToIntDef(pChave,0);
-    exit;
-  end;
-
-  if (wLen = 55) and (pos('Env_NFe',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 33,9);
-    Result := StrToIntDef(pChave,0);
-    exit;
-  end;
-end;
-
-function TRotinas.fGetCNPJPelaChave(pChave: string):string;
-var wLen: Integer;
-begin
-  Result := '';
-
-  if pChave= '' then
-    exit;
-  wLen := Length(pChave);
-
-  if (wLen = 44) then
-  begin
-    pChave := Copy(pChave, 08,14);
-    if fValidaCNPJ(pChave) then
-      Result := pChave;
-    exit;
-  end;
-
-  if (wLen = 52) and (pos('Can_',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 11,14);
-    if fValidaCNPJ(pChave) then
-      Result := pChave;
-    exit;
-  end;
-
-  if (wLen = 53) and (pos('Inut_',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 12,14);
-    if fValidaCNPJ(pChave) then
-      Result := pChave;
-    exit;
-  end;
-
-  if (wLen = 55) and (pos('Env_NFe',pChave)>0 ) then
-  begin
-    pChave := Copy(pChave, 14,14);
-    if fValidaCNPJ(pChave) then
-      Result := pChave;
-    exit;
-  end;
-end;
-
-function TRotinas.fGetDataXMLPelaChave(pChave: string): TDate;
-var wLen: Integer;
-    wAA, wMM, wDD: string;
-begin
-  Result := 0;
-
-  if pChave= '' then
-    exit;
-  wLen := Length(pChave);
-
-  if (wLen = 44) then
-  begin
-    wAA := Copy(pChave,03,02);
-    wMM := Copy(pChave,05,02);
-    try
-      Result := StrToDate('01/'+wMM+'/20'+wAA);
-    except on E: Exception do
-      Result :=0;
-    end;
-    exit;
-  end;
-
-  if (wLen = 52) and (pos('Can_',pChave)>0 ) then
-  begin
-    wAA := Copy(pChave,07,02);
-    wMM := Copy(pChave,09,02);
-    try
-      Result := StrToDate('01/'+wMM+'/20'+wAA);
-    except on E: Exception do
-      Result :=0;
-    end;
-    exit;
-  end;
-
-
-  if (wLen = 53) and (pos('Inut_',pChave)>0 ) then
-  begin
-    wAA := Copy(pChave,08,02);
-    wMM := Copy(pChave,10,02);
-    try
-      Result := StrToDate('01/'+wMM+'/20'+wAA);
-    except on E: Exception do
-      Result :=0;
-    end;
-    exit;
-  end;
-
-  if (wLen = 55) and (pos('Env_NFe',pChave)>0 ) then
-  begin
-    wAA := Copy(pChave,11,02);
-    wMM := Copy(pChave,13,02);
-    try
-      Result := StrToDate('01/'+wMM+'/20'+wAA);
-    except on E: Exception do
-      Result :=0;
-    end;
-    exit;
-  end;
-end;
 
 procedure TRotinas.pLeituradaNFE;
 var
@@ -1892,7 +1753,7 @@ procedure TRotinas.Execute;
   begin
     Max := foPrincipal.dbgNfebkp.DataSource.DataSet.RecordCount;
     DoMax;
-    FResult :=foPrincipal.fSelecionaLinhaGrid(sgFiltro);
+    FResult :=foPrincipal.fSelecionaLinhaGrid(sgTodos ,Documento);
   end;
 
 begin

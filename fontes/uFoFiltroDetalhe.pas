@@ -14,7 +14,6 @@ type
     pnl1: TPanel;
     edIdf_DocIni: TLabeledEdit;
     edCNPJDest: TLabeledEdit;
-    edCNPJEmi: TLabeledEdit;
     lbDataIni: TLabel;
     lbDataFIm: TLabel;
     dtpDataFiltroINI: TDateTimePicker;
@@ -30,19 +29,23 @@ type
     rbEmissao: TRadioButton;
     lbStatusIni: TLabel;
     jcbbStatus: TJvCheckedComboBox;
-    jcbbOrdena: TJvCheckedComboBox;
     lbOrdena: TLabel;
+    lbCNPJEmpresa: TLabel;
+    cbbOrdenaCampo: TComboBox;
+    cbbCNPJEmpresa: TComboBox;
     procedure dtpDataFiltroINIExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
 //    procedure jcbbStatusIniDrawItem(Control: TWinControl; Index: Integer;
 //      Rect: TRect; State: TOwnerDrawState);
     procedure btnOKClick(Sender: TObject);
+    procedure jcbbOrdenaClick(Sender: TObject);
   private
     { Private declarations }
     procedure pMenuFiltroData(pFieldFiltros: TFieldFiltros);
     procedure pMontaListaStatus;
     procedure pMontaListaOrdenacao;
+    procedure pMontaListaCNPJ;
   public
     { Public declarations }
   end;
@@ -55,7 +58,7 @@ private
   FDocFin   : Integer;
   FDataIni  : TDateTime;
   FDataFin  : TDateTime;
-  FTipoData : TFieldFiltros;
+  FFieldFiltros : TFieldFiltros;
 
 public
   property CnpjEmi  : string          read  FCnpjEmi   write  FCnpjEmi;
@@ -64,7 +67,7 @@ public
   property DocFin   : Integer         read  FDocFin    write  FDocFin;
   property DataIni  : TDateTime       read  FDataIni   write  FDataIni;
   property DataFin  : TDateTime       read  FDataFin   write  FDataFin;
-  property TipoData : TFieldFiltros   read  FTipoData  write  FTipoData;
+  property FieldFiltros : TFieldFiltros   read  FFieldFiltros  write  FFieldFiltros;
 
   constructor Create overload;
 end;
@@ -90,13 +93,45 @@ begin
   FDocFin   := 001;
   FDataIni  := 0;
   FDataFin  := 0;
-  FTipoData := ffDATAEMISSAO;
+  FFieldFiltros := ffDATAEMISSAO;
 end;
 
 procedure TfoFiltroDetalahado.btnOKClick(Sender: TObject);
+var wLista : TStringList;
+    wObjDOC ,wObjStatus: TValorInt;
+    wObjDtEmi, wObjDtRec, wObjDtAlt  : TValorData;
+    wObjCNPJ : TValorSTR;
+
 begin
   inherited;
-  DaoObjetoXML.pFiltraOrdena()
+  with DaoObjetoXML, wFiltroDetalhado do
+  begin
+   wLista := TStringList.Create;
+   try
+     FFieldFiltros := fFieldNameToFiltroField(cbbOrdenaCampo.Items[cbbOrdenaCampo.ItemIndex]);
+     FCnpjEmi      := cbbCNPJEmpresa.Items[foPrincipal.cbbEmpCNPJ.ItemIndex];
+
+     if (Trim(edIdf_DocIni.Text) <> '') and (Trim(edIdf_DocFin.Text) <> '') then
+     begin
+       wObjDOC.IntInicial := StrToInt64Def(edIdf_DocIni.Text, 0);
+       wObjDOC.IntFinal   := StrToInt64Def(edIdf_DocFin.Text, 0);
+       wLista.AddObject('IDF_DOCUMENTO', @wObjDOC);
+     end;
+
+     if (Trim(edCNPJDest.Text) <> '') then
+     begin
+       wObjCNPJ.StrInicial := Trim(edCNPJDest.Text);
+       if ( (fValidaCNPJ(wObjCNPJ.StrInicial)) or (fValidCPF(wObjCNPJ.StrInicial)) )then
+         wLista.AddObject('CNPJDEST', @wObjCNPJ);
+     end;
+
+   //   DaoObjetoXML.pFiltraOrdena2(FFieldFiltros, foPrincipal.LastOrderBy, FCnpjEmi,
+
+   finally
+     wLista.Free;
+   end;
+
+  end;
 end;
 
 //procedure TfoFiltroDetalahado.jcbbStatusIniDrawItem(Control: TWinControl;
@@ -172,12 +207,27 @@ begin
    ffDATAALTERACAO   : pCheck(false, true, false);
   end;
 end;
-procedure TfoFiltroDetalahado.pMontaListaOrdenacao;
-var I: Integer;
+procedure TfoFiltroDetalahado.pMontaListaCNPJ;
 begin
-   for I := 0 to foPrincipal.dbgNfebkp.Columns.Count-1 do
+  cbbCNPJEmpresa.Items := foPrincipal.cbbEmpCNPJ.Items;
+  cbbCNPJEmpresa.Items[foPrincipal.cbbEmpCNPJ.ItemIndex];
+end;
 
+procedure TfoFiltroDetalahado.pMontaListaOrdenacao;
+var I, wLastColunm: Integer;
+begin
+  for I := 0 to foPrincipal.dbgNfebkp.Columns.Count-1 do
+  begin
+    if foPrincipal.dbgNfebkp.Columns[I].Visible then
+      cbbOrdenaCampo.Items.Add(foPrincipal.dbgNfebkp.Columns[I].Title.Caption);
+  end;
 
+  wLastColunm := foPrincipal.LastColunm;
+
+  if wLastColunm <=0 then
+   wLastColunm := 1;
+
+  cbbOrdenaCampo.Items[wLastColunm];
 end;
 
 procedure TfoFiltroDetalahado.pMontaListaStatus;
@@ -198,6 +248,8 @@ procedure TfoFiltroDetalahado.FormCreate(Sender: TObject);
 begin
   inherited;
   wFiltroDetalhado := TFiltroDetalhado.Create;
+  pMontaListaOrdenacao;
+  pMontaListaCNPJ;
 end;
 
 procedure TfoFiltroDetalahado.FormShow(Sender: TObject);
@@ -205,15 +257,22 @@ begin
   inherited;
   with wFiltroDetalhado do
   begin
-    edCNPJEmi.Text := trim(FCnpjEmi);
     edCNPJDest.Text := trim(FCnpjDest);
-    pMenuFiltroData(FTipoData);
+    pMenuFiltroData(FFieldFiltros);
     edIdf_DocIni.Text := trim(IntToStr(FDocIni));
     edIdf_DocFin.Text := trim(IntToStr(FDocFin));
     dtpDataFiltroINI.DateTime := FDataIni;
     dtpDataFiltroFin.DateTime := FDataFin;
     pMontaListaStatus;
   end;
+end;
+
+procedure TfoFiltroDetalahado.jcbbOrdenaClick(Sender: TObject);
+var I: integer;
+begin
+  inherited;
+  //
+
 end;
 
 end.

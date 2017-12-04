@@ -60,7 +60,7 @@ var
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML)';
+  Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML) - Versão 1.5';
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
@@ -176,6 +176,8 @@ begin
 //    if ParamCount > 0 then
 //    for I := 0 to ParamCount do
 //      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
+    ConecxaoBD.pReadParams;
+    ConecxaoBD.pConecta;
 
     if not ConecxaoBD.Conectado then
     begin
