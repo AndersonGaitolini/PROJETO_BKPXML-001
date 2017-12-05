@@ -10,7 +10,8 @@ uses
   FireDAC.Phys, FireDAC.Comp.Client, FireDAC.Phys.FB, FireDAC.Phys.FBDef,
   FireDAC.Phys.IBBase, FireDAC.VCLUI.Wait, FireDAC.Comp.UI,
   Base, DaoFD, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
-  FireDAC.DApt, FireDAC.Comp.DataSet,FMX.Forms;
+  FireDAC.DApt, FireDAC.Comp.DataSet,FMX.Forms, FireDAC.Moni.Custom,
+  FireDAC.Moni.FlatFile;
 
 type
   TTipoConexao = (tcLocal, tcLocalEmbed, tcRemote);
@@ -18,12 +19,12 @@ type
   TConecxaoBD = class(TObject)
   private
     { private declarations }
-    FConectado : boolean;
-    FPassword   : String;
-    FUserName   : String;
-    FDataBase   : String;
-    FSQLDialect : String;
-    FDriverID   : String;
+    FConectado    : boolean;
+    FPassword     : String;
+    FUserName     : String;
+    FDataBase     : String;
+    FSQLDialect   : String;
+    FDriverID     : String;
     FCharacterSet : String;
     FVendorLib    : String;
     FVendorHome   : String;
@@ -136,6 +137,7 @@ type
     cdsBkpdfeCNPJ: TStringField;
     cdsBkpdfeXMLERRO: TMemoField;
     cdsBkpdfeCNPJDEST: TStringField;
+    fdmoMonitor: TFDMoniFlatFileClientLink;
 
     procedure DataModuleCreate(Sender: TObject);
   private
@@ -177,29 +179,7 @@ begin
   DaoObjetoXML := TDaoBkpdfe.Create;
 
   CNPJDOC := TCNPJDOC.Create;
-
-//  if not Assigned(sqlBkpDfe.FindField('CNPJDEST')) then
-//  begin
-//    dao.StartTransaction;
-//    try
-////      Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
-//     Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST CNPJVARCHAR');
-//      Dao.Commit;
-//    except on E: Exception do
-//       Dao.RollBack;
-//    end;
-//  end;
-
-//  if not Assigned(sqlBkpDfe.FindField('XMLERRO')) then
-//  begin
-//    dao.StartTransaction;
-//    try
-//      Dao.ConsultaSqlExecute('CREATE DOMAIN XMLBLOB AS BLOB SUB_TYPE 0 SEGMENT SIZE 80');
-//      Dao.Commit;
-//    except on E: Exception do
-//       Dao.RollBack;
-//    end;
-//  end;
+//  DaoObjetoXML.pAtualizaTabela;
 
 end;
 
@@ -227,38 +207,59 @@ wDataBase: string;
 wHost: string;
 wLog :Boolean;
 
-
 procedure pConLocal;
 begin
-  with DM_NFEDFE do
-  begin
-    conConexaoFD.Params.Values['User_Name']    := FUserName;
-    conConexaoFD.Params.Values['Password']     := FPassword;
-    conConexaoFD.Params.Values['Database']     := FDataBase;
-    conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-    conConexaoFD.Params.Values['DriverID']     := FDriverID;
-    conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
-    fddrfbDriver.VendorLib                     := FVendorLib;
-    fddrfbDriver.VendorHome                    := FVendorHome;
-    fddrfbDriver.Embedded                      := FEmbedded;
-  end;
+  DM_NFEDFE.fddrfbDriver.VendorLib                     := FVendorLib;
+  DM_NFEDFE.fddrfbDriver.VendorHome                    := FVendorHome;
+  DM_NFEDFE.fddrfbDriver.Embedded                      := FEmbedded;
+  DM_NFEDFE.fddrfbDriver.DriverID                      := FDriverID;
+  DM_NFEDFE.conConexaoFD.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
+
+  DM_NFEDFE.conConexaoFD.Params.Values['User_Name']    := FUserName;
+  DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
+  DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
+  DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+//  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
+  DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
+  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
+  DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
+  DM_NFEDFE.conConexaoFD.Params.Values['Port']                   := FPort;
 end;
 
 procedure pConLocalEmbedded;
 begin
-  with DM_NFEDFE do
-  begin
-    conConexaoFD.Params.Values['User_Name']    := FUserName;
-    conConexaoFD.Params.Values['Password']     := FPassword;
-    conConexaoFD.Params.Values['Database']     := FDataBase;
-    conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-    conConexaoFD.Params.Values['DriverID']     := FDriverID;
-    conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
-    conConexaoFD.Params.Values['Protocol']     := FProtocol;
-    fddrfbDriver.VendorLib                   := FVendorLib;
-    fddrfbDriver.VendorHome                  := FVendorHome;
-    fddrfbDriver.Embedded                    := FEmbedded;
-  end;
+  DM_NFEDFE.fddrfbDriver.VendorLib                     := FVendorLib;
+  DM_NFEDFE.fddrfbDriver.VendorHome                    := FVendorHome;
+  DM_NFEDFE.fddrfbDriver.Embedded                      := FEmbedded;
+  DM_NFEDFE.fddrfbDriver.DriverID                      := FDriverID;
+  DM_NFEDFE.conConexaoFD.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
+
+  DM_NFEDFE.conConexaoFD.Params.Values['User_Name']    := FUserName;
+  DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
+  DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
+  DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+//  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
+  DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
+  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
+  DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
+  DM_NFEDFE.conConexaoFD.Params.Values['Port']                   := FPort;
+
+//    DM_NFEDFE.conConexaoFD.Params.UserName               := FUserName;
+//    DM_NFEDFE.conConexaoFD.Params.Password               := FPassword;
+//    DM_NFEDFE.conConexaoFD.Params.Database               := FDataBase;
+//    DM_NFEDFE.conConexaoFD.ActualDriverID;
+//    DM_NFEDFE.conConexaoFD.Params.Pooled                 := False;
+//    DM_NFEDFE.conConexaoFD.Params.PoolCleanupTimeout     := 30000;
+//    DM_NFEDFE.conConexaoFD.Params.PoolExpireTimeout      := 90000;
+//    DM_NFEDFE.conConexaoFD.Params.PoolMaximumItems       := 50;
+//
+//    DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
+//    DM_NFEDFE.conConexaoFD.Params.Values['Port']         := '3050';
+//    DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+//    DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := 'WIN1252';
+//    DM_NFEDFE.conConexaoFD.Params.Values['server']       := '';
 end;
 
 procedure pConRemote;
@@ -274,7 +275,7 @@ begin
     conConexaoFD.Params.Values['Protocol']     := FProtocol;
     conConexaoFD.Params.Values['Server']       := FServer;
     fPingIP(FServer);
-    conConexaoFD.Params.Values['Protocol']     := FProtocol;
+    conConexaoFD.Params.Values['Port']     := FPort;
     fddrfbDriver.VendorLib                   := FVendorLib;
   end;
 end;
@@ -283,9 +284,10 @@ var I:Integer;
 begin
   Result := False;
   FConectado := False;
+  DM_NFEDFE.conConexaoFD.Connected := false;
   DM_NFEDFE.conConexaoFD.Close;
   try
-    pClearParams;
+//    pClearParams;
     case TipoCon of
       tcLocal: pConLocal;
       tcLocalEmbed: pConLocalEmbedded;
@@ -293,10 +295,11 @@ begin
     else
       Exit;
     end;
+
    DM_NFEDFE.conConexaoFD.Open;
 
-   for I := 0 to ParamCount do
-     uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
+//   for I := 0 to ParamCount do
+//     uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
 
     Result := DM_NFEDFE.conConexaoFD.Connected;
     FConectado := Result;
@@ -333,8 +336,6 @@ end;
 
 procedure TConecxaoBD.pConecta;
 begin
-  DM_NFEDFE.conConexaoFD.Connected := false;
-  DM_NFEDFE.conConexaoFD.Close;
   Conectado := fConexaoBD;
 end;
 

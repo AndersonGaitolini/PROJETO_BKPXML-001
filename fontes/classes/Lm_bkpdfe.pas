@@ -17,7 +17,7 @@ type
   TLm_bkpdfe = class(TTabela)
   private
     FId: Integer;
-    FStatus : Integer;
+    FStatusXml : Integer;
     FCNPJ : string;
     FChave: string;
     FIdf_documento: Integer;
@@ -44,7 +44,7 @@ type
   public
     [attPK]
     property Id: Integer read FId write FId;
-    property Status : Integer read FStatus write FStatus;
+    property StatusXML : Integer read FStatusXml write FStatusXml;
     property CNPJ: string read FCNPJ write FCNPJ;
     property Chave: string read FChave write FChave;
     property Idf_documento: Integer read FIdf_documento write FIdf_documento;
@@ -69,13 +69,13 @@ type
     property CNPJDest: string read FCNPJDest write FCNPJDest;
   end;
 
-type 
+type
   TValorData = record
    DataInicial,
    DataFinal  : TDateTime;
   end;
-     
-type 
+
+type
   TValorStr = record
    StrInicial,
    StrFinal  : String;
@@ -85,12 +85,12 @@ type
   TValorInt = record
     IntInicial,
     IntFinal : Integer;
-  end;                 
+  end;
 
 type
   TFieldFiltros  = (ffNone,
                     ffID,
-                    ffStatus,
+                    ffStatusXml,
                     ffCHAVE,
                     ffCNPJ,
                     ffIDF_DOCUMENTO,
@@ -134,13 +134,15 @@ type
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
     procedure pAtualizaTabela;
-    procedure pFiltraOrdena2 (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*'; 
-                             pListFields: TStringList = nil); 
-                              
+    procedure pFiltraOrdena2 (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*';
+                             pListFields: TStringList = nil);
+
     function pFiltraOrdena (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
                             pValue1: string = '';pValue2: string = ''): TDataSet;
-    function fFiltroFieldToFiledName(pFieldFiltros : TFieldFiltros):string; 
-    function fFieldNameToFiltroField(pFieldName: String): TFieldFiltros; 
+    function fFiltroFieldToFiledName(pFieldFiltros : TFieldFiltros):string;
+    function fFieldNameToFiltroField(pFieldName: String): TFieldFiltros;
+
+    constructor create; overload;
   end;
 
 type
@@ -176,6 +178,11 @@ uses
 
 { TDaoBkpdfe }
 
+constructor TDaoBkpdfe.create;
+begin
+//  DaoObjetoXML.pAtualizaTabela;
+end;
+
 function TDaoBkpdfe.fCarregaXMLEnvio(pObjXML : TLm_bkpdfe): Boolean;
 var //wDataSet : TDataSet;
     wChaveAux : string;
@@ -189,14 +196,14 @@ begin
     DM_NFEDFE.Dao.StartTransaction;
     try
       with DM_NFEDFE do
-      begin                                    
+      begin
         wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
-        if (wOperacao =  otUpadate) then 
+        if (wOperacao =  otUpadate) then
         begin
           wControle := Dao.Salvar(pObjXML);
         end
         else
-        if (wOperacao =  otInsert) then   
+        if (wOperacao =  otInsert) then
         begin  //Insert
            pObjXML.Id := fNextId(pObjXML);
            wControle:= Dao.Inserir(pObjXML);
@@ -295,11 +302,11 @@ var wDataSet : TDataSet;
       if (pObjXML.Id < 1) then
       pObjXML.Id := FieldByName('id').AsInteger;
 
-      if (pObjXML.Status = 0) then
-        pObjXML.Status := FieldByName('Status').AsInteger;
+      if (pObjXML.StatusXml = 0) then
+        pObjXML.StatusXml := FieldByName('Statusxml').AsInteger;
 //      else
 //      if((FieldByName('Status').AsInteger in [1,4]) and  (pObjXML.Status >= 1) )  then
-       
+
 //      if ((pObjXML.Status in [1,4]) and (pObjXML.Status
 //          (pObjXML.Status >= 100) and (pObjXML.Status > wDataSet.FieldByName('Status').AsInteger)  then
 //        pObjXML.Status
@@ -438,11 +445,11 @@ var wDataSet : TDataSet;
       if (pObjXML.Id < 1) then
       pObjXML.Id := FieldByName('id').AsInteger;
 
-      if (pObjXML.Status = 0) then      //wDataSet.FieldByName('Status').AsInteger
-      pObjXML.Status := FieldByName('Status').AsInteger;
+      if (pObjXML.StatusXml = 0) then      //wDataSet.FieldByName('Status').AsInteger
+      pObjXML.StatusXml := FieldByName('Statusxml').AsInteger;
 
-      if (pObjXML.Status in [1,4]) and (pObjXML.Status > wDataSet.FieldByName('Status').AsInteger)  then
-       FieldByName('Status').AsInteger := pObjXML.Status;
+//      if (pObjXML.StatusXml in [1,4]) and (pObjXML.StatusXml > wDataSet.FieldByName('Status').AsInteger)  then
+//       FieldByName('Statusxml').AsInteger := pObjXML.StatusXml;
 
       if pObjXML.CNPJ = '' then
       pObjXML.CNPJ := FieldByName('CNPJ').AsString;
@@ -542,7 +549,6 @@ var wDataSet : TDataSet;
     end;
   end;
 
-      
 begin
   Result := false;
   wDataSet := TDataSet.Create(Application);
@@ -585,7 +591,6 @@ begin
   finally
     pObjXML.Free;
   end;
-
 end;
 
 function TDaoBkpdfe.fFindChaveXML(var pObjXML: TLm_bkpdfe): Boolean;
@@ -627,10 +632,9 @@ function TDaoBkpdfe.fFiltroFieldToFiledName(pFieldFiltros: TFieldFiltros): strin
 begin
   try
     Result := TConvert<TFieldFiltros>.EnumConvertStr(pFieldFiltros);
-  except 
+  except
      Result := ''
   end;
-  
 end;
 
 function TDaoBkpdfe.fNextId(pObjXML: TLm_bkpdfe): integer;
@@ -650,8 +654,7 @@ begin
       wDataSet.last;
       Result := wDataSet.FieldByName('id').AsInteger+1;
     except on E: Exception do
-             ShowMessage('Método: fNextId!'+#10#13+
-                         'Exception: '+e.Message);
+             ShowMessage('Método: fNextId!'+#10#13 + 'Exception: '+e.Message);
     end;
   finally
     FreeAndNil(wDataSet);
@@ -692,6 +695,18 @@ begin
       dao.StartTransaction;
       try
         Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+        Dao.Commit;
+      except on E: Exception do
+        Dao.RollBack;
+      end;
+    end;
+
+    try
+      Dao.ConsultaSql('SELECT STATUSXML FROM LM_BKPDFE');
+    except //on E: Exception do
+      dao.StartTransaction;
+      try
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD STATUSXML INTEGER');
         Dao.Commit;
       except on E: Exception do
         Dao.RollBack;
@@ -765,7 +780,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
           str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
         else
           str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
-      
+
       if not (wV1Empty) and (pFieldName = 'CNPJDEST') and wDataVal then
          str1 := str1 + Format(' and (%s like '+QuotedStr('%s')+')',[pFieldName, '%'+pValue1+'%'])
       else
@@ -793,7 +808,7 @@ const cAsc = 'Asc'; cdesc = 'desc';
 begin
   Result := nil;
   pFieldName := UpperCase(Trim(pFieldName));
-  
+
    if Length(pCNPJDest) = 18 then
     pCNPJDest := fTiraMascaraCNPJ(pCNPJDest);
 
@@ -865,7 +880,7 @@ begin
   with pObjXML do
   begin
     id := 0;
-    Status := 999;
+    StatusXml := 999;
     CNPJ := '';
     Chave := '';
     Idf_documento := 0;

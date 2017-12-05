@@ -104,7 +104,6 @@ begin
 //      ShowMessage('O Serviço '+QuotedStr('FirebirdServerDefaultInstance')+' não pode ser iniciado!'+#13#13+
 //                  'Alt+ R e digite '+ QuotedStr('services.msc'));
     TipoCon := tcLocal;
-
     UserName     := trim(LowerCase(edUsuarioBD.Text));
     Password     := trim(LowerCase(edSenhaBD.Text));
     DataBase     := trim(LowerCase(edDataBase.Text));
@@ -112,7 +111,9 @@ begin
     DriverID     := 'FB';
     CharacterSet := 'WIN1252';
     Protocol     := 'Local';
-    VendorLib    := 'fbclient.dll'
+    VendorLib    := 'fbclient.dll';
+    Server       := '';
+    Port         := '3050';
   end;
 end;
 
@@ -135,6 +136,8 @@ begin
     DriverID     := 'FBEmbed';
     CharacterSet := 'WIN1252';
     wPath := Trim(UpperCase(edServerName.Text));
+    Protocol     := 'Local';
+    Embedded     := true;
     if (cbbTipoCon.ItemIndex = 1) and (FileExists(wPath)) then
     begin
       VendorLib := ExtractFileName(wPath);
@@ -161,10 +164,6 @@ begin
         exit;
       end;
     end;
-//    VendorLib    := 'fbembed.dll';
-//    VendorHome   := ExtractFileDir(Application.ExeName)+'\fb\';
-    Protocol     := 'Local';
-    Embedded     := true;
   end;
 end;
 

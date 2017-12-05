@@ -9,13 +9,13 @@ object DM_NFEDFE: TDM_NFEDFE
       'User_Name=sysdba'
       'Password=masterkey'
       'Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
-      '|Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
-      'Protocol=Local'
+      'MonitorBy=FlatFile'
       'DriverID=FB')
     LoginPrompt = False
-    Left = 28
-    Top = 80
+    Transaction = fdtrTransacao
+    Left = 29
+    Top = 78
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
@@ -24,8 +24,8 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fdWaitCursor: TFDGUIxWaitCursor
     Provider = 'Forms'
-    Left = 100
-    Top = 77
+    Left = 101
+    Top = 79
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
@@ -36,11 +36,11 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object dsConfiguracoes: TDataSource
     DataSet = cdsConfiguracoes
-    Left = 171
-    Top = 138
+    Left = 170
+    Top = 139
   end
   object dsBkpdfe: TDataSource
-    DataSet = cdsBkpdfe
+    DataSet = cdsConfiguracoes
     Left = 173
     Top = 256
   end
@@ -171,7 +171,7 @@ object DM_NFEDFE: TDM_NFEDFE
       Required = True
     end
     object cdsBkpdfeSTATUS: TSmallintField
-      FieldName = 'STATUS'
+      FieldName = 'STATUSXML'
       Origin = 'STATUS'
     end
     object cdsBkpdfeCNPJ: TStringField
@@ -282,7 +282,7 @@ object DM_NFEDFE: TDM_NFEDFE
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from LM_bkpdfe')
-    Left = 250
+    Left = 249
     Top = 257
   end
   object dsUsuarios: TDataSource
@@ -429,8 +429,8 @@ object DM_NFEDFE: TDM_NFEDFE
     end
   end
   object provConfiguracoes: TDataSetProvider
-    Left = 95
-    Top = 138
+    Left = 94
+    Top = 139
   end
   object sqlConfiguracoes: TFDQuery
     Connection = conConexaoFD
@@ -439,5 +439,10 @@ object DM_NFEDFE: TDM_NFEDFE
       'select * from configuracoes')
     Left = 247
     Top = 138
+  end
+  object fdmoMonitor: TFDMoniFlatFileClientLink
+    FileColumns = [tiRefNo, tiTime, tiObjID, tiMsgText]
+    Left = 28
+    Top = 26
   end
 end

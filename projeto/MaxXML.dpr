@@ -52,9 +52,7 @@ var
   cXMLProcessado = 2;
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
-
- label
-   GotoLogin, GotoTerminate;
+  cXMLInut       = 5;
 
 {$R *.res}
 begin
@@ -64,21 +62,11 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-  for I := 0 to ParamCount do
-    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
-
-//  DM_NFEDFE.IniFile := ExtractFileDir(Application.ExeName) + '\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));
-//    if (FileExists(DM_NFEDFE.IniFile)) then
-
-//   ConecxaoBD.pReadParams;
-//   ConecxaoBD.pConecta;
-//    if (ParamCount = 0) and (not (ConecxaoBD.Conectado)) then
-//    begin
-//      goto GotoLogin;
-//    end
-//    else
-//    if (ParamCount > 0) and (not (ConecxaoBD.Conectado)) then
-//    goto GotoTerminate;
+//  for I := 0 to ParamCount do
+//    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
+  DM_NFEDFE.fdmoMonitor.Tracing := false;
+  DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
+  DM_NFEDFE.fdmoMonitor.Tracing := False;
 
   if (ParamCount = 0) then
   begin
@@ -171,7 +159,7 @@ begin
      Application.Terminate;
   end
   else
-  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio]) then
+  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut]) then
   begin
 //    if ParamCount > 0 then
 //    for I := 0 to ParamCount do
@@ -187,6 +175,7 @@ begin
 
     if TRUE then
     begin
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'---------- INICIO ----------', true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2)), true);
@@ -194,6 +183,7 @@ begin
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(4)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(5)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(6)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'------------- FIM ----------', true);
     end;
 
     tabUsuarios.Usuario         := Trim(ParamStr(2));
@@ -219,9 +209,7 @@ begin
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;
    end;
-   GotoTerminate:
    Application.Terminate;
   end;
-
     //by Anderson Gaitolini
 end.

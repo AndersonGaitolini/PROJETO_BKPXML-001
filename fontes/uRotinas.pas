@@ -14,6 +14,7 @@ uses
 
  type TOperArquivos = (oaReplace, oaAdd, oaDescarta);
  type TExecuteMetodo = (emLoadXMLNFe, emExportaLoteXML, emExportaPDF, emSelecionaRows, emPescaXML);
+ type TTipoSelecao = (tsSelTodos, tsSelMulti, tsSelNenhum);
 
  type TRotinas = class(TProgressThread)
   strict protected
@@ -54,7 +55,7 @@ uses
 
     //Métodos para importar e exportar arquivos XML
     function fExportaLoteXML(pLista: TStringList):Int64;
-    function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'):Boolean;
+    function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'; pTipoSelecao : TTipoSelecao = tsSelNenhum):Boolean;
     function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pParametro: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
     function fLoadXMLNFeLista(pLista : TStringList): Boolean;
     function fPescaXML(): Int64;
@@ -452,7 +453,7 @@ begin
           begin
             if (ObjetoXML.Protocolocanc <> '') and (ObjetoXML.Protocoloaut <> '') then
             begin
-              if  objetoXML.Status = 004 then
+              if  objetoXML.Statusxml = 004 then
                 wStream := objetoXML.Xmlenviocanc
               else
                 wStream := objetoXML.Xmlextendcanc;
@@ -466,7 +467,7 @@ begin
                   DeleteFile(wDirTemp+'\'+wXMLFilename);
               end;
 
-              if  objetoXML.Status = 001 then
+              if  objetoXML.Statusxml = 001 then
                 wStream := objetoXML.Xmlenvio
               else
                 wStream := objetoXML.Xmlextend;
@@ -693,7 +694,7 @@ var
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
              wArrayObjXML[j-1] := ObjetoXML;
-             status := cXMLErro;
+             Statusxml := cXMLErro;
              if not pParametro then
              begin
                wErro := FindNext(wFRec);
@@ -756,7 +757,7 @@ var
                   CNPJDest := wNodeDest.Text;
               end;
 
-              Status := cAguardando;
+              Statusxml := cAguardando;
             end;
 
             if (wXMLProcessado) and (Assigned(wNodeNfeProc)) then
@@ -781,7 +782,7 @@ var
 
                   Datarecto := DateXMLToDate(funcvarXML(wNodeNfeProc.ChildNodes['dhRecbto']));
                   Protocoloaut := funcvarXML(wNodeNfeProc.ChildNodes['nProt']);
-                  Status :=  StrToIntDef(funcvarXML(wNodeNfeProc.ChildNodes['cStat']),-1);
+                  Statusxml :=  StrToIntDef(funcvarXML(wNodeNfeProc.ChildNodes['cStat']),-1);
                   Motivo :=  funcvarXML(wNodeNfeProc.ChildNodes['xMotivo']);
                   if Length(Motivo) > 20 then
                   Motivo := Copy(Motivo,1,20);
@@ -796,7 +797,7 @@ var
         pCompress(wFileSource, wStream,false);
         if wCNPJAux <> CNPJ then
         begin
-          status := cXMLErro;
+          Statusxml := cXMLErro;
           Xmlerro := wStream;
         end
         else
@@ -863,7 +864,7 @@ var
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
              wArrayObjXML[j-1] := ObjetoXML;
-             status := cXMLErro;
+             Statusxml := cXMLErro;
              if not pParametro then
              begin
                wErro := FindNext(wFRec);
@@ -895,7 +896,7 @@ var
               CNPJ := fGetCNPJPelaChave(chave);
 
               Protocolocanc := funcvarXML(wNodeXML.ChildNodes['nProt']);
-              Status := cCancAguard;;
+              Statusxml := cCancAguard;;
               Motivocanc := funcvarXML(wNodeXML.ChildNodes['xJust']);
               if Length(Motivocanc)>20 then
                 Motivocanc := copy(Motivocanc,1,20);
@@ -925,7 +926,7 @@ var
                 else
                   Tipoambiente := 'Homologação';
 
-                Status :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
+                Statusxml :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
                 Motivocanc := funcvarXML(wNodeXML.ChildNodes['xMotivo']);
                 if Length(Motivocanc)> 20 then
                   Motivocanc := copy(Motivocanc,1,20);
@@ -986,7 +987,7 @@ var
         SetLength(wArrayObjXML, J);
         ObjetoXML := TLm_bkpdfe.Create;
         Tipo := '1';
-        Status := cAguardando;
+        Statusxml := cAguardando;
         CNPJ  := fGetCNPJPelaChave(Chave);
         wStream := TMemoryStream.Create;
         wXmlName := ExtractFileName(wFileSource);
@@ -1007,7 +1008,7 @@ var
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
              wArrayObjXML[j-1] := ObjetoXML;
-             status := cXMLErro;
+             Statusxml := cXMLErro;
              if not pParametro then
              begin
                wErro := FindNext(wFRec);
@@ -1038,7 +1039,7 @@ var
             wChaveAux := funcvarXML(wNodeXML.ChildNodes['chNFe']);
             Datarecto := DateXMLToDate(funcvarXML(wNodeXML.ChildNodes['dhRecbto']));
             Protocoloaut := funcvarXML(wNodeXML.ChildNodes['nProt']);
-            Status :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
+            Statusxml :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
             Motivo :=  funcvarXML(wNodeXML.ChildNodes['xMotivo']);
             if Length(Motivo) > 20 then
             Motivo := Copy(Motivo,1,20);
@@ -1234,7 +1235,7 @@ var
     begin
       if Pos('Env_NFe',wFileSource) > 0 then
       begin
-        Status := cAguardando;
+        Statusxml := cAguardando;
         wObjetoXML := TLm_bkpdfe.Create;
         wXmlName := ExtractFileName(wFileSource);
         wChaveAux := fGetChaveFilename(wXmlName);
@@ -1302,7 +1303,7 @@ var
 
                   Datarecto := DateXMLToDate(funcvarXML(wNodeNfeProc.ChildNodes['dhRecbto']));
                   Protocoloaut := funcvarXML(wNodeNfeProc.ChildNodes['nProt']);
-                  Status :=  StrToIntDef(funcvarXML(wNodeNfeProc.ChildNodes['cStat']),-1);
+                  Statusxml :=  StrToIntDef(funcvarXML(wNodeNfeProc.ChildNodes['cStat']),-1);
                   Motivo :=  funcvarXML(wNodeNfeProc.ChildNodes['xMotivo']);
                   if Length(Motivo) > 20 then
                   Motivo := Copy(Motivo,1,20);
@@ -1325,7 +1326,7 @@ var
       if Pos('Can_',wFileSource) > 0 then
       begin
         Inc(wJ,1);
-        Status := cAguardando;
+        Statusxml := cAguardando;
         SetLength(wArrayObjXML, wJ);
         wXmlName := ExtractFileName(wFileSource);
         wObjetoXML := TLm_bkpdfe.Create;
@@ -1352,7 +1353,7 @@ var
                 Tipoambiente := 'Homologação';
               wChaveAux := funcvarXML(wNodeXML.ChildNodes['chNFe']);
               Protocolocanc := funcvarXML(wNodeXML.ChildNodes['nProt']);
-              Status := cCancAguard;
+              Statusxml := cCancAguard;
               Motivocanc := funcvarXML(wNodeXML.ChildNodes['xJust']);
               if Length(Motivocanc)>20 then
                 Motivocanc := copy(Motivocanc,1,20);
@@ -1381,7 +1382,7 @@ var
                 else
                   Tipoambiente := 'Homologação';
 
-                Status :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
+                Statusxml :=  StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
                 wChaveAux := funcvarXML(wNodeXML.ChildNodes['chNFe']);
                 if wChaveAux <> Chave then
                   exit;
@@ -1767,14 +1768,11 @@ begin
         emSelecionaRows : pExecuteSelecionaLinhaGrid;
     end;
   finally
-//        if Terminated then
-//    SuspendThread(Handle);
     CoInitializeEx(nil,0);
-
   end;
 end;
 
-function TRotinas.fDeleteObjetoXML(pLista: TStringList; pCNPJ: string): Boolean;
+function TRotinas.fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'; pTipoSelecao : TTipoSelecao = tsSelNenhum):Boolean;
 var i: integer;
     wObjtXML : TLm_bkpdfe;
     wDataSet : TDataSet;
@@ -1782,34 +1780,45 @@ begin
   Result := False;
     DM_NFEDFE.Dao.StartTransaction;
   try
-
-    if pCNPJ = '*' then
-    begin
-      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe');
-      Result := wDataSet.IsEmpty;
-      Exit;
-    end
-    else
-    if fValidaCNPJ(pCNPJ) then
-    begin
-      if Length(pCNPJ) >= 18  then
-       pCNPJ := fTiraMascaraCNPJ(pCNPJ);
-
-      wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe where CNPJ = '+ QuotedStr(pCNPJ));
-      Result := wDataSet.FieldCount = 0;
-      Exit;
-    end;
-
-    for I := 0 to pLista.Count - 1 do
-    begin
-      wObjtXML := TLm_bkpdfe.create;
-      wObjtXML := TLm_bkpdfe(pLista.Objects[I]);
-      if wObjtXML.Chave = pLista.Strings[i] then
-        if DaoObjetoXML.fConsDeleteObjXML(wObjtXML,['CHAVE']) then
+    case pTipoSelecao of
+      tsSelTodos:
+      begin
+        if pCNPJ = '*' then
         begin
-          Result := (DaoObjetoXML.fExcluirObjXML(wObjtXML) > 0);
-          ObjetoXML:= TLm_bkpdfe.Create;
+          wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe');
+          Result := wDataSet.IsEmpty;
+          Exit;
+        end
+        else
+        if fValidaCNPJ(pCNPJ) then
+        begin
+          if Length(pCNPJ) >= 18  then
+           pCNPJ := fTiraMascaraCNPJ(pCNPJ);
+
+          wDataSet := DM_NFEDFE.Dao.ConsultaSqlExecute('delete from lm_bkpdfe where CNPJ = '+ QuotedStr(pCNPJ));
+          Result := wDataSet.FieldCount = 0;
+          Exit;
         end;
+      end;
+
+      tsSelMulti:
+      begin
+        for I := 0 to pLista.Count - 1 do
+        begin
+          wObjtXML := TLm_bkpdfe.create;
+          if not assigned( pLista.Objects[I]) then
+            continue;
+
+          wObjtXML := TLm_bkpdfe(pLista.Objects[I]);
+          if wObjtXML.Chave = pLista.Strings[i] then
+            if DaoObjetoXML.fConsDeleteObjXML(wObjtXML,['CHAVE']) then
+            begin
+              Result := (DaoObjetoXML.fExcluirObjXML(wObjtXML) > 0);
+              ObjetoXML:= TLm_bkpdfe.Create;
+            end;
+        end;
+      end;
+
     end;
 
    DM_NFEDFE.Dao.Commit;

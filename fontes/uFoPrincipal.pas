@@ -275,7 +275,7 @@ type
     procedure pFiltroEmissaoXML;
     procedure pUpdateCampoCNPJE;
     procedure pSalveName(pFieldName: string; var wFileName: string);
-    procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
+    procedure pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = true);
     procedure pDeleteRowsSelectGrid;
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
@@ -898,13 +898,11 @@ begin
      wMsg := 'Você está prestes a deletar todos os arquivos do CNPJ '+ wCNPJEmit+'.';
 
     if MessageDlg(wMsg, mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
-     if wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento) then
+     if wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento, tsSelTodos) then
      begin
-       pUpdateCampoCNPJE
-//       cbbEmpCNPJ.Clear;
+       pAtualizaGrid;
      end;
   end;
- dbgNfebkp.Refresh;
 end;
 
 procedure TfoPrincipal.pmDelRefazAutTodosClick(Sender: TObject);
@@ -914,7 +912,7 @@ begin
   wRotinas.fDeleteObjetoXML(wListaSelecionados);
   if wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFe_EnvExt,true,'','') > 0 then
   begin
-    dbgNfebkp.Refresh;
+     pAtualizaGrid;
   end;
 end;
 
@@ -923,20 +921,23 @@ begin
   if wListaSelecionados.Count <> dbgNfebkp.SelectedRows.Count then
     pSelecaoChave(wListaSelecionados);
 
-  if (dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count) and (dbgNfebkp.SelectedRows.Count = 1) then
+  if (dbgNfebkp.SelectedRows.Count = wListaSelecionados.Count) then
   begin
-    if MessageDlg('Você está prestes a deletar '+ IntToStr(wListaSelecionados.Count) +' arquivos.',
-       mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
-      wRotinas.fDeleteObjetoXML(wListaSelecionados);
-  end
-  else
-  if wListaSelecionados.Count = 1 then
-  begin
-    if MessageDlg('Deseja excluir o arquivo XML ?', mtConfirmation, [mbNo, mbYes],0 ) = mrYes then
-      wRotinas.fDeleteObjetoXML(wListaSelecionados,  fGetCNPJPelaChave(wListaSelecionados.Strings[0]));
+    if (dbgNfebkp.SelectedRows.Count > 1) then
+    begin
+      if MessageDlg('Você está prestes a deletar '+ IntToStr(wListaSelecionados.Count) +' arquivos.',
+         mtConfirmation, [mbNo, mbYesToAll],0 )= mrYesToAll then
+        wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento, tsSelMulti);
+    end
+    else
+    if wListaSelecionados.Count = 1 then
+    begin
+      if MessageDlg('Deseja excluir o arquivo XML ?', mtConfirmation, [mbNo, mbYes],0 ) = mrYes then
+        wRotinas.fDeleteObjetoXML(wListaSelecionados, CNPJDOC.Documento, tsSelMulti);
+    end;
   end;
 
-  dbgNfebkp.Refresh;
+  pAtualizaGrid;
 end;
 
 procedure TfoPrincipal.pmExpTodosClick(Sender: TObject);
@@ -1401,7 +1402,7 @@ begin
   with (Sender as TDBGrid) do
   begin
 
-    wStatus := DataSource.DataSet.FieldByName('STATUS').AsInteger;
+    wStatus := DataSource.DataSet.FieldByName('STATUSXML').AsInteger;
     case wStatus of
      -999: Canvas.Font.Color := clXmlDefeito;
       001: Canvas.Font.Color := clEnvAguard;     //XML Envio aguardando
@@ -1511,7 +1512,7 @@ begin
   if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
 
-  DaoObjetoXML.pAtualizaTabela;
+//  DaoObjetoXML.pAtualizaTabela;
   foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.5';
   pSetaCores;
   pIniciaGrid;
@@ -1579,7 +1580,7 @@ begin
    wFileName := 'Can_'+dbgNfebkp.Fields[1].AsString + '.xml';
 end;
 
-procedure TfoPrincipal.pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = false);
+procedure TfoPrincipal.pSelecaoChave(var pLista: TStringList; pAddObjet : boolean = true);
 var I : Integer;
     wObjXML :TLm_bkpdfe;
     wSLAux : TStringList;
