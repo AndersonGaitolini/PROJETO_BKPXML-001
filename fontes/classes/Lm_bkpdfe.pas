@@ -133,7 +133,7 @@ type
     function fConsDeleteObjXML(var pObjXML  : TLm_bkpdfe; pCampos: array of string): Boolean;
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
-    procedure pAtualizaTabela;
+    procedure pAtualizaBD;
     procedure pFiltraOrdena2 (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*';
                              pListFields: TStringList = nil);
 
@@ -661,57 +661,44 @@ begin
   end;
 end;
 
-procedure TDaoBkpdfe.pAtualizaTabela;
+procedure TDaoBkpdfe.pAtualizaBD;
+VAR wDataSet : TdataSet;
 begin
   with DM_NFEDFE do
   begin
+    dao.StartTransaction;
     try
-      Dao.ConsultaSql('SELECT CNPJDEST FROM LM_BKPDFE');
-    except //on E: Exception do
-      dao.StartTransaction;
-      try
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
-        Dao.Commit;
-      except on E: Exception do
-        Dao.RollBack;
-      end;
-    end;
-
-    try
-      Dao.ConsultaSql('SELECT XMLERRO FROM LM_BKPDFE');
-    except //on E: Exception do
-      dao.StartTransaction;
-      try
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
-        Dao.Commit;
-      except on E: Exception do
-        Dao.RollBack;
-      end;
-    end;
-
-    try
-      Dao.ConsultaSql('SELECT CNPJ FROM LM_BKPDFE');
-    except //on E: Exception do
-      dao.StartTransaction;
-      try
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
-        Dao.Commit;
-      except on E: Exception do
-        Dao.RollBack;
-      end;
-    end;
-
-    try
-      Dao.ConsultaSql('SELECT STATUSXML FROM LM_BKPDFE');
-    except //on E: Exception do
-      dao.StartTransaction;
-      try
+      wDataSet := Dao.ConsultaSql('SELECT * FROM LM_BKPDFE');
+      if Assigned(wDataSet.FindField('STATUS')) then
+         Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ALTER STATUS TO STATUSXML')
+      else
+      if not Assigned(wDataSet.FindField('STATUSXML')) then
         Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD STATUSXML INTEGER');
-        Dao.Commit;
-      except on E: Exception do
-        Dao.RollBack;
-      end;
+
+      if not Assigned(wDataSet.FindField('CNPJ')) then
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+
+      if not Assigned(wDataSet.FindField('CNPJDEST')) then
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+
+      if not Assigned(wDataSet.FindField('XMLERRO')) then
+        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+
+      Dao.Commit;
+    except //on E: Exception do
+      Dao.RollBack;
     end;
+
+//   wDataSet := Dao.ConsultaSql('SELECT RDB$FIELD_NAME AS CAMPO FROM RDB$RELATION_FIELDS AS TABELA ' +
+//                            'WHERE RDB$FIELD_NAME = ' + QuotedStr('STATUSXML' ) +' AND RDB$RELATION_NAME = '+ QuotedStr('LM_BKPDFE'));
+//   try
+//     if wDataSet.FieldByName('CAMPO').AsString = 'STATUSXML' then
+//       exit
+//     else
+//
+//   except on E: Exception do
+//   end;
+
   end;
 end;
 

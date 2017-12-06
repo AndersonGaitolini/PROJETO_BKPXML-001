@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{81D5B454-C0C4-4934-B424-39A05417BED0}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="MaxXML.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="C:\Users\anderson\Documents\Embarcadero\Studio\Projects\ProgressWheel.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="MaxXML">
+        <MSBuild Projects="MaxXML.dproj"/>
+    </Target>
+    <Target Name="MaxXML:Clean">
+        <MSBuild Projects="MaxXML.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="MaxXML:Make">
+        <MSBuild Projects="MaxXML.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ProgressWheel">
+        <MSBuild Projects="C:\Users\anderson\Documents\Embarcadero\Studio\Projects\ProgressWheel.dproj"/>
+    </Target>
+    <Target Name="ProgressWheel:Clean">
+        <MSBuild Projects="C:\Users\anderson\Documents\Embarcadero\Studio\Projects\ProgressWheel.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ProgressWheel:Make">
+        <MSBuild Projects="C:\Users\anderson\Documents\Embarcadero\Studio\Projects\ProgressWheel.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="MaxXML;ProgressWheel"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="MaxXML:Clean;ProgressWheel:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="MaxXML:Make;ProgressWheel:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

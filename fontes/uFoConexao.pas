@@ -269,10 +269,6 @@ begin
            end;
         end;
   end;
-
-
-
-
 end;
 
 procedure TfoConexao.btnSalvaIniClick(Sender: TObject);
@@ -562,7 +558,7 @@ end;
 
 function TfoConexao.validacampos(pForm : TForm): boolean;
 var i,tabIdx,iTab : Integer;
-    NameLabel, NameComp : string;
+    NameLabel : string;
 begin
   result := True;
   if not Assigned(pForm) then

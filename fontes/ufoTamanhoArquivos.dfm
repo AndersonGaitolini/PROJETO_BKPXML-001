@@ -36,9 +36,6 @@ inherited foTamArquivos: TfoTamArquivos
     Height = 17
     Align = alBottom
     TabOrder = 1
-    ExplicitLeft = 40
-    ExplicitTop = 259
-    ExplicitWidth = 150
   end
   object edPath: TEdit
     Left = 17

@@ -43,7 +43,7 @@ var
  ShowResult : Byte;
  wMsg, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
- i,wTipo : integer;
+ wTipo : integer;
  wMaxOK : boolean;
 
  const
@@ -72,6 +72,7 @@ begin
   begin
     ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
+
 //    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';

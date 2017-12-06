@@ -52,6 +52,7 @@ var
   cXMLProcessado = 2;
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
+  cXMLInut       = 5;
 
 {$R *.res}
 begin
@@ -63,12 +64,15 @@ begin
 
 //  for I := 0 to ParamCount do
 //    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
+  DM_NFEDFE.fdmoMonitor.Tracing := false;
+  DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
+  DM_NFEDFE.fdmoMonitor.Tracing := False;
+
   if (ParamCount = 0) then
   begin
-    DM_NFEDFE.fdmoMonitor.FileName := IncludeTrailingPathDelimiter(Application.GetNamePath) + ChangeFileExt(Application.ExeName , '.log');
-    DM_NFEDFE.fdmoMonitor.Tracing := true;
     ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
+
 //    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
@@ -156,7 +160,7 @@ begin
      Application.Terminate;
   end
   else
-  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio]) then
+  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut]) then
   begin
 //    if ParamCount > 0 then
 //    for I := 0 to ParamCount do

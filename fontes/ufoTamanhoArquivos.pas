@@ -64,6 +64,7 @@ begin
   pbBarra.Position := 0;
   pbBarra.Max := PMax;
   pbBarra.DoubleBuffered := True;
+
 end;
 
 procedure TfoTamArquivos.DoProgress(const PText: String; const PNumber: Cardinal);

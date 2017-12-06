@@ -179,8 +179,6 @@ begin
   DaoObjetoXML := TDaoBkpdfe.Create;
 
   CNPJDOC := TCNPJDOC.Create;
-//  DaoObjetoXML.pAtualizaTabela;
-
 end;
 
 { TConecxaoBD }
@@ -296,12 +294,12 @@ begin
       Exit;
     end;
 
-   DM_NFEDFE.conConexaoFD.Open;
-
-//   for I := 0 to ParamCount do
-//     uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
+    DM_NFEDFE.conConexaoFD.Open;
 
     Result := DM_NFEDFE.conConexaoFD.Connected;
+    if Result then
+      DaoObjetoXML.pAtualizaBD;
+
     FConectado := Result;
   except
     on E: Exception do

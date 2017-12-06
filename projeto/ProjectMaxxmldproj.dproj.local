@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>2017/12/06 16:39:38.000.728,=rtl.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.291,=xmlrtl.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.278,=designide.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.288,=vclx.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.285,=vclactnband.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.282,=vcl.dcp</Transaction>
+    <Transaction>2017/12/06 16:39:50.000.275,=E:\Arquivos\2_Dev\Componentes\Progress\progresswheel\progresswheel\ProgressWheel.pas</Transaction>
+    <Transaction>2017/12/06 16:54:06.000.233,J:\projeto\ProjectMaxxmldproj.dproj=C:\Users\anderson\Documents\Embarcadero\Studio\Projects\ProgressBarWheel.dproj</Transaction>
+  </Transactions>
+</BorlandProject>
