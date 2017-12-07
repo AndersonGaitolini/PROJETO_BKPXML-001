@@ -781,20 +781,15 @@ const cAsc = 'Asc'; cdesc = 'desc';
       Result := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
       DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
 
+      with DM_NFEDFE.dsBkpdfe.DataSet do
+      begin
+        if Length(FieldByName('CNPJDEST').AsString) = 14 then
+          FieldByName('CNPJDEST').EditMask := '999 999 999\-99;0;_'     ´99 999 999\/9999\-99;0;_´
+        else
+        if Length(FieldByName('CNPJDEST').AsString) = 11 then
+          FieldByName('CNPJDEST').EditMask := '###.###.###-##;0;_;';
+      end;
 
-//        with DM_NFEDFE.dsBkpdfe.DataSet do
-//        begin
-//          First;
-//          while not Eof do
-//          begin
-//            if Length( FieldByName('CNPJDEST').AsString) = 14 then
-//              FieldByName('CNPJDEST'). := '99.999.999\/9999\-99;0;_'
-//            else
-//            if Length(FieldByName('CNPJDEST').AsString) = 11 then
-//              FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
-//           Next;
-//          end;
-//        end;
     except on E: Exception do
            begin
              ShowMessage('Método: pFiltro!'+#10#13+

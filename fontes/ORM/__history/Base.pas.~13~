@@ -77,6 +77,11 @@ type
     procedure SetCamposStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
   end;
 
+ TDataSetMX = class(TDataSet)
+  protected
+    procedure DoOnCalcFields; override;
+end;
+
 Type
   IDaoBase = interface
   ['{6E2AFB66-465B-4924-9221-88E283E81EA7}']
@@ -349,4 +354,36 @@ begin
   end;
 end;
 
-end.
+{ TDataSetMX }
+
+eprocedure TDataSetMX{ TDataSetMX }
+
+{procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+
+end;
+
+ TDataSetMX }
+
+{ TDataSetMX }
+
+.procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+
+end;
+
+procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+
+end;
+
+DoOnCalcFields;
+begin
+  inherited;
+
+end;
+
+nd.

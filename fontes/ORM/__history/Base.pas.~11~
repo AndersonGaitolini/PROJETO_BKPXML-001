@@ -77,7 +77,6 @@ type
     procedure SetCamposStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
   end;
 
-Type
   IDaoBase = interface
   ['{6E2AFB66-465B-4924-9221-88E283E81EA7}']
   // configura e executa a query

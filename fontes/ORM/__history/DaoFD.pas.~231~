@@ -37,6 +37,11 @@ type
     procedure SetCamposStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
   end;
 
+TFDQueryMX = class(TFDQuery)
+  protected
+    procedure DoAfterOpen; override;
+  end;
+
   TDaoFD = class(TInterfacedObject, IDaoBase)
   private
     FConexao: TFDConnection;
@@ -62,8 +67,8 @@ type
     function ConsultaAll(ATabela: TTabela; AOrderBy: string = ''): TDataSet;
     function SelectAll(ATabela: TTabela; AOrderBy: string = ''): TDataSet;
 
-    function ConsultaSql(ASql: string): TDataSet; overload;
-    function ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet; overload;
+    function ConsultaSql(ASql: string): TDataSetMX; overload;
+    function ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSetMX; overload;
     function ConsultaSql(ASql: string; const ParamList: Array of Variant): TDataSet; overload;
     function ConsultaSql(ATabela: string; AWhere: string): TDataSet; overload;
     function ConsultaSqlExecute(ASql: string): TDataSet;
@@ -460,7 +465,7 @@ begin
   end;
 end;
 
-function TDaoFD.ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet;
+function TDaoFD.ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSetMX;
 var AQry: TFDQuery;
 begin
   AQry := TFDQuery.Create(Application);
@@ -473,14 +478,11 @@ begin
     Open;
     if pFetchAll then
       FetchAll;
-
   end;
-
-
-  Result := AQry
+  Result := AQry;
 end;
 
-function TDaoFD.ConsultaSql(ASql: string): TDataSet;
+function TDaoFD.ConsultaSql(ASql: string): TDataSetMX;
 var
   AQry: TFDQuery; //TFDQuery;
 begin
@@ -492,8 +494,7 @@ begin
     sql.Add(ASql);
     Open;
   end;
-
-  Result := AQry;
+  Result := AQry
 end;
 
 function TDaoFD.ConsultaSqlExecute(ASql: string): TDataSet;
@@ -1178,6 +1179,22 @@ begin
   finally
     Dados.Free;
   end;
+end;
+
+{ TFDQueryMX }
+procedure TFDQueryMX.DoAfterOpen;
+begin
+  inherited;
+//  if Assigned( FindField('CNPJDEST')) then
+//  begin
+//    ShowMessage(FieldByName('CNPJDEST').AsString + 'Length: '+IntToStr(Length( FieldByName('CNPJDEST').AsString)) );
+//
+//    if Length( FieldByName('CNPJDEST').AsString) = 14 then
+//      FieldByName('CNPJDEST').EditMask := '99.999.999\/9999\-99;0;_'
+//    else
+//    if Length(FieldByName('CNPJDEST').AsString) = 11 then
+//      FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
+//  end;
 end;
 
 end.

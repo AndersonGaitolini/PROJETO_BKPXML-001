@@ -100,6 +100,7 @@ type
     pmTrocarUsuario: TMenuItem;
     pmN2: TMenuItem;
     pnl1: TPanel;
+
     dbgNfebkp: TDBGrid;
     statPrincipal: TStatusBar;
     pmFiltroData: TPopupMenu;
@@ -247,6 +248,8 @@ type
     procedure edConsultaSQLChange(Sender: TObject);
     procedure edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
+      Field: TField; State: TGridDrawState);
 
 //  protected
 //    procedure DoExecute; override;
@@ -299,7 +302,7 @@ var
   wLastField : string;
   wLoadXML : TLoadXML;
   SLXMLEnv :TStringList;
-  wListaEmp, wListaSelecionados : TStringList;
+  wListaEmp, wListaSelecionados, wSlLoadLote : TStringList;
   clCorGrid00,
   clCorGrid01,
   clCorGrid02,
@@ -599,6 +602,11 @@ begin
                           InitialDir := wPathXML;
                           statPrincipal.Panels[1].Text := '0.00%';
                         end;
+
+       emLoadLoteXMLNFe: begin
+                           Lista := wSlLoadLote;
+                           statPrincipal.Panels[1].Text := '0.00%';
+                         end;
 
       emExportaLoteXML: begin
                           Lista := wListaSelecionados;
@@ -1401,7 +1409,6 @@ var wStream : TStream;
 begin
   with (Sender as TDBGrid) do
   begin
-
     wStatus := DataSource.DataSet.FieldByName('STATUSXML').AsInteger;
     case wStatus of
      -999: Canvas.Font.Color := clXmlDefeito;
@@ -1439,6 +1446,12 @@ begin
    Canvas.FillRect(Rect);
    DefaultDrawColumnCell(Rect, DataCol, Column, State);
   end;
+end;
+
+procedure TfoPrincipal.dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
+  Field: TField; State: TGridDrawState);
+begin
+  //
 end;
 
 procedure TfoPrincipal.dbgNfebkpKeyPress(Sender: TObject; var Key: Char);
@@ -1829,7 +1842,8 @@ begin
 end;
 
 procedure TfoPrincipal.pmRefazXMLClick(Sender: TObject);
-var wFileName: string;
+var I: Integer;
+    wFileName: string;
 begin
   wFileName := ExtractFileDir(ParamStr(0));
   wFileName := Copy(wFileName, 1, LastDelimiter('\', wFileName));
@@ -1838,19 +1852,24 @@ begin
     wFileName := wFileName + 'DFE\XML\Envio\Processado';
   end;
 
+  dlgOpenPrinc.DefaultExt := 'xml';
+
   dlgOpenPrinc.Title := 'Escolha o Arquivo XML';
   dlgOpenPrinc.InitialDir := wFileName;
   dlgOpenPrinc.Filter := '*.*XML';
-
+  dlgOpenPrinc.Options := [ofAllowMultiSelect];
   if dlgOpenPrinc.Execute then
   begin
-    tabConfiguracoes.NFePathProcessado := dlgOpenPrinc.FileName;
+    if not Assigned(wRotinas) then
+      wRotinas := TRotinas.Create;
+
+    wSlLoadLote := TStringList.Create;
+    dlgOpenPrinc.FileName;
+    for I := 0 to dlgOpenPrinc.Files.Count-1 do
+      wSlLoadLote.Add(dlgOpenPrinc.Files[I]);
+
+    pRotinasProgress(emLoadLoteXMLNFe);
   end;
-
-  if not Assigned(wRotinas) then
-     wRotinas := TRotinas.Create;
-
- wRotinas.fLoadXMLNFe(tabConfiguracoes,txNFE_Env,true,dlgOpenPrinc.FileName);
 end;
 
 procedure TfoPrincipal.pmDescmarcarSelTodosClick(Sender: TObject);

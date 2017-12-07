@@ -56,6 +56,7 @@ type
     procedure btnPingClick(Sender: TObject);
     procedure cbbTipoConChange(Sender: TObject);
     procedure btnSalvaIniClick(Sender: TObject);
+    procedure cbbPerfilConChange(Sender: TObject);
   private
     { Private declarations }
     wListaServicos: TStringList;
@@ -190,12 +191,6 @@ end;
 procedure TfoConexao.btnConectar1Click(Sender: TObject);
 //var wNomwPC : string;
 begin
-//  wNomwPC := fNomePC;
-//  wListaServicos := TStringList.Create;
-//  fServiceGetList(wNomwPC, SERVICE_TYPE_ALL, SERVICE_TYPE_ALL, wListaServicos);
-
-//  if Assigned(wListaServicos) then
-//     wListaServicos.SaveToFile( ChangeFileExt(Application.ExeName,'.log'));
   if ConecxaoBD.Conectado  then
   begin
    DM_NFEDFE.conConexaoFD.Close;
@@ -213,7 +208,7 @@ begin
      2: pConRemote;
     end;
 
-    ConecxaoBD.pWriteParams;
+    ConecxaoBD.pWriteParams(ConecxaoBD.SessaoAtual);
     ConecxaoBD.pConecta;
 
     pShowBotaoConectar;
@@ -273,7 +268,19 @@ end;
 
 procedure TfoConexao.btnSalvaIniClick(Sender: TObject);
 begin
-  ConecxaoBD.pWriteParams;
+  ConecxaoBD.pWriteParams(ConecxaoBD.SessaoAtual);
+end;
+
+procedure TfoConexao.cbbPerfilConChange(Sender: TObject);
+begin
+ DM_NFEDFE.conConexaoFD.Close;
+ DM_NFEDFE.conConexaoFD.Connected := False;
+ ConecxaoBD.Conectado := False;
+
+ pShowBotaoConectar;
+ pShowStatusBar;
+ ConecxaoBD.pReadParams(cbbPerfilCon.Items[cbbPerfilCon.ItemIndex]);
+ pLerParametros;
 end;
 
 procedure TfoConexao.cbbTipoConChange(Sender: TObject);
@@ -367,7 +374,8 @@ begin
  if not Assigned(ConecxaoBD) then
      ConecxaoBD := TConecxaoBD.Create;
 
- ConecxaoBD.pReadParams;
+ pMontaListaPerfil;
+ ConecxaoBD.pReadParams(fNomePC);
 end;
 
 procedure TfoConexao.FormKeyDown(Sender: TObject; var Key: Word;
@@ -401,7 +409,6 @@ end;
 
 procedure TfoConexao.FormShow(Sender: TObject);
 begin
-
   pLerParametros;
   pgcConfig.TabIndex := 0;
 
@@ -445,15 +452,16 @@ begin
 
 end;
 
+
 procedure TfoConexao.pMontaListaPerfil;
-var wINI : TIniFile;
+var I:Integer;
 begin
-  wINI := TIniFile.Create(ConecxaoBD.IniFile);
-  try
-    cbbPerfilCon.Clear;
-  finally
-    FreeAndNil(wINI);
-  end;
+  cbbPerfilCon.Clear;
+  for I := 0 to ConecxaoBD.ListaSessao.Count-1 do
+    cbbPerfilCon.Items.Add(ConecxaoBD.ListaSessao.Strings[I]);
+
+  cbbPerfilCon.ItemIndex := cbbPerfilCon.Items.IndexOf(fNomePC);
+  ConecxaoBD.ListaSessao.Free;
 end;
 
 procedure TfoConexao.pPreemcheCampos;
@@ -495,7 +503,6 @@ begin
 
   result := true;
 end;
-
 
 procedure TfoConexao.pEnableConfig(pForm : TForm; pEnable: boolean);
 var i : integer;

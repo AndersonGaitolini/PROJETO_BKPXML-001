@@ -11,7 +11,7 @@ uses
   FireDAC.Phys.IBBase, FireDAC.VCLUI.Wait, FireDAC.Comp.UI,
   Base, DaoFD, FireDAC.Stan.Param, FireDAC.DatS, FireDAC.DApt.Intf,
   FireDAC.DApt, FireDAC.Comp.DataSet,FMX.Forms, FireDAC.Moni.Custom,
-  FireDAC.Moni.FlatFile;
+  FireDAC.Moni.FlatFile,System.IniFiles;
 
 type
   TTipoConexao = (tcLocal, tcLocalEmbed, tcRemote);
@@ -33,9 +33,12 @@ type
     FProtocol     : String;
     FPort         : String;
     FIniFile      : String;
+    FSessaoAtual  : String;
+    FListaSessao  : TStringList;
     FTipoCon      : TTipoConexao;
-//    FConn         : TFDConnection;
-//    FDriver       : TFDPhysFBDriverLink;
+
+  procedure pListaSessaoINI;
+
   protected
     { protected declarations }
 
@@ -56,15 +59,18 @@ type
     property Protocol     : String       read  FProtocol     write FProtocol    ;
     property Port         : String       read  FPort         write FPort        ;
     property TipoCon      : TTipoConexao read  FTipoCon      write FTipoCon;
+    property SessaoAtual  : String read FSessaoAtual write FSessaoAtual;
+    property ListaSessao  : TStringList read FListaSessao write FListaSessao;
 //    property Conn         : TFDConnection read FConn write FConn;
 //    property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
+
 
     function fConexaoBD: Boolean;
     procedure pIniPath;
     procedure pConecta;
     procedure pClearParams;
-    procedure pReadParams;
-    procedure pWriteParams;
+    procedure pReadParams(pSessao: String);
+    procedure pWriteParams(pSessao: String);
 
     constructor Create; overload;
   end;
@@ -140,6 +146,7 @@ type
     fdmoMonitor: TFDMoniFlatFileClientLink;
 
     procedure DataModuleCreate(Sender: TObject);
+    procedure cdsBkpdfeAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -160,6 +167,11 @@ uses
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
+
+procedure TDM_NFEDFE.cdsBkpdfeAfterOpen(DataSet: TDataSet);
+begin
+//
+end;
 
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
@@ -319,6 +331,12 @@ begin
   end;
 end;
 
+procedure TConecxaoBD.pListaSessaoINI;
+begin
+  FListaSessao := fListaSessaoINIFile;
+  fListaSessaoINIFile.Free;
+end;
+
 procedure TConecxaoBD.pIniPath;
 begin
   FIniFile := fArqIni;
@@ -337,45 +355,43 @@ begin
   Conectado := fConexaoBD;
 end;
 
-
-procedure TConecxaoBD.pReadParams;
-var wSessao : string;
+procedure TConecxaoBD.pReadParams(pSessao: String);
 begin
-  wSessao := fNomePC;
-  FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, wSessao, 'TipoCon','tcLocal'));
-  FUserName     := getINI(FIniFile, wSessao, 'User_Name');
-  FPassword     := getINI(FIniFile, wSessao, 'Password');
-  FDataBase     := getINI(FIniFile, wSessao, 'Database');
-  FSQLDialect   := getINI(FIniFile, wSessao, 'SQLDialect');
-  FDriverID     := getINI(FIniFile, wSessao, 'DriverID');
-  FCharacterSet := getINI(FIniFile, wSessao, 'CharacterSet');
-  FServer       := getINI(FIniFile, wSessao, 'Server');
-  FProtocol     := getINI(FIniFile, wSessao, 'Protocol');
-  FPort         := getINI(FIniFile, wSessao, 'Port');
-  FVendorLib    := getINI(FIniFile, wSessao, 'VendorLib');
-  FVendorHome   := getINI(FIniFile, wSessao, 'VendorHome');
-  FEmbedded     := StrToBoolDef(getINI(FIniFile, wSessao, 'Embedded'),false);
+  FSessaoAtual := pSessao;
+  pListaSessaoINI;
+  FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, pSessao, 'TipoCon','tcLocal'));
+  FUserName     := getINI(FIniFile, pSessao, 'User_Name');
+  FPassword     := getINI(FIniFile, pSessao, 'Password');
+  FDataBase     := getINI(FIniFile, pSessao, 'Database');
+  FSQLDialect   := getINI(FIniFile, pSessao, 'SQLDialect');
+  FDriverID     := getINI(FIniFile, pSessao, 'DriverID');
+  FCharacterSet := getINI(FIniFile, pSessao, 'CharacterSet');
+  FServer       := getINI(FIniFile, pSessao, 'Server');
+  FProtocol     := getINI(FIniFile, pSessao, 'Protocol');
+  FPort         := getINI(FIniFile, pSessao, 'Port');
+  FVendorLib    := getINI(FIniFile, pSessao, 'VendorLib');
+  FVendorHome   := getINI(FIniFile, pSessao, 'VendorHome');
+  FEmbedded     := StrToBoolDef(getINI(FIniFile, pSessao, 'Embedded'),false);
 end;
 
-procedure TConecxaoBD.pWriteParams;
-var wSessao : string;
+procedure TConecxaoBD.pWriteParams(pSessao: String);
 begin
- wSessao := fNomePC;
- setINI(FIniFile, wSessao, 'TipoCon'       ,TConvert<TTipoConexao>.EnumConvertStr(FTipoCon));
- setINI(FIniFile, wSessao, 'User_Name'     ,FUserName     );
- setINI(FIniFile, wSessao, 'Password'      ,FPassword     );
- setINI(FIniFile, wSessao, 'Database'      ,FDataBase     );
- setINI(FIniFile, wSessao, 'SQLDialect'    ,FSQLDialect   );
- setINI(FIniFile, wSessao, 'DriverID'      ,FDriverID     );
- setINI(FIniFile, wSessao, 'CharacterSet'  ,FCharacterSet );
- setINI(FIniFile, wSessao, 'Server'        ,FServer       );
- setINI(FIniFile, wSessao, 'Protocol'      ,FProtocol     );
- setINI(FIniFile, wSessao, 'Port'          ,FPort         );
- setINI(FIniFile, wSessao, 'VendorLib'     ,FVendorLib    );
- setINI(FIniFile, wSessao, 'VendorHome'    ,FVendorHome   );
- setINI(FIniFile, wSessao, 'Embedded'      ,BoolToStr(FEmbedded));
+ setINI(FIniFile, pSessao, 'TipoCon'       ,TConvert<TTipoConexao>.EnumConvertStr(FTipoCon));
+ setINI(FIniFile, pSessao, 'User_Name'     ,FUserName     );
+ setINI(FIniFile, pSessao, 'Password'      ,FPassword     );
+ setINI(FIniFile, pSessao, 'Database'      ,FDataBase     );
+ setINI(FIniFile, pSessao, 'SQLDialect'    ,FSQLDialect   );
+ setINI(FIniFile, pSessao, 'DriverID'      ,FDriverID     );
+ setINI(FIniFile, pSessao, 'CharacterSet'  ,FCharacterSet );
+ setINI(FIniFile, pSessao, 'Server'        ,FServer       );
+ setINI(FIniFile, pSessao, 'Protocol'      ,FProtocol     );
+ setINI(FIniFile, pSessao, 'Port'          ,FPort         );
+ setINI(FIniFile, pSessao, 'VendorLib'     ,FVendorLib    );
+ setINI(FIniFile, pSessao, 'VendorHome'    ,FVendorHome   );
+ setINI(FIniFile, pSessao, 'Embedded'      ,BoolToStr(FEmbedded));
 end;
 
 end.
+
 
 

@@ -44,10 +44,6 @@ object foConexao: TfoConexao
       TabOrder = 0
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lbStatusConn: TLabel
           Left = 94
           Top = 343
@@ -204,7 +200,7 @@ object foConexao: TfoConexao
           ItemIndex = 0
           TabOrder = 0
           Text = 'MAXXML'
-          OnChange = cbbTipoConChange
+          OnChange = cbbPerfilConChange
           Items.Strings = (
             'MAXXML')
         end
@@ -279,7 +275,7 @@ object foConexao: TfoConexao
     Left = 272
     Top = 4
     Bitmap = {
-      494C010104000C00700110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00740110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

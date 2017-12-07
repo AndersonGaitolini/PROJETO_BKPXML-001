@@ -37,6 +37,17 @@ type
     procedure SetCamposStream(AProp: TRttiProperty; ACampo: string; ATabela: TTabela; AQry: TObject);
   end;
 
+ TDataSetMX = class(TDataSet)
+  protected
+    procedure DoOnCalcFields; override;
+end;
+
+ TFDQueryMX = class(TFDQuery)
+  protected
+    procedure CalculateFields(Buffer: NativeInt); override;
+
+  end;
+
   TDaoFD = class(TInterfacedObject, IDaoBase)
   private
     FConexao: TFDConnection;
@@ -473,9 +484,7 @@ begin
     Open;
     if pFetchAll then
       FetchAll;
-
   end;
-
 
   Result := AQry
 end;
@@ -1180,4 +1189,35 @@ begin
   end;
 end;
 
+{ TFDQueryMX }
+procedure TFDQueryMX.CalculateFields(Buffer: NativeInt);
+begin
+  inherited;
+ if Assigned( FindField('CNPJDEST')) then
+ begin
+   ShowMessage(FieldByName('CNPJDEST').AsString + 'Length: '+IntToStr(Length( FieldByName('CNPJDEST').AsString)) );
+
+   if Length( FieldByName('CNPJDEST').AsString) = 14 then
+     FieldByName('CNPJDEST').EditMask := '99.999.999\/9999\-99;0;_'
+   else
+   if Length(FieldByName('CNPJDEST').AsString) = 11 then
+     FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
+ end;
+end;
+
+{ TDataSetMX }
+
+procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+  if Assigned( FindField('CNPJDEST')) then
+  begin
+//    ShowMessage(FieldByName('CNPJDEST').AsString + 'Length: '+IntToStr(Length( FieldByName('CNPJDEST').AsString)) );
+    if Length( FieldByName('CNPJDEST').AsString) = 14 then
+      FieldByName('CNPJDEST').EditMask := '99.999.999\/9999\-99;0;_'
+    else
+    if Length(FieldByName('CNPJDEST').AsString) = 11 then
+      FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
+  end;
+end;
 end.

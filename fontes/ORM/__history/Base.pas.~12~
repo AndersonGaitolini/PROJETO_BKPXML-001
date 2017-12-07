@@ -78,6 +78,11 @@ type
   end;
 
 Type
+ TDataSetMX = class(TDataSet)
+  protected
+    procedure DoOnCalcFields; override;
+end;
+
   IDaoBase = interface
   ['{6E2AFB66-465B-4924-9221-88E283E81EA7}']
   // configura e executa a query

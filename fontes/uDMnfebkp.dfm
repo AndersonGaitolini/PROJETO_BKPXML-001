@@ -40,7 +40,7 @@ object DM_NFEDFE: TDM_NFEDFE
     Top = 139
   end
   object dsBkpdfe: TDataSource
-    DataSet = cdsConfiguracoes
+    DataSet = cdsBkpdfe
     Left = 173
     Top = 256
   end
@@ -162,6 +162,7 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provBkpdfe'
     StoreDefs = True
+    AfterOpen = cdsBkpdfeAfterOpen
     Left = 21
     Top = 256
     object cdsBkpdfeID: TIntegerField
@@ -442,6 +443,7 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fdmoMonitor: TFDMoniFlatFileClientLink
     FileColumns = [tiRefNo, tiTime, tiObjID, tiMsgText]
+    Tracing = True
     Left = 28
     Top = 26
   end

@@ -9,6 +9,11 @@ type
   TCamposArray = array of string;
   TFlagCampos = (fcAdd, fcIgnore);
 
+ TDataSetMX = class(TDataSet)
+  protected
+    procedure DoOnCalcFields; override;
+end;
+
   TTabela = class
   end;
 
@@ -346,6 +351,24 @@ begin
     Result := ASql.Text;
   finally
     ASql.Free;
+  end;
+end;
+
+
+{ TDataSetMX }
+
+procedure TDataSetMX.DoOnCalcFields;
+procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+  if Assigned( FindField('CNPJDEST')) then
+  begin
+//    ShowMessage(FieldByName('CNPJDEST').AsString + 'Length: '+IntToStr(Length( FieldByName('CNPJDEST').AsString)) );
+    if Length( FieldByName('CNPJDEST').AsString) = 14 then
+      FieldByName('CNPJDEST').EditMask := '99.999.999\/9999\-99;0;_'
+    else
+    if Length(FieldByName('CNPJDEST').AsString) = 11 then
+      FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
   end;
 end;
 

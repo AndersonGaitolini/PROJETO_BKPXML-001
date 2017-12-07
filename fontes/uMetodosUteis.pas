@@ -124,6 +124,7 @@ type
 
   procedure pAppTerminate;
   function fSetAtribute(pPath: string; pAtribute: Cardinal): Boolean;
+  function fListaSessaoINIFile: TStringList;
 
   var
    wOpe : TOperacao = opNil;
@@ -169,6 +170,45 @@ uses
 //     result   := WideCharToString(ist);
 //  end;
 
+function fListaSessaoINIFile: TStringList;
+var I,J : Integer;
+    wLinha : String;
+    wINI : TIniFile;
+    wSessao : Boolean;
+    wList, wSLPerfil : TStringList;
+begin
+   wList := TStringList.create;
+   wSLPerfil := TStringList.create;
+   wINI := TIniFile.Create(ConecxaoBD.IniFile);
+   try
+     try
+       wList.LoadFromFile(ConecxaoBD.IniFile);
+       for I := 0 to wList.Count-1 do
+       begin
+         wLinha := wList.Strings[I];
+         if Length(wLinha) = 0 then
+           Continue;
+
+         wSessao := (wLinha[1] = '[') and (wLinha[Length(wLinha)] = ']');
+         if (wSessao) then
+         begin
+           wLinha := Copy(wLinha, 2, Pos(']',wLinha)-2);
+           if wIni.SectionExists(wLinha) then
+             if wSLPerfil.IndexOf(wLinha) < 0 then
+                wSLPerfil.Add(wLinha);
+         end;
+
+       end;
+
+       Result := wSLPerfil;
+     Except
+
+     end;
+   finally
+     FreeAndNil(wINI);
+     FreeAndNil(wList);
+   end;
+end;
 
 function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
 var

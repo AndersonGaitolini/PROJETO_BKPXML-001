@@ -66,11 +66,11 @@ begin
 //    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
   DM_NFEDFE.fdmoMonitor.Tracing := false;
   DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
-  DM_NFEDFE.fdmoMonitor.Tracing := True;
+  DM_NFEDFE.fdmoMonitor.Tracing := False;
 
   if (ParamCount = 0) then
   begin
-    ConecxaoBD.pReadParams(FNomePC);
+    ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
 
 //    GotoLogin:
@@ -99,7 +99,7 @@ begin
   else
   if wTipo = cXMLConsulta then
   begin
-    ConecxaoBD.pReadParams(FNomePC);
+    ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
     if not ConecxaoBD.Conectado then
     begin
@@ -132,7 +132,7 @@ begin
    begin
      DM_NFEDFE.Dao.StartTransaction;
      try
-       ConecxaoBD.pReadParams(fNomePC);
+       ConecxaoBD.pReadParams;
        ConecxaoBD.pConecta;
 
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'wPathMAX: True não logou');
@@ -165,7 +165,7 @@ begin
 //    if ParamCount > 0 then
 //    for I := 0 to ParamCount do
 //      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
-    ConecxaoBD.pReadParams(FNomePC);
+    ConecxaoBD.pReadParams;
     ConecxaoBD.pConecta;
 
     if not ConecxaoBD.Conectado then

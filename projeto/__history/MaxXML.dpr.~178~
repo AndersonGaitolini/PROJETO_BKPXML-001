@@ -66,7 +66,7 @@ begin
 //    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
   DM_NFEDFE.fdmoMonitor.Tracing := false;
   DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
-  DM_NFEDFE.fdmoMonitor.Tracing := True;
+  DM_NFEDFE.fdmoMonitor.Tracing := False;
 
   if (ParamCount = 0) then
   begin

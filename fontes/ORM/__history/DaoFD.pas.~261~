@@ -461,9 +461,9 @@ begin
 end;
 
 function TDaoFD.ConsultaSql(ASql: string; pFetchAll: Boolean): TDataSet;
-var AQry: TFDQuery;
+var AQry: TFDQueryMX;
 begin
-  AQry := TFDQuery.Create(Application);
+  AQry := TFDQueryMX.Create(Application);
 
   with AQry do
   begin
@@ -474,6 +474,7 @@ begin
     if pFetchAll then
       FetchAll;
 
+    DoOnCalcFields;
   end;
 
 
@@ -1178,6 +1179,32 @@ begin
   finally
     Dados.Free;
   end;
+end;
+
+procedure TDataSetMX.DoOnCalcFields;
+begin
+  inherited;
+
+end;
+{ TFDQueryMX }
+
+procedure TFDQueryMX.DoAfterOpen;
+begin
+  inherited;
+//  if Assigned( FindField('CNPJDEST')) then
+//  begin
+//    if Length( FieldByName('CNPJDEST').AsString) = 14 then
+//      FieldByName('CNPJDEST').EditMask := '99.999.999\/9999\-99;0;_'
+//    else
+//    if Length(FieldByName('CNPJDEST').AsString) = 11 then
+//      FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
+//  end;
+end;
+
+procedure TFDQueryMX.DoOnCalcFields;
+begin
+  inherited;
+
 end;
 
 end.
