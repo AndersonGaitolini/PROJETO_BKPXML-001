@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, uPadraoForm,UDirectoryTreeSize,
-  Vcl.StdCtrls, Vcl.ComCtrls, JvBaseDlg, JvSelectDirectory, uProgressWheel;
+  Vcl.StdCtrls, Vcl.ComCtrls, JvBaseDlg, JvSelectDirectory;
 
 type
   TfoTamArquivos = class(TfoPadraoForm)
@@ -15,7 +15,6 @@ type
     lbPerc: TLabel;
     edPath: TEdit;
     jopd1: TJvSelectDirectory;
-    pbw1: TProgressWheel;
     procedure btnProcPesadoClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure edPathDblClick(Sender: TObject);

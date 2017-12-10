@@ -1808,26 +1808,28 @@ begin
 end;
 
 procedure TfoPrincipal.pmRefazAutorizacaoTodosClick(Sender: TObject);
-var wPathInit : TStringList;
+var
     wI : Integer;
     wColumn : TColumn;
+//    wPathInit : TStringList;
 begin
-   wPathInit := TStringList.Create;
-   jopdDirDir := TJvSelectDirectory.Create(Application);
+//   wPathInit := TStringList.Create;
+//   jopdDirDir := TJvSelectDirectory.Create(Application);
    try
      wPathXML := ExtractFileDir(ParamStr(0));
      wPathXML := Copy(wPathXML, 1, LastDelimiter('\', wPathXML));
      if FileExists(wPathXML+'Maxwin.exe') or (FileExists(wPathXML+'Maxecv.exe')) then
        wPathXML := wPathXML + 'DFE\XML\Envio\Processado';
 
-     if DirectoryExists(wPathXML) then
-       jopdDirDir.InitialDir := wPathXML
-     else
-       jopdDirDir.InitialDir := GetCurrentDir;
-
-     jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
-    if jopdDirDir.Execute then
-      wPathXML  := jopdDirDir.Directory;
+//     if DirectoryExists(wPathXML) then
+//       jopdDirDir.InitialDir := wPathXML
+//     else
+//       jopdDirDir.InitialDir := GetCurrentDir;
+//
+//     jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
+//    if jopdDirDir.Execute then
+//      wPathXML  := jopdDirDir.Directory;
+     fOpenDirectory(wPathXML);
 
     if (wPathXML = '') OR (NOT DirectoryExists(wPathXML)) then
       exit;
@@ -1835,8 +1837,8 @@ begin
     pRotinasProgress(emLoadXMLNFe);
 
    finally
-     wPathInit.free;
-     jopdDirDir.Free;
+//     wPathInit.free;
+//     jopdDirDir.Free;
    end;
 
 end;

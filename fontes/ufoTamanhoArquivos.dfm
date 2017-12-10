@@ -45,12 +45,6 @@ inherited foTamArquivos: TfoTamArquivos
     TabOrder = 2
     OnDblClick = edPathDblClick
   end
-  object pbw1: TProgressWheel
-    Left = 277
-    Top = 69
-    Width = 100
-    Height = 41
-  end
   object jopd1: TJvSelectDirectory
     Left = 450
     Top = 20

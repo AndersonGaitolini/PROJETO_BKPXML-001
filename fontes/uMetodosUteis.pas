@@ -5,7 +5,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock, WinSvc;
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock, WinSvc, Vcl.FileCtrl;
 
 
 Const
@@ -83,6 +83,7 @@ type
   function fLocalIP : string;
   function ExtractName(const Filename: String): String;
   function DateXMLToDate(pDateXML: String): TDate;
+  procedure fOpenDirectory(var pFileName: string);
   function fOpenFileName(var prFileName:string;pTitle: string; pFilter: array of string; pFilterIndex : integer = 0): Boolean;
   function fOpenFile(pTitleName: string;var pFileName : String; pFilterName: array of string; pFilterIndex : integer = 0; pDefaultExt : string = '*.*' ): Boolean; overload;
   function fGetWindowsDrive: Char;
@@ -808,6 +809,14 @@ var
       FreeAndNil(f);
     end;
   end;
+procedure fOpenDirectory(var pFileName: string);
+begin
+  if SelectDirectory('Selecione uma pasta', 'C:\', pFileName) then
+    if not DirectoryExists(pFileName) then
+      pFileName := '';
+
+end;
+
 
 function fOpenFileName(var prFileName:string;pTitle: string; pFilter: array of string; pFilterIndex : integer = 0): Boolean;
 var
