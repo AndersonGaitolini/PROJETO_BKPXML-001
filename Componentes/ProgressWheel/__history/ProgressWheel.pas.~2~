@@ -449,7 +449,7 @@ end;
 
 procedure Register;
 begin
-  RegisterComponents('Standard', [TProgressWheel]);
+  RegisterComponents('ProgressWheelBar', [TProgressWheel]);
 end;
 
 end.

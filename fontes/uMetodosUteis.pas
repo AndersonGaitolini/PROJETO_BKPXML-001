@@ -60,7 +60,6 @@ type
   TGenerico = 0..255;
 
    TConvert<T:Record> = class
-     private
      public
        class procedure PopulateListEnum(AList: TStrings);
        class function StrConvertEnum(const AStr: string):T;
@@ -811,7 +810,8 @@ var
   end;
 procedure fOpenDirectory(var pFileName: string);
 begin
-  if SelectDirectory('Selecione uma pasta', 'C:\', pFileName) then
+  if SelectDirectory('Selecione uma pasta', 'C:\', pFileName,[sdNewFolder, sdShowEdit, sdShowShares, sdNewUI, sdShowFiles,
+    sdValidateDir]) then
     if not DirectoryExists(pFileName) then
       pFileName := '';
 

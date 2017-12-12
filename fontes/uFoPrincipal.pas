@@ -13,7 +13,8 @@ uses
   System.PushNotification, Data.Bind.Components, Data.Bind.ObjectScope,
   REST.Backend.BindSource, REST.Backend.PushDevice,System.TypInfo, Vcl.Buttons,uRotinas,
   Vcl.DBCtrls, Vcl.AppEvnts, JvBaseDlg, JvSelectDirectory,System.MaskUtils,
-  IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient;
+  IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient,
+  ProgressWheel;
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
@@ -169,6 +170,10 @@ type
     lbConsultas: TLabel;
     btnFIltroSQL: TBitBtn;
     bvl1: TBevel;
+    pnlProgressWheel: TPanel;
+    pbw1: TProgressWheel;
+    btnPause: TButton;
+    btnStop: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -250,6 +255,8 @@ type
       Shift: TShiftState);
     procedure dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
       Field: TField; State: TGridDrawState);
+    procedure btnPauseClick(Sender: TObject);
+    procedure btnStopClick(Sender: TObject);
 
 //  protected
 //    procedure DoExecute; override;
@@ -318,7 +325,7 @@ implementation
 
 uses
 
-uFoConsConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos, uFoFiltroDetalhe, uFoConexao;
+uFoConsConfiguracao, Configuracoes, uFoXMLSimulacao, ufoLogin, uFoCadUsuario, uFoConsUsuario, ufoTamanhoArquivos, uFoFiltroDetalhe, uFoConexao, uFoProgressao;
 
 {$R *.dfm}
 
@@ -442,6 +449,11 @@ begin
     tabConfiguracoes := TConfiguracoes.Create;
 end;
 
+procedure TfoPrincipal.btnPauseClick(Sender: TObject);
+begin
+  wRotinas.Pausar := not wRotinas.Pausar;
+end;
+
 procedure TfoPrincipal.btnPelaChaveClick(Sender: TObject);
 var wFilename: string;
 begin
@@ -482,6 +494,11 @@ begin
   finally
     foXMLSimulcao.Free;
   end;
+end;
+
+procedure TfoPrincipal.btnStopClick(Sender: TObject);
+begin
+  wRotinas.Parar := not wRotinas.Parar;
 end;
 
 procedure TfoPrincipal.btnXMLEnvioExtLoteClick(Sender: TObject);
@@ -1179,10 +1196,14 @@ end;
 //  if not Assigned(wRotinas) then
 //    inherited DoTearDown();
 //end;
+procedure TfoPrincipal.DoMax(const PMax: Int64);
+begin
+  pnlProgressWheel.Visible := true;
+  pnlProgressWheel.BringToFront;
+  pbw1.Min := 0;
+  pbw1.Max := PMax;
+  pbw1.Position := 0;
 
-
-procedure TfoPrincipal.DoMax(const PMax: Int64);
-begin
   statPrincipal.Panels[2].Text := 'Processando!';
   ProgressBar1.Step := 1;
   ProgressBar1.Position := 0;
@@ -1191,7 +1212,13 @@ begin
 end;
 
 procedure TfoPrincipal.DoProgress(const PText: String; const PNumber: Cardinal);
+var I:Int64;
 begin
+  I:= pbw1.Position;
+  Inc(I,1);
+  pbw1.Position := I;
+
+
   ProgressBar1.StepIt;
   statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
   statPrincipal.Panels[3].Text := Inttostr(PNumber)+' - '+ PText;
@@ -1223,6 +1250,7 @@ begin
   statPrincipal.Panels[3].Text := wMSG;
   ProgressBar1.Step := 1;
   ProgressBar1.Position := 0;
+  pnlProgressWheel.Visible := False;
   wRotinas.Terminate;
 end;
 
@@ -1814,22 +1842,22 @@ var
 //    wPathInit : TStringList;
 begin
 //   wPathInit := TStringList.Create;
-//   jopdDirDir := TJvSelectDirectory.Create(Application);
+   jopdDirDir := TJvSelectDirectory.Create(Application);
    try
      wPathXML := ExtractFileDir(ParamStr(0));
      wPathXML := Copy(wPathXML, 1, LastDelimiter('\', wPathXML));
      if FileExists(wPathXML+'Maxwin.exe') or (FileExists(wPathXML+'Maxecv.exe')) then
        wPathXML := wPathXML + 'DFE\XML\Envio\Processado';
 
-//     if DirectoryExists(wPathXML) then
-//       jopdDirDir.InitialDir := wPathXML
-//     else
-//       jopdDirDir.InitialDir := GetCurrentDir;
-//
-//     jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
-//    if jopdDirDir.Execute then
-//      wPathXML  := jopdDirDir.Directory;
-     fOpenDirectory(wPathXML);
+     if DirectoryExists(wPathXML) then
+       jopdDirDir.InitialDir := wPathXML
+     else
+       jopdDirDir.InitialDir := GetCurrentDir;
+
+     jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
+    if jopdDirDir.Execute then
+      wPathXML  := jopdDirDir.Directory;
+//     fOpenDirectory(wPathXML);
 
     if (wPathXML = '') OR (NOT DirectoryExists(wPathXML)) then
       exit;
@@ -1838,7 +1866,7 @@ begin
 
    finally
 //     wPathInit.free;
-//     jopdDirDir.Free;
+     jopdDirDir.Free;
    end;
 
 end;

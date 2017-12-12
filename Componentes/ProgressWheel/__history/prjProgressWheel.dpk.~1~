@@ -33,6 +33,6 @@ requires
   vcl;
 
 contains
-  ProgressWheel in 'ProgressWheel.pas';
+  uProgressWheel in 'uProgressWheel.pas';
 
 end.

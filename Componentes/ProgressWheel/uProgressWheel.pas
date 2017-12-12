@@ -1,14 +1,5 @@
 unit uProgressWheel;
 
-(*  GREATIS PROGRESS WHEEL                                    *)
-(*  unit version 1.00.001                                     *)
-(*  Copyright (C) 2014 Greatis Software                       *)
-(*                                                            *)
-(*  FREE FOR NON-COMMERCIAL USE ONLY !                        *)
-(*                                                            *)
-(*  To get support or to order commercial license visit       *)
-(*  http://www.greatis.com/delphicb/progresswheel/getit.html  *)
-
 interface
 
 uses

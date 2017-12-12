@@ -443,7 +443,6 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object fdmoMonitor: TFDMoniFlatFileClientLink
     FileColumns = [tiRefNo, tiTime, tiObjID, tiMsgText]
-    Tracing = True
     Left = 28
     Top = 26
   end

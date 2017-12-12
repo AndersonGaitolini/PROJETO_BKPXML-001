@@ -29,6 +29,7 @@ uses
     FLista : TStringList;
     FDocumento : string;
     FInitialDir : String;
+    FParar ,FPausar: Boolean;
     FRefazAutorizacao : Boolean;
     FExecuteMetodo : TExecuteMetodo;
     FOnExecute: TNotifyEvent;
@@ -36,6 +37,8 @@ uses
     FOnTearDown: TNotifyEvent;
 
   public
+    property Parar: Boolean read FParar write FParar;
+    property Pausar: Boolean read FPausar write FPausar;
     property Result: Int64                 read FResult;
     property Maximo: Int64                 read FMaximo write FMaximo;
     property Lista: TStringList            write FLista;
@@ -49,7 +52,6 @@ uses
     property OnTearDown: TNotifyEvent read FOnTearDown write FOnTearDown;
 
     procedure Execute; override; //Demo
-
     procedure pProgress(pText : string; pNumber: cardinal);
     procedure pLeituradaNFE;
 
@@ -83,6 +85,7 @@ uses
     procedure pDecompressFiles(const Filename, DestDirectory : String);
     procedure pEnumFiles(szPath, szAllowedExt: String; iAttributes: Integer;
       Buffer: TStrings; bClear, bIncludePath: Boolean); StdCall;
+
   end;
 
   // in case you want to use RTTI
@@ -117,7 +120,7 @@ var
 implementation
 
 uses
-  uFoPrincipal, Base;
+  uFoPrincipal, Base, uFoProgressao;
 
 var
  wChaveErro : TStringList;
@@ -445,8 +448,12 @@ begin
 
         FMaximo := pLista.Count;
         FResultMax := pLista.Count;
-        for I := 0 to pLista.Count - 1 do
+
+//        for I := 0 to pLista.Count - 1 do
+        I := 0;
+        while (I < pLista.Count-1) and not (FParar) do
         begin
+          Inc(I,1);
           ObjetoXML:= TLm_bkpdfe.Create;
           ObjetoXML.Chave := pLista.Strings[i];
 
@@ -497,6 +504,8 @@ begin
             end;
 
             pProgress('Exportando: '+pLista.Strings[i], I);
+
+
             Inc(Result,1);
           end;
         end;
@@ -987,8 +996,13 @@ begin
 
   try
     try
-     for X := 0 to pListaChave.Count-1 do
+     X:= 0;
+     while (X < pListaChave.Count-1) and not (FParar) do
+     begin
+//     for X := 0 to pListaChave.Count-1 do
+       Inc(X,1);
        fXMLChave(pListaChave.Strings[X]);
+     end;
 
      Result := J;
      FRefazAutorizacao := fGravaXML;
@@ -1845,11 +1859,14 @@ var
  begin
    Result := False;
    try
-   for I := Low(wArrayObjXML) to High(wArrayObjXML) do
-   begin
-     if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
-        wArrayObjXML[i].Free;
-   end;
+//   for I := Low(wArrayObjXML) to High(wArrayObjXML) do
+     wI := 0;
+     while (wI < Length(wArrayObjXML)-1) and not (FParar) do
+     begin
+       Inc(I,1);
+       if wDaoXML.fCarregaXMLEnvio(wArrayObjXML[I]) then
+          wArrayObjXML[i].Free;
+     end;
    finally
      Result := True;
    end;
@@ -1869,8 +1886,15 @@ begin
       if fCarregaObjConfig(tabUsuarios.Id) then
       begin
         wJ := 0;
-        for wI := 0 to pLista.Count - 1 do
+//        for wI := 0 to pLista.Count - 1 do
+        wI := 0;
+        while (wI < pLista.Count-1) and not (FParar) do
+        begin
+          Inc(I,1);
           pXMLChave(pLista.Strings[wi]);
+        end;
+
+
       end
       else
       exit;
