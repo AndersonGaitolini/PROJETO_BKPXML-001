@@ -265,8 +265,8 @@ object foPrincipal: TfoPrincipal
         220
         48)
       object Shape1: TShape
-        Left = -261
-        Top = -280
+        Left = -265
+        Top = -284
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -276,8 +276,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape2: TShape
-        Left = -144
-        Top = -252
+        Left = -148
+        Top = -256
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -287,8 +287,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape3: TShape
-        Left = -261
-        Top = -252
+        Left = -265
+        Top = -256
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -298,8 +298,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Shape13: TShape
-        Left = -144
-        Top = -238
+        Left = -148
+        Top = -242
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -310,8 +310,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape14: TShape
-        Left = -261
-        Top = -238
+        Left = -265
+        Top = -242
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -321,8 +321,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Shape15: TShape
-        Left = -144
-        Top = -279
+        Left = -148
+        Top = -283
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -332,8 +332,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -41
       end
       object Shape17: TShape
-        Left = -261
-        Top = -266
+        Left = -265
+        Top = -270
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -343,8 +343,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label3: TLabel
-        Left = -245
-        Top = -280
+        Left = -249
+        Top = -284
         Width = 51
         Height = 12
         Anchors = [akRight, akBottom]
@@ -353,8 +353,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Label4: TLabel
-        Left = -130
-        Top = -253
+        Left = -134
+        Top = -257
         Width = 41
         Height = 12
         Anchors = [akRight, akBottom]
@@ -363,8 +363,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -15
       end
       object Label5: TLabel
-        Left = -245
-        Top = -252
+        Left = -249
+        Top = -256
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -373,8 +373,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -14
       end
       object Label16: TLabel
-        Left = -130
-        Top = -239
+        Left = -134
+        Top = -243
         Width = 57
         Height = 12
         Anchors = [akRight, akBottom]
@@ -384,8 +384,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -1
       end
       object Label17: TLabel
-        Left = -245
-        Top = -238
+        Left = -249
+        Top = -242
         Width = 45
         Height = 12
         Anchors = [akRight, akBottom]
@@ -394,8 +394,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = 0
       end
       object Label18: TLabel
-        Left = -245
-        Top = -266
+        Left = -249
+        Top = -270
         Width = 87
         Height = 12
         Anchors = [akRight, akBottom]
@@ -404,8 +404,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label20: TLabel
-        Left = -130
-        Top = -280
+        Left = -134
+        Top = -284
         Width = 67
         Height = 12
         Anchors = [akRight, akBottom]
@@ -414,8 +414,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -42
       end
       object Shape4: TShape
-        Left = -144
-        Top = -266
+        Left = -148
+        Top = -270
         Width = 10
         Height = 10
         Anchors = [akRight, akBottom]
@@ -425,8 +425,8 @@ object foPrincipal: TfoPrincipal
         ExplicitTop = -28
       end
       object Label1: TLabel
-        Left = -130
-        Top = -267
+        Left = -134
+        Top = -271
         Width = 62
         Height = 12
         Anchors = [akRight, akBottom]
@@ -445,6 +445,44 @@ object foPrincipal: TfoPrincipal
     Alignment = taLeftJustify
     Caption = 'pnl1'
     TabOrder = 2
+    object pnlProgressWheel: TPanel
+      Left = 396
+      Top = 138
+      Width = 150
+      Height = 117
+      TabOrder = 3
+      Visible = False
+      object pbw1: TProgressWheel
+        Left = 1
+        Top = 1
+        Width = 148
+        Height = 79
+        Align = alTop
+        ExplicitLeft = 8
+        ExplicitTop = -5
+      end
+      object btnPause: TButton
+        Left = 1
+        Top = 80
+        Width = 75
+        Height = 36
+        Align = alLeft
+        Caption = '&Pausar'
+        TabOrder = 1
+        OnClick = btnPauseClick
+      end
+      object btnStop: TButton
+        Left = 74
+        Top = 80
+        Width = 75
+        Height = 36
+        Align = alRight
+        Caption = 'Pa&rar'
+        TabOrder = 2
+        OnClick = btnStopClick
+        ExplicitTop = 78
+      end
+    end
     object dbgNfebkp: TDBGrid
       Left = 1
       Top = 1
@@ -645,45 +683,7 @@ object foPrincipal: TfoPrincipal
       Height = 17
       Align = alBottom
       TabOrder = 2
-    end
-    object pnlProgressWheel: TPanel
-      Left = 396
-      Top = 138
-      Width = 150
-      Height = 117
-      TabOrder = 3
       Visible = False
-      object pbw1: TProgressWheel
-        Left = 1
-        Top = 1
-        Width = 148
-        Height = 79
-        Align = alTop
-        ExplicitLeft = 5
-        ExplicitTop = -5
-      end
-      object btnPause: TButton
-        Left = 1
-        Top = 80
-        Width = 75
-        Height = 36
-        Align = alLeft
-        Caption = 'btnPause'
-        TabOrder = 1
-        OnClick = btnPauseClick
-        ExplicitHeight = 35
-      end
-      object btnStop: TButton
-        Left = 74
-        Top = 80
-        Width = 75
-        Height = 36
-        Align = alRight
-        Caption = 'btnStop'
-        TabOrder = 2
-        OnClick = btnStopClick
-        ExplicitTop = 78
-      end
     end
   end
   object pnlMenu: TPanel
@@ -937,7 +937,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 201
     Bitmap = {
-      494C01012C003C00E00220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C01012C003C00E40220002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000008001000001002000000000000000
       0300000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -7425,7 +7425,7 @@ object foPrincipal: TfoPrincipal
     Left = 212
     Top = 277
     Bitmap = {
-      494C010103000C00880210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010103000C008C0210001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       000000000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF05710A00FFFFFFFFFFFFFFFFFFFF

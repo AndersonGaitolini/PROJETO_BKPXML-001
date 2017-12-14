@@ -184,44 +184,40 @@ begin
 end;
 
 function TDaoBkpdfe.fCarregaXMLEnvio(pObjXML : TLm_bkpdfe): Boolean;
-var //wDataSet : TDataSet;
-    wChaveAux : string;
+var
     wControle : Integer;
     wSQL : string;
     wOperacao : TOperacaoTab;
 begin
-  wChaveAux := pObjXML.Chave;
-//  wDataSet := TDataSet.Create(Application);
   try
-    DM_NFEDFE.Dao.StartTransaction;
-    try
-      with DM_NFEDFE do
+    with DM_NFEDFE do
+    begin
+      wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
+      if (wOperacao =  otUpadate) then
       begin
-        wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
-        if (wOperacao =  otUpadate) then
-        begin
-          wControle := Dao.Salvar(pObjXML);
-        end
-        else
-        if (wOperacao =  otInsert) then
-        begin  //Insert
-           pObjXML.Id := fNextId(pObjXML);
-           wControle:= Dao.Inserir(pObjXML);
-        end;
-
-        Result := (wControle > 0);
-        DM_NFEDFE.Dao.Commit;
+        DM_NFEDFE.Dao.StartTransaction;
+        wControle := Dao.Salvar(pObjXML);
+        DM_NFEDFE.Dao.Commit
+      end
+      else
+      if (wOperacao =  otInsert) then
+      begin  //Insert
+         DM_NFEDFE.Dao.StartTransaction;
+         pObjXML.Id := fNextId(pObjXML);
+         wControle:= Dao.Inserir(pObjXML);
+         DM_NFEDFE.Dao.Commit
       end;
-    except on E: Exception do
-           begin
-             DM_NFEDFE.Dao.RollBack;
-             ShowMessage('Método: fCarregaXMLEnvio!'+#10#13+
-                         'Exception: '+E.Message);
-           end;
+
+      Result := (wControle > 0);
     end;
-  finally
-//   FreeAndNil(wDataSet);
+  except on E: Exception do
+         begin
+           DM_NFEDFE.Dao.RollBack;
+           ShowMessage('Método: fCarregaXMLEnvio!'+#10#13+
+                       'Exception: '+E.Message);
+         end;
   end;
+
 end;
 
 function TDaoBkpdfe.fCarregaXMLRetorno(pObjXML: TLm_bkpdfe): Boolean;
@@ -230,12 +226,11 @@ var wDataSet : TDataSet;
 begin
   wDataSet := TDataSet.Create(Application);
   try
-    DM_NFEDFE.Dao.StartTransaction;
     try
       with DM_NFEDFE do
       begin
+        DM_NFEDFE.Dao.StartTransaction;
         wDataSet := Dao.ConsultaTab(pObjXML,['chave']);
-
         if (wDataSet.RecordCount = 1) and
            (wDataSet.FieldByName('chave').AsString = pObjXML.Chave) then
         begin
@@ -251,8 +246,7 @@ begin
     except on E: Exception do
            begin
              DM_NFEDFE.Dao.RollBack;
-             ShowMessage('Método: fCarregaXMLRetorno!'+#10#13+
-                         'Exception: '+E.Message);
+             ShowMessage('Método: fCarregaXMLRetorno!'+#10#13+'Exception: '+E.Message);
            end;
     end;
   finally
@@ -663,42 +657,44 @@ end;
 
 procedure TDaoBkpdfe.pAtualizaBD;
 VAR wDataSet : TdataSet;
+    wSql: TStringList;
+    I :Integer;
 begin
   with DM_NFEDFE do
   begin
-    dao.StartTransaction;
+    wSql := TStringList.Create;
     try
-      wDataSet := Dao.ConsultaSql('SELECT * FROM LM_BKPDFE');
-      if Assigned(wDataSet.FindField('STATUS')) then
-         Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ALTER STATUS TO STATUSXML')
-      else
-      if not Assigned(wDataSet.FindField('STATUSXML')) then
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD STATUSXML INTEGER');
+      try
+        wDataSet := Dao.ConsultaSql('SELECT * FROM LM_BKPDFE');
+        if Assigned(wDataSet.FindField('STATUS')) then
+           wSql.Add('ALTER TABLE LM_BKPDFE ALTER STATUS TO STATUSXML')
+        else
+        if not Assigned(wDataSet.FindField('STATUSXML')) then
+          wSql.Add('ALTER TABLE LM_BKPDFE ADD STATUSXML INTEGER');
 
-      if not Assigned(wDataSet.FindField('CNPJ')) then
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+        if not Assigned(wDataSet.FindField('CNPJ')) then
+         wSql.Add('ALTER TABLE LM_BKPDFE ADD CNPJ VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
 
-      if not Assigned(wDataSet.FindField('CNPJDEST')) then
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
+        if not Assigned(wDataSet.FindField('CNPJDEST')) then
+         wSql.Add('ALTER TABLE LM_BKPDFE ADD CNPJDEST VARCHAR(14) CHARACTER SET WIN1252 COLLATE WIN1252');
 
-      if not Assigned(wDataSet.FindField('XMLERRO')) then
-        Dao.ConsultaSqlExecute('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+        if not Assigned(wDataSet.FindField('XMLERRO')) then
+          wSql.Add('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
 
-      Dao.Commit;
-    except //on E: Exception do
-      Dao.RollBack;
+        if wSql.Count >0 then
+        for I := 0 to wSql.Count-1 do
+        begin
+          dao.StartTransaction;
+          Dao.ConsultaSqlExecute(wSql.Strings[I]);
+          Dao.Commit;
+        end;
+      except
+        on E: Exception do
+            Dao.RollBack;
+      end;
+    finally
+      FreeAndNil(wSql);
     end;
-
-//   wDataSet := Dao.ConsultaSql('SELECT RDB$FIELD_NAME AS CAMPO FROM RDB$RELATION_FIELDS AS TABELA ' +
-//                            'WHERE RDB$FIELD_NAME = ' + QuotedStr('STATUSXML' ) +' AND RDB$RELATION_NAME = '+ QuotedStr('LM_BKPDFE'));
-//   try
-//     if wDataSet.FieldByName('CAMPO').AsString = 'STATUSXML' then
-//       exit
-//     else
-//
-//   except on E: Exception do
-//   end;
-
   end;
 end;
 
@@ -778,8 +774,11 @@ const cAsc = 'Asc'; cdesc = 'desc';
         str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
 
 //        ShowMessage('SQL '+str1);
+      DM_NFEDFE.Dao.StartTransaction;
       Result := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
+      DM_NFEDFE.Dao.Commit;
       DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
+
 
 
 //        with DM_NFEDFE.dsBkpdfe.DataSet do

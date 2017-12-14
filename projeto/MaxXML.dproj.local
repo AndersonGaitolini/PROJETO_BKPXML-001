@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>2017/11/28 15:32:55.000.035,J:\fontes\uFoConexao.pas=J:\fontes\uFoConfiguracao.pas</Transaction>
-    <Transaction>2017/11/28 15:32:55.000.052,J:\fontes\uFoConexao.dfm=J:\fontes\uFoConfiguracao.dfm</Transaction>
+    <Transaction>2017/11/28 15:32:55.000.052,J:\fontes\uFoConfiguracao.dfm=J:\fontes\uFoConexao.dfm</Transaction>
+    <Transaction>2017/11/28 15:32:55.000.035,J:\fontes\uFoConfiguracao.pas=J:\fontes\uFoConexao.pas</Transaction>
     <Transaction>2017/11/30 09:17:58.000.320,=J:\projeto\Unit1.pas</Transaction>
-    <Transaction>2017/11/30 09:22:52.000.764,J:\projeto\Unit1.pas=J:\fontes\uEventedThreadRotinas.pas</Transaction>
+    <Transaction>2017/11/30 09:22:52.000.764,J:\fontes\uEventedThreadRotinas.pas=J:\projeto\Unit1.pas</Transaction>
     <Transaction>2017/11/30 09:36:07.000.109,J:\fontes\uEventedThreadRotinas.pas=</Transaction>
     <Transaction>2017/11/30 09:37:14.000.420,=J:\fontes\uEventedThreadProgess.pas</Transaction>
     <Transaction>2017/11/30 10:27:58.000.884,J:\fontes\uEventedThreadProgess.pas=</Transaction>
-    <Transaction>2017/12/12 11:54:49.090,=J:\projeto\Unit1.pas</Transaction>
-    <Transaction>2017/12/12 11:59:14.383,J:\fontes\uFrProgressao.pas=J:\projeto\Unit1.pas</Transaction>
-    <Transaction>2017/12/12 11:59:14.383,J:\fontes\uFrProgressao.dfm=J:\projeto\Unit1.dfm</Transaction>
-    <Transaction>2017/12/12 14:07:00.248,J:\fontes\uFrProgressao.pas=</Transaction>
-    <Transaction>2017/12/12 14:08:24.061,=J:\fontes\uFoProgressao.pas</Transaction>
+    <Transaction>2017/12/12 11:54:49.000.090,=J:\projeto\Unit1.pas</Transaction>
+    <Transaction>2017/12/12 11:59:14.000.383,J:\projeto\Unit1.dfm=J:\fontes\uFrProgressao.dfm</Transaction>
+    <Transaction>2017/12/12 11:59:14.000.383,J:\projeto\Unit1.pas=J:\fontes\uFrProgressao.pas</Transaction>
+    <Transaction>2017/12/12 14:07:00.000.248,J:\fontes\uFrProgressao.pas=</Transaction>
+    <Transaction>2017/12/12 14:08:24.000.061,=J:\fontes\uFoProgressao.pas</Transaction>
   </Transactions>
 </BorlandProject>

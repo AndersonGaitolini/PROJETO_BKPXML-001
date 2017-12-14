@@ -274,6 +274,7 @@ type
     wLastFieldFiltros : TFieldFiltros;
     wFetchALL :Boolean;
     wPathXML : string;
+    wThreadAtual : cardinal;
     {Métodos da barra de progresso em threds}
     procedure DoMax(const PMax: Int64);
     procedure DoProgress (const PText: String; const PNumber: Cardinal);
@@ -455,7 +456,7 @@ begin
 end;
 
 procedure TfoPrincipal.btnPelaChaveClick(Sender: TObject);
-var wFilename: string;
+//var wFilename: string;
 begin
 //  fOpenFileName(['XML | *.*xml'],['XML Arquivo | *.*xml'], wFilename,'Selecione o XML');
 //  fLoadXMLNFe(tabConfiguracoes,[txTodos],false,wFilename);
@@ -482,11 +483,9 @@ begin
 end;
 
 procedure TfoPrincipal.btnSIMULACAOClick(Sender: TObject);
-var wProcess: integer;
 begin
   foXMLSimulcao := TfoXMLSimulcao.Create(Application);
   try
-    wProcess:= wRotinas.fNumProcessThreads;
     foXMLSimulcao.ShowModal;
     pDataFiltro;
     DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
@@ -497,8 +496,17 @@ begin
 end;
 
 procedure TfoPrincipal.btnStopClick(Sender: TObject);
+var wCardinal : CArdinal;
 begin
-  wRotinas.Parar := not wRotinas.Parar;
+  wCardinal := StrToIntDef( InputBox('Determine o Sleep', 'Sleep', '30'),0);
+  if (Assigned(wRotinas)) and (wRotinas.Suspended) then
+    wRotinas.Sleep(wCardinal);
+
+  if MessageDlg('Deseja para o processo?', mtConfirmation, mbYesNo, 0) = mrYes then
+  begin
+    wRotinas.Terminate;
+  end;
+
 end;
 
 procedure TfoPrincipal.btnXMLEnvioExtLoteClick(Sender: TObject);
@@ -609,7 +617,7 @@ procedure TfoPrincipal.pRotinasProgress(pNomeMetodo: TExecuteMetodo);
 begin
 //  if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
-
+    wThreadAtual := wRotinas.ThreadID;
   with wRotinas do
   begin
     ExecuteMetodo := pNomeMetodo;
@@ -1203,12 +1211,13 @@ end;
   pbw1.Min := 0;
   pbw1.Max := PMax;
   pbw1.Position := 0;
+  pbw1.DoubleBuffered := True;
 
+//  ProgressBar1.Step := 1;
+//  ProgressBar1.Position := 0;
+//  ProgressBar1.Max := PMax;
+//  ProgressBar1.DoubleBuffered := True;
   statPrincipal.Panels[2].Text := 'Processando!';
-  ProgressBar1.Step := 1;
-  ProgressBar1.Position := 0;
-  ProgressBar1.Max := PMax;
-  ProgressBar1.DoubleBuffered := True;
 end;
 
 procedure TfoPrincipal.DoProgress(const PText: String; const PNumber: Cardinal);
@@ -1217,10 +1226,11 @@ begin
   I:= pbw1.Position;
   Inc(I,1);
   pbw1.Position := I;
+  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',pbw1.Position / pbw1.Max * 100);
 
+//  ProgressBar1.StepIt;
+//  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
 
-  ProgressBar1.StepIt;
-  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
   statPrincipal.Panels[3].Text := Inttostr(PNumber)+' - '+ PText;
 end;
 
@@ -1228,8 +1238,9 @@ procedure TfoPrincipal.DoTerminate(PSender: TObject);
 var wMSG: string;
  wCardinal : cardinal;
 begin
-//  Application.MessageBox(PChar('Feito! '),PChar(Format('Processamento concluído em %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)])),MB_ICONINFORMATION);
-  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
+//  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',ProgressBar1.Position / ProgressBar1.Max * 100);
+//  statPrincipal.Panels[2].Text := 'Concluído!';
+  statPrincipal.Panels[1].Text := FormatFloat('##0.00%',pbw1.Position / pbw1.Max * 100);
   statPrincipal.Panels[2].Text := 'Concluído!';
   with wRotinas do
   case ExecuteMetodo of
@@ -1238,18 +1249,23 @@ begin
 
                         pUpdateCampoCNPJE;
                       end;
-        emExportaPDF: wMSG := Format('Total %d de %d Arquivos exportados - Tempo total: %s',[ProgressBar1.Position, ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+//        emExportaPDF: wMSG := Format('Total %d de %d Arquivos exportados - Tempo total: %s',[ProgressBar1.Position, ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+        emExportaPDF: wMSG := Format('Total %d de %d Arquivos exportados - Tempo total: %s',[pbw1.Position, pbw1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+
     emExportaLoteXML: wMSG := Format('Tempo total: %s',[FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+
      emSelecionaRows: begin
-                        wMSG := Format('%d / %d Linhas selecionadas - Tempo total: %s',[ProgressBar1.Position,ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)]);
+//                        wMSG := Format('%d / %d Linhas selecionadas - Tempo total: %s',[ProgressBar1.Position,ProgressBar1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)])
+                        wMSG := Format('%d / %d Linhas selecionadas - Tempo total: %s',[pbw1.Position,pbw1.Max, FormatDateTime('hh:nn:ss',Now - wStartTime)])
                       end;
   end;
 
 
 //  SuspendThread(Handle);
   statPrincipal.Panels[3].Text := wMSG;
-  ProgressBar1.Step := 1;
-  ProgressBar1.Position := 0;
+//  ProgressBar1.Step := 1;
+//  ProgressBar1.Position := 0;
+  pbw1.Position := 0;
   pnlProgressWheel.Visible := False;
   wRotinas.Terminate;
 end;
@@ -1522,7 +1538,6 @@ end;
 procedure TfoPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FreeAndNil(wListaSelecionados);
-  DM_NFEDFE.conConexaoFD.Connected := false;
 end;
 
 procedure TfoPrincipal.FormCreate(Sender: TObject);

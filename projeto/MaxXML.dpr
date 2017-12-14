@@ -63,11 +63,9 @@ begin
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-//  for I := 0 to ParamCount do
-//    uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'[ParamCount ['+ inttoStr(ParamCount) +'] '+inttostr(I)+'-> CALL_PARAMETROS: '+ ParamStr(i),true);
-  DM_NFEDFE.fdmoMonitor.Tracing := false;
-  DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
-  DM_NFEDFE.fdmoMonitor.Tracing := FALSE;
+//  DM_NFEDFE.fdmoMonitor.Tracing := false;
+//  DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
+//  DM_NFEDFE.fdmoMonitor.Tracing := True;
 
   if (ParamCount = 0) then
   begin
@@ -201,11 +199,10 @@ begin
    begin
 
      try
-       tabConfiguracoes.id := tabUsuarios.ConfigSalva;
-       daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
+//       tabConfiguracoes.id := tabUsuarios.ConfigSalva;
+//       daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
        wRotinas := TRotinas.Create;
-
-     if wRotinas.fLoadXMLNFe(tabConfiguracoes, txTodos, true,ParamStr(4)) > 0 then
+       if wRotinas.fLoadXMLNFeParam(txTodos,ParamStr(4)) then
 
      except
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);

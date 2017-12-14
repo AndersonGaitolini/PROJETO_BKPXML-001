@@ -1094,8 +1094,10 @@ begin
       end;
     end;
     Result := ExecutaQuery;
-  except
-    raise;
+  except on E: Exception do
+           begin
+             ShowMessage(E.Message);
+           end;
   end;
 end;
 

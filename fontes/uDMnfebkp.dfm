@@ -10,17 +10,16 @@ object DM_NFEDFE: TDM_NFEDFE
       'Password=masterkey'
       'Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
-      'MonitorBy=FlatFile'
       'DriverID=FB')
     LoginPrompt = False
     Transaction = fdtrTransacao
-    Left = 29
-    Top = 78
+    Left = 28
+    Top = 77
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
-    Left = 252
-    Top = 77
+    Left = 237
+    Top = 78
   end
   object fdWaitCursor: TFDGUIxWaitCursor
     Provider = 'Forms'
@@ -162,7 +161,6 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provBkpdfe'
     StoreDefs = True
-    AfterOpen = cdsBkpdfeAfterOpen
     Left = 21
     Top = 256
     object cdsBkpdfeID: TIntegerField
@@ -440,10 +438,5 @@ object DM_NFEDFE: TDM_NFEDFE
       'select * from configuracoes')
     Left = 247
     Top = 138
-  end
-  object fdmoMonitor: TFDMoniFlatFileClientLink
-    FileColumns = [tiRefNo, tiTime, tiObjID, tiMsgText]
-    Left = 28
-    Top = 26
   end
 end

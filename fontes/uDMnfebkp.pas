@@ -143,10 +143,8 @@ type
     cdsBkpdfeCNPJ: TStringField;
     cdsBkpdfeXMLERRO: TMemoField;
     cdsBkpdfeCNPJDEST: TStringField;
-    fdmoMonitor: TFDMoniFlatFileClientLink;
 
     procedure DataModuleCreate(Sender: TObject);
-    procedure cdsBkpdfeAfterOpen(DataSet: TDataSet);
   private
     { Private declarations }
   public
@@ -168,15 +166,10 @@ uses
 
 {$R *.dfm}
 
-procedure TDM_NFEDFE.cdsBkpdfeAfterOpen(DataSet: TDataSet);
-begin
-//
-end;
-
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
-  ConecxaoBD := TConecxaoBD.Create;
   Dao := TDaoFD.Create(conConexaoFD, fdtrTransacao);
+  ConecxaoBD := TConecxaoBD.Create;
   sqlBkpDfe.Connection := conConexaoFD;
   tabConfigpadrao := TConfigpadrao.create;
   daoConfigPadrao := TDaoConfigPadrao.Create;
