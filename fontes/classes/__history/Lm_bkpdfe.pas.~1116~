@@ -9,7 +9,7 @@ uses
 type
   TPushXML = (pshNone, pshEnvio1st, pshEnvioSinc);
   TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
-  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven, txCartaCorrecao);
+  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven);
 
 
 
@@ -35,13 +35,12 @@ type
     FMotivocanc: string;
     FXmlenviocanc: TStream;
     FXmlextendcanc: TStream;
-    FXmlInutilizacao : TStream;
-    FXmlCartaCorrecao : TStream;
     FProtocoloaut: string;
     FXmlerro : TStream;
     FSelecao: string;
     FCheckBox: SmallInt;
     FCNPJDest: string;
+
   public
     [attPK]
     property Id: Integer read FId write FId;
@@ -63,8 +62,6 @@ type
     property Motivocanc: string read FMotivocanc write FMotivocanc;
     property Xmlenviocanc: TStream read FXmlenviocanc write FXmlenviocanc;
     property Xmlextendcanc: TStream read FXmlextendcanc write FXmlextendcanc;
-    property XmlInutilizacao: TStream read FXmlInutilizacao write FXmlInutilizacao;
-    property XmlCartaCorrecao: TStream read FXmlCartaCorrecao write FXmlCartaCorrecao;
     property Protocoloaut: string read FProtocoloaut write FProtocoloaut;
     property Xmlerro : TStream read FXmlerro write FXmlerro;
     property Selecao: string read FSelecao write FSelecao;
@@ -111,8 +108,6 @@ type
                     ffMOTIVOCANC,
                     ffXMLENVIOCANC,
                     ffXMLEXTENDCANC,
-                    ffXmlInutilizacao,
-                    ffXmlCartaCorrecao,
                     ffPROTOCOLOAUT,
                     ffXMLERRO,
                     ffSELECAO,
@@ -198,8 +193,6 @@ begin
     with DM_NFEDFE do
     begin
       wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
-      AddLog('CHAMADAPELOMAX',GetCurrentDir,'wOperacao: ['+ TConvert<TOperacaoTab>.EnumConvertStr(wOperacao)+']', true);
-
       if (wOperacao =  otUpadate) then
       begin
         DM_NFEDFE.Dao.StartTransaction;
@@ -209,14 +202,13 @@ begin
       else
       if (wOperacao =  otInsert) then
       begin  //Insert
-        DM_NFEDFE.Dao.StartTransaction;
-        pObjXML.Id := fNextId(pObjXML);
-        wControle:= Dao.Inserir(pObjXML);
-        DM_NFEDFE.Dao.Commit
+         DM_NFEDFE.Dao.StartTransaction;
+         pObjXML.Id := fNextId(pObjXML);
+         wControle:= Dao.Inserir(pObjXML);
+         DM_NFEDFE.Dao.Commit
       end;
 
       Result := (wControle > 0);
-      AddLog('CHAMADAPELOMAX',GetCurrentDir,'wControle: ['+ IntToStr(wControle) +']', true);
     end;
   except on E: Exception do
          begin
@@ -408,24 +400,6 @@ var wDataSet : TDataSet;
       end
       else
       wStream := nil;
-
-      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XmlInutilizacao'),bmReadWrite);
-      if Assigned(wStream) then
-      begin
-      if not Assigned(pObjXML.XmlInutilizacao) then
-        pObjXML.XmlInutilizacao :=  wStream;
-      end
-      else
-      wStream := nil;
-
-      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XmlCartaCorrecao'),bmReadWrite);
-      if Assigned(wStream) then
-      begin
-      if not Assigned(pObjXML.XmlCartaCorrecao) then
-        pObjXML.XmlInutilizacao :=  wStream;
-      end
-      else
-      wStream := nil;
     end;
   end;
 
@@ -444,7 +418,7 @@ begin
           Result := otUpadate;
         end
         else
-        if (wDataSet.RecordCount = 0) then
+        if (wDataSet.RecordCount = 0) then //and not (wDataSet.FieldByName('status').AsInteger in [1,4] ) then
            Result := otInsert;
       end;
     except on E: Exception do
@@ -465,8 +439,11 @@ var wDataSet : TDataSet;
       if (pObjXML.Id < 1) then
       pObjXML.Id := FieldByName('id').AsInteger;
 
-      if (pObjXML.StatusXml = 0) then
+      if (pObjXML.StatusXml = 0) then      //wDataSet.FieldByName('Status').AsInteger
       pObjXML.StatusXml := FieldByName('Statusxml').AsInteger;
+
+//      if (pObjXML.StatusXml in [1,4]) and (pObjXML.StatusXml > wDataSet.FieldByName('Status').AsInteger)  then
+//       FieldByName('Statusxml').AsInteger := pObjXML.StatusXml;
 
       if pObjXML.CNPJ = '' then
       pObjXML.CNPJ := FieldByName('CNPJ').AsString;
@@ -563,25 +540,6 @@ var wDataSet : TDataSet;
       end
       else
       wStream := nil;
-
-      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XmlInutilizacao'),bmReadWrite);
-      if Assigned(wStream) then
-      begin
-      if not Assigned(pObjXML.XmlInutilizacao) then
-        pObjXML.XmlInutilizacao :=  wStream;
-      end
-      else
-      wStream := nil;
-
-      wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XmlCartaCorrecao'),bmReadWrite);
-      if Assigned(wStream) then
-      begin
-      if not Assigned(pObjXML.XmlCartaCorrecao) then
-        pObjXML.XmlCartaCorrecao :=  wStream;
-      end
-      else
-      wStream := nil;
-
     end;
   end;
 
@@ -723,13 +681,7 @@ begin
         if not Assigned(wDataSet.FindField('XMLERRO')) then
           wSql.Add('ALTER TABLE LM_BKPDFE ADD XMLERRO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
 
-        if not Assigned(wDataSet.FindField('XMLINUTILIZACAO')) then
-          wSql.Add('ALTER TABLE LM_BKPDFE ADD XMLINUTILIZACAO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
-
-        if not Assigned(wDataSet.FindField('XMLCARTACORRECAO')) then
-          wSql.Add('ALTER TABLE LM_BKPDFE ADD XMLCARTACORRECAO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
-
-        if wSql.Count > 0 then
+        if wSql.Count >0 then
         for I := 0 to wSql.Count-1 do
         begin
           dao.StartTransaction;
@@ -891,6 +843,7 @@ begin
     ffXMLEXTENDCANC: begin pFiltro('ID') end;
     ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
     ffCNPJDEST : begin pFiltro('CNPJDEST') end;
+//      ffSELECAO:begin Filtro('SELECAO') end;
   end;
 end;
 
@@ -947,8 +900,6 @@ begin
     Xmlextendcanc := nil;
     Protocoloaut := '';
     XMLERRO  := nil;
-    XmlInutilizacao := nil;
-    XmlCartaCorrecao := nil;
     Selecao := '';
     CNPJDest := '';
   end;

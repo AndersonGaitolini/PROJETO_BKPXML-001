@@ -36,7 +36,8 @@ type
     FSessaoAtual  : String;
     FListaSessao  : TStringList;
     FTipoCon      : TTipoConexao;
-
+    FConn         : TFDConnection;
+//    FDriver       : TFDPhysFBDriverLink;
   procedure pListaSessaoINI;
 
   protected
@@ -61,7 +62,7 @@ type
     property TipoCon      : TTipoConexao read  FTipoCon      write FTipoCon;
     property SessaoAtual  : String read FSessaoAtual write FSessaoAtual;
     property ListaSessao  : TStringList read FListaSessao write FListaSessao;
-//    property Conn         : TFDConnection read FConn write FConn;
+    property Conn         : TFDConnection read FConn write FConn;
 //    property Driver       : TFDPhysFBDriverLink read FDriver write FDriver;
 
 
@@ -72,7 +73,7 @@ type
     procedure pReadParams(pSessao: String);
     procedure pWriteParams(pSessao: String);
 
-    constructor Create; overload;
+    constructor Create(pConn : TFDConnection);
   end;
 
 type
@@ -143,8 +144,11 @@ type
     cdsBkpdfeCNPJ: TStringField;
     cdsBkpdfeXMLERRO: TMemoField;
     cdsBkpdfeCNPJDEST: TStringField;
+    cdsBkpdfeXMLINUTILIZACAO: TBlobField;
+    cdsBkpdfeXMLCARTACORRECAO: TBlobField;
 
     procedure DataModuleCreate(Sender: TObject);
+    procedure conConexaoFDBeforeDisconnect(Sender: TObject);
   private
     { Private declarations }
   public
@@ -166,10 +170,15 @@ uses
 
 {$R *.dfm}
 
+procedure TDM_NFEDFE.conConexaoFDBeforeDisconnect(Sender: TObject);
+begin
+//  DM_NFEDFE.conConexaoFD.Close;
+end;
+
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
   Dao := TDaoFD.Create(conConexaoFD, fdtrTransacao);
-  ConecxaoBD := TConecxaoBD.Create;
+  ConecxaoBD := TConecxaoBD.Create(conConexaoFD);
   sqlBkpDfe.Connection := conConexaoFD;
   tabConfigpadrao := TConfigpadrao.create;
   daoConfigPadrao := TDaoConfigPadrao.Create;
@@ -197,18 +206,13 @@ end;
 //  pIniPath;
 //end;
 
-
-constructor TConecxaoBD.Create;
+constructor TConecxaoBD.Create(pConn: TFDConnection);
 begin
+  FConn := pConn;
   pIniPath;
 end;
 
 function TConecxaoBD.fConexaoBD: Boolean;
-var
-wMSg : string;
-wDataBase: string;
-wHost: string;
-wLog :Boolean;
 
 procedure pConLocal;
 begin
@@ -216,18 +220,28 @@ begin
   DM_NFEDFE.fddrfbDriver.VendorHome                    := FVendorHome;
   DM_NFEDFE.fddrfbDriver.Embedded                      := FEmbedded;
   DM_NFEDFE.fddrfbDriver.DriverID                      := FDriverID;
-  DM_NFEDFE.conConexaoFD.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
+//  DM_NFEDFE.conConexaoFD.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
+  Conn.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
 
-  DM_NFEDFE.conConexaoFD.Params.Values['User_Name']    := FUserName;
-  DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
-  DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
-  DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-//  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
-  DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
-  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
-  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
-  DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
-  DM_NFEDFE.conConexaoFD.Params.Values['Port']                   := FPort;
+  Conn.Params.Values['User_Name']    := FUserName;
+  Conn.Params.Values['Password']     := FPassword;
+  Conn.Params.Values['Database']     := FDataBase;
+  Conn.Params.Values['SQLDialect']   := FSQLDialect;
+  Conn.Params.Values['CharacterSet'] := FCharacterSet;
+  Conn.Params.Values['Protocol']     := FProtocol;
+  Conn.Params.Values['Protocol']     := 'ipLocal';
+  Conn.Params.Values['Server']       := '';
+  Conn.Params.Values['Port']         := FPort;
+//  DM_NFEDFE.conConexaoFD.Params.Values['User_Name']    := FUserName;
+//  DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
+//  DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
+//  DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
+////  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
+//  DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
+//  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
+//  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
+//  DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
+//  DM_NFEDFE.conConexaoFD.Params.Values['Port']         := FPort;
 end;
 
 procedure pConLocalEmbedded;
@@ -287,8 +301,11 @@ var I:Integer;
 begin
   Result := False;
   FConectado := False;
-  DM_NFEDFE.conConexaoFD.Connected := false;
-  DM_NFEDFE.conConexaoFD.Close;
+
+  Conn.Connected := false;
+  Conn.Close;
+//  DM_NFEDFE.conConexaoFD.Connected := false;
+//  DM_NFEDFE.conConexaoFD.Close;
   try
 //    pClearParams;
     case TipoCon of
@@ -299,11 +316,12 @@ begin
       Exit;
     end;
 
-    DM_NFEDFE.conConexaoFD.Open;
+    Conn.Open;
+//    DM_NFEDFE.conConexaoFD.Open;
 
-    Result := DM_NFEDFE.conConexaoFD.Connected;
-    if Result then
-      DaoObjetoXML.pAtualizaBD;
+    Result := Conn.Connected;
+//    if Result then
+//      DaoObjetoXML.pAtualizaBD;
 
     FConectado := Result;
   except

@@ -911,6 +911,14 @@ begin
     exit;
   end;
 
+  if (wLen = 50) and (pos('retcc_',pChave)>0 ) then
+  begin
+    pChave := Copy(pChave, 13,14);
+    if fValidaCNPJ(pChave) then
+      Result := pChave;
+    exit;
+  end;
+
   if (wLen = 52) and (pos('Can_',pChave)>0 ) then
   begin
     pChave := Copy(pChave, 11,14);
@@ -947,6 +955,13 @@ begin
   if (wLen = 44) then
   begin
     pChave := Copy(pChave, 26,9);
+    Result := StrToIntDef(pChave,0);
+    exit;
+  end;
+
+  if (wLen = 50) and (pos('retcc_',pChave)>0 ) then
+  begin
+    pChave := Copy(pChave, 32,9);
     Result := StrToIntDef(pChave,0);
     exit;
   end;
@@ -988,6 +1003,18 @@ begin
   begin
     wAA := Copy(pChave,03,02);
     wMM := Copy(pChave,05,02);
+    try
+      Result := StrToDate('01/'+wMM+'/20'+wAA);
+    except on E: Exception do
+      Result :=0;
+    end;
+    exit;
+  end;
+
+   if (wLen = 50) and (pos('retcc_',pChave)>0 ) then
+  begin
+    wAA := Copy(pChave,09,02);
+    wMM := Copy(pChave,11,02);
     try
       Result := StrToDate('01/'+wMM+'/20'+wAA);
     except on E: Exception do

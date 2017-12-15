@@ -9,7 +9,7 @@ uses
 type
   TPushXML = (pshNone, pshEnvio1st, pshEnvioSinc);
   TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
-  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven, txCartaCorrecao);
+  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven);
 
 
 
@@ -436,7 +436,7 @@ begin
       with DM_NFEDFE do
       begin
         wDataSet := dao.ConsultaTab(pObjXML, pCampos);
-        wDataSet.Edit;
+//        wDataSet.Edit;
 
         if (wDataSet.RecordCount = 1)  then
         begin

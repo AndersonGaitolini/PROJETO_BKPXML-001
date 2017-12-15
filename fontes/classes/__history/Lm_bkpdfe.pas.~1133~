@@ -9,7 +9,7 @@ uses
 type
   TPushXML = (pshNone, pshEnvio1st, pshEnvioSinc);
   TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
-  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven, txCartaCorrecao);
+  TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven);
 
 
 
@@ -209,10 +209,10 @@ begin
       else
       if (wOperacao =  otInsert) then
       begin  //Insert
-        DM_NFEDFE.Dao.StartTransaction;
-        pObjXML.Id := fNextId(pObjXML);
-        wControle:= Dao.Inserir(pObjXML);
-        DM_NFEDFE.Dao.Commit
+         DM_NFEDFE.Dao.StartTransaction;
+         pObjXML.Id := fNextId(pObjXML);
+         wControle:= Dao.Inserir(pObjXML);
+         DM_NFEDFE.Dao.Commit
       end;
 
       Result := (wControle > 0);

@@ -11,8 +11,11 @@ object DM_NFEDFE: TDM_NFEDFE
       'Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
       'Port=3050'
       'DriverID=FB')
+    UpdateOptions.AssignedValues = [uvEInsert, uvEUpdate, uvUpdateChngFields, uvUpdateMode, uvLockWait, uvRefreshDelete]
+    UpdateOptions.LockWait = True
     LoginPrompt = False
     Transaction = fdtrTransacao
+    BeforeDisconnect = conConexaoFDBeforeDisconnect
     Left = 28
     Top = 77
   end
@@ -30,7 +33,7 @@ object DM_NFEDFE: TDM_NFEDFE
     DriverID = 'FBEmbed'
     VendorLib = 'C:\fb\bin\fbembed.dll'
     Embedded = True
-    Left = 171
+    Left = 169
     Top = 79
   end
   object dsConfiguracoes: TDataSource
@@ -52,8 +55,8 @@ object DM_NFEDFE: TDM_NFEDFE
         DataType = ftInteger
       end
       item
-        Name = 'STATUS'
-        DataType = ftSmallint
+        Name = 'STATUSXML'
+        DataType = ftInteger
       end
       item
         Name = 'CNPJ'
@@ -139,8 +142,8 @@ object DM_NFEDFE: TDM_NFEDFE
         Size = 50
       end
       item
-        Name = 'XMLERRO'
-        DataType = ftMemo
+        Name = 'CAMPOSTREAM'
+        DataType = ftBlob
       end
       item
         Name = 'SELECAO'
@@ -156,6 +159,18 @@ object DM_NFEDFE: TDM_NFEDFE
         Name = 'CNPJDEST'
         DataType = ftString
         Size = 14
+      end
+      item
+        Name = 'XMLERRO'
+        DataType = ftBlob
+      end
+      item
+        Name = 'XMLINUTILIZACAO'
+        DataType = ftBlob
+      end
+      item
+        Name = 'XMLCARTACORRECAO'
+        DataType = ftBlob
       end>
     IndexDefs = <>
     Params = <>
@@ -269,6 +284,12 @@ object DM_NFEDFE: TDM_NFEDFE
     object cdsBkpdfeCNPJDEST: TStringField
       FieldName = 'CNPJDEST'
       Size = 14
+    end
+    object cdsBkpdfeXMLINUTILIZACAO: TBlobField
+      FieldName = 'XMLINUTILIZACAO'
+    end
+    object cdsBkpdfeXMLCARTACORRECAO: TBlobField
+      FieldName = 'XMLCARTACORRECAO'
     end
   end
   object provBkpdfe: TDataSetProvider

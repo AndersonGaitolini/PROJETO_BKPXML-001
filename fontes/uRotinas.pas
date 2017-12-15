@@ -59,7 +59,7 @@ uses
     function fExportaLoteXML(pLista: TStringList):Int64;
     function fDeleteObjetoXML(pLista: TStringList; pCNPJ: string = '*'; pTipoSelecao : TTipoSelecao = tsSelNenhum):Boolean;
     function fLoadXMLNFe(pObjConfig : TConfiguracoes; pTiposXML: TTipoXML; pParametro: boolean = false; pChave: string = ''; pEmail : string = ''): Int64;
-    function fLoadXMLNFeParam(pTiposXML: TTipoXML; pChave: string = ''; pEmail : string = ''): boolean;
+
     function fLoadLoteXMLNFe(pListaChave: TStringList): Int64;
     function fLoadXMLNFeLista(pLista : TStringList; pParametro: boolean = false): Boolean;
     function fPescaXML(): Int64;
@@ -96,6 +96,8 @@ uses
     property OnSetUp;
     property OnTearDown;
   end;
+
+function fLoadXMLNFeParam(pTipo : Byte; pChave: string = ''; pEmail : string = ''): boolean;
 
 const
   SHCONTCH_NOPROGRESSBOX = 4;
@@ -1902,7 +1904,7 @@ begin
   end;
 end;
 
-function TRotinas.fLoadXMLNFeParam(pTiposXML: TTipoXML; pChave,
+function fLoadXMLNFeParam(pTipo : Byte; pChave,
   pEmail: string): Boolean;
 var
   wDataSet   : TDataSet;
@@ -1919,6 +1921,39 @@ var
   wFileSource, wFileDest: string;
   wXmlName, wZipName,wChaveAux,wPathFile, wCNPJAux: string;
   wXMLEnvio, wXMLProcessado,wOK, wYesAll: boolean;
+
+
+procedure pCompressInterno(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
+var
+  FileIni: TFileStream;
+  Zip:     TCompressionStream;
+  tString: TStringStream;
+begin
+  tString := nil;
+  FileIni := nil;
+
+  if aEHStringStream then //Se for no momento do envio, pega da string (memória) e não do arquivo físico.
+    tString := TStringStream.Create(ASrc)
+  else
+    FileIni := TFileStream.Create(ASrc, fmOpenRead and fmShareExclusive);
+
+  Zip := TCompressionStream.Create(vDest); //clMax,
+  try
+    try
+      if aEHStringStream then
+        Zip.CopyFrom(tString, tString.Size)
+      else
+        Zip.CopyFrom(FileIni, FileIni.Size);
+    except
+      Raise Exception.Create('Não foi possível compactar o arquivo');
+      abort;
+    end;
+  finally
+    FreeAndNil(tString);
+    FreeAndNil(Zip);
+    FreeAndNil(FileIni);
+  end;
+end;
 
  function fGetChaveFilename(pFileName : string): string;
   var wPos :Integer;
@@ -1989,7 +2024,7 @@ var
            begin
              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
              FileClose(wFileStream.Handle);
-             pCompress(wFileSource, wStream,false);
+             pCompressInterno(wFileSource, wStream,false);
              Xmlerro := wStream;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
@@ -2083,7 +2118,7 @@ var
 
         FileClose(wFileStream.Handle);
 
-        pCompress(wFileSource, wStream,false);
+        pCompressInterno(wFileSource, wStream,false);
         if wCNPJAux <> CNPJ then
         begin
           Statusxml := cXMLErro;
@@ -2119,7 +2154,7 @@ var
            begin
              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
              FileClose(wFileStream.Handle);
-             pCompress(wFileSource, wStream,false);
+             pCompressInterno(wFileSource, wStream,false);
              Xmlerro := wStream;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
@@ -2155,7 +2190,7 @@ var
 
               Dataalteracao := Today;
               FileClose(wFileStream.Handle);
-              pCompress(wFileSource,wStream,false);
+              pCompressInterno(wFileSource,wStream,false);
               Xmlenviocanc := wStream;
             end;
           end
@@ -2191,13 +2226,78 @@ var
                 Protocolocanc := funcvarXML(wNodeXML.ChildNodes['nProt']);
                 Dataalteracao := Today;
                 FileClose(wFileStream.Handle);
-                pCompress(wFileSource,wStream,false);
+                pCompressInterno(wFileSource,wStream,false);
                 Xmlextendcanc := wStream;
               end;
             end;
           end;
         end;
 
+        Result := ObjetoXML;
+        exit;
+      end;
+
+      if Pos('retcc_',wFileSource) > 0 then
+      begin
+        ObjetoXML := TLm_bkpdfe.Create;
+        wXmlName := ExtractFileName(wFileSource);
+        wCNPJAux :=  fGetCNPJPelaChave(wXmlName);
+        wChaveAux := fGetChaveFilename(wXmlName);
+
+        Tipo := '1';
+        wXMLProcessado := False;
+        wStream := TMemoryStream.Create;
+
+        wFileStream := TFileStream.Create(wFileSource,0);
+        try
+          XMLArq.LoadFromStream(wFileStream,xetUTF_8);
+          wNodeXML := XMLArq.documentElement;
+        EXCEPT
+           on E: Exception do
+           begin
+             AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
+             FileClose(wFileStream.Handle);
+             pCompressInterno(wFileSource, wStream,false);
+             Xmlerro := wStream;
+             Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
+             Dataemissao := fGetDataXMLPelaChave(wChaveAux);
+             chave := wChaveAux;
+             Result := ObjetoXML;
+             Statusxml := cXMLErro;
+             exit;
+           end;
+        end;
+
+        if Assigned(wNodeXML) and (wNodeXML.NodeName = 'procEventoNFe')then
+        begin
+          wNodeXML := wNodeXML.ChildNodes.FindNode('retEvento');
+          if Assigned(wNodeXML) and (wNodeXML.NodeName = 'retEvento') then
+          begin
+            wNodeXML := wNodeXML.ChildNodes.First;
+
+            if Assigned(wNodeXML) and (wNodeXML.NodeName = 'infEvento') then
+            begin
+              Tipoambiente :=  funcvarXML(wNodeXML.ChildNodes['tpAmb']); // Tipo de Ambiente da Nota Fiscal(Produção/Homologação)
+              if Tipoambiente = '1' then
+                Tipoambiente := 'Produção'
+              else
+                Tipoambiente := 'Homologação';
+
+              Statusxml := StrToIntDef(funcvarXML(wNodeXML.ChildNodes['cStat']),-1);
+              Chave := funcvarXML(wNodeXML.ChildNodes['chNFe']);
+              Idf_documento := fGetIdf_DocPelaChave(Chave);
+              CNPJDest := funcvarXML(wNodeXML.ChildNodes['CNPJDest']);
+            end;
+
+          end;
+        end;
+
+        FileClose(wFileStream.Handle);
+
+        pCompressInterno(wFileSource, wStream,false);
+        XmlCartaCorrecao := wStream;
+
+        Dataalteracao := Today;
         Result := ObjetoXML;
         exit;
       end;
@@ -2221,7 +2321,7 @@ var
            begin
              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
              FileClose(wFileStream.Handle);
-             pCompress(wFileSource, wStream,false);
+             pCompressInterno(wFileSource, wStream,false);
              Xmlerro := wStream;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
@@ -2284,20 +2384,20 @@ var
 begin
   XMLArq     := TXMLDocument.Create(Application);
   wDaoXML    := TDaoBkpdfe.Create;
-  wDataSet   := TDataSet.Create(Application);
   try
     try
-     Result := fGravaXML(fXMLChave);
+      AddLog('CHAMADAPELOMAX',GetCurrentDir,'pChave: ['+pChave+']', true);
+      AddLog('CHAMADAPELOMAX',GetCurrentDir,'pTiposXML: ['+ IntToStr(pTipo) +']', true);
+      Result := fGravaXML(fXMLChave);
+
     except on E: Exception do
            begin
              AddLog('RELACAO_XML_COM_PROBLEMAS',GetCurrentDir,'ErroXML: ['+ wXmlName+']'+ E.Message, true);
            end;
     end;
   finally
-    foPrincipal.pAtualizaGrid;
     FreeAndNil(XMLArq);
     FreeAndNil(wDaoXML);
-    FreeAndNil(wDataSet);
   end;
 end;
 

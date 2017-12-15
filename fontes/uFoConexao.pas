@@ -371,8 +371,8 @@ end;
 
 procedure TfoConexao.FormCreate(Sender: TObject);
 begin
- if not Assigned(ConecxaoBD) then
-     ConecxaoBD := TConecxaoBD.Create;
+// if not Assigned(ConecxaoBD) then
+//     ConecxaoBD := TConecxaoBD.Create;
 
  pMontaListaPerfil;
  ConecxaoBD.pReadParams(fNomePC);
