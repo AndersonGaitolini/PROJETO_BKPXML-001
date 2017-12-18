@@ -54,6 +54,7 @@ var
   cXMLCancProc   = 3;
   cXMLCancEnvio  = 4;
   cXMLInut       = 5;
+  cXMLCartaCorr  = 6;
 
 {$R *.res}
 begin
@@ -159,7 +160,7 @@ begin
      Application.Terminate;
   end
   else
-  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut]) then
+  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut,cXMLCartaCorr]) then
   begin
 //    if ParamCount > 0 then
 //    for I := 0 to ParamCount do
@@ -173,7 +174,7 @@ begin
       exit;
     end;
 
-    if TRUE then
+    if false then
     begin
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'---------- INICIO ----------', true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
@@ -199,11 +200,7 @@ begin
    begin
 
      try
-//       tabConfiguracoes.id := tabUsuarios.ConfigSalva;
-//       daoConfiguracoes.fCarregaConfiguracoes(tabConfiguracoes,['id']);
-       wRotinas := TRotinas.Create;
-       if wRotinas.fLoadXMLNFeParam(txTodos,ParamStr(4)) then
-          wRotinas.Free;
+       if fLoadXMLNFeParam(wTipo,ParamStr(4)) then
      except
        uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'fLoadXMLNFe Erro ao exec via paramstr(4): : ' + ParamStr(4), true);
      end;

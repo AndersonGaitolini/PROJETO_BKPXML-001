@@ -174,6 +174,9 @@ type
     pbw1: TProgressWheel;
     btnPause: TButton;
     btnStop: TButton;
+    mmGeraClasse: TMenuItem;
+    Shape5: TShape;
+    Label2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -1460,7 +1463,11 @@ begin
       004: Canvas.Font.Color := clCancAguard;   //XML Cancelamento Envio aguardando
       100: Canvas.Font.Color := clProcessado;    //XML Envio Processado
       101,
-      135: Canvas.Font.Color := clCancProcessado;      //XML Cancel. Processado
+      135: if DataSource.DataSet.FieldByName('tpEvento').AsInteger = 110110 then
+             Canvas.Font.Color := clCartaCorrecao      //XML Carta Correção
+           else
+//           if DataSource.DataSet.FieldByName('tpEvento').AsInteger = 110111 then
+             Canvas.Font.Color := clCancProcessado;      //XML Cancel. Processado
       110,205,301,302,
       303: Canvas.Font.Color := clDenegada;     //Denegada
       206,
@@ -1818,10 +1825,15 @@ begin
 end;
 
 procedure TfoPrincipal.mmGeraclasseClick(Sender: TObject);
+var wSenha :string;
 begin
  foGeraClasse := TfoGeraClasse.Create(Application);
  try
-   foGeraClasse.ShowModal;
+   wSenha := InputBox('Digite a senha do desenvolvimento!', 'Senha:','');
+   if (Trim(wSenha) <> '') and (Trim(wSenha) = '$ouis2017') then
+     foGeraClasse.ShowModal
+   else
+     ShowMessage('Senha incorreta!');
  finally
    foGeraClasse.Free;
  end;

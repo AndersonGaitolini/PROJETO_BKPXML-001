@@ -1,7 +1,7 @@
 object DM_NFEDFE: TDM_NFEDFE
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 330
+  Height = 403
   Width = 364
   object conConexaoFD: TFDConnection
     Params.Strings = (
@@ -13,6 +13,7 @@ object DM_NFEDFE: TDM_NFEDFE
       'DriverID=FB')
     UpdateOptions.AssignedValues = [uvEInsert, uvEUpdate, uvUpdateChngFields, uvUpdateMode, uvLockWait, uvRefreshDelete]
     UpdateOptions.LockWait = True
+    Connected = True
     LoginPrompt = False
     Transaction = fdtrTransacao
     BeforeDisconnect = conConexaoFDBeforeDisconnect
@@ -171,6 +172,10 @@ object DM_NFEDFE: TDM_NFEDFE
       item
         Name = 'XMLCARTACORRECAO'
         DataType = ftBlob
+      end
+      item
+        Name = 'TPEVENTO'
+        DataType = ftInteger
       end>
     IndexDefs = <>
     Params = <>
@@ -290,6 +295,9 @@ object DM_NFEDFE: TDM_NFEDFE
     end
     object cdsBkpdfeXMLCARTACORRECAO: TBlobField
       FieldName = 'XMLCARTACORRECAO'
+    end
+    object cdsBkpdfeTPEVENTO: TIntegerField
+      FieldName = 'TPEVENTO'
     end
   end
   object provBkpdfe: TDataSetProvider
@@ -459,5 +467,59 @@ object DM_NFEDFE: TDM_NFEDFE
       'select * from configuracoes')
     Left = 247
     Top = 138
+  end
+  object dsTPEvento: TDataSource
+    DataSet = cdsTPEvento
+    OnDataChange = dsTPEventoDataChange
+    Left = 169
+    Top = 332
+  end
+  object cdsTPEvento: TClientDataSet
+    Aggregates = <>
+    FieldDefs = <
+      item
+        Name = 'ID'
+        Attributes = [faRequired]
+        DataType = ftInteger
+      end
+      item
+        Name = 'CODEVENTO'
+        DataType = ftInteger
+      end
+      item
+        Name = 'DESCRICAO'
+        DataType = ftString
+        Size = 100
+      end>
+    IndexDefs = <>
+    Params = <>
+    ProviderName = 'provTPEvento'
+    StoreDefs = True
+    Left = 19
+    Top = 333
+    object cdsTPEventoID: TIntegerField
+      FieldName = 'ID'
+      Required = True
+    end
+    object cdsTPEventoCODEVENTO: TIntegerField
+      FieldName = 'CODEVENTO'
+    end
+    object cdsTPEventoDESCRICAO: TStringField
+      FieldName = 'DESCRICAO'
+      Size = 100
+    end
+  end
+  object provTPEvento: TDataSetProvider
+    DataSet = sqlTPEvento
+    Left = 96
+    Top = 331
+  end
+  object sqlTPEvento: TFDQuery
+    Connection = conConexaoFD
+    Transaction = fdtrTransacao
+    SQL.Strings = (
+      'select * from tpevento')
+    Left = 246
+    Top = 334
   end
 end

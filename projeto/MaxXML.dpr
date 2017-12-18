@@ -38,7 +38,8 @@ uses
   uProgressThread in 'J:\fontes\uProgressThread.pas',
   uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado},
   uFoConexao in 'J:\fontes\uFoConexao.pas' {foConexao},
-  uFoProgressao in 'J:\fontes\uFoProgressao.pas' {foProgressao};
+  uFoProgressao in 'J:\fontes\uFoProgressao.pas' {foProgressao},
+  Tpevento in 'J:\fontes\Tpevento.pas';
 
 var
  ShowResult : Byte;

@@ -77,7 +77,7 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>E:\BT\7.0\MaxWin\Zancanaro\MaxXML\MAXXML.exe &apos;2&apos; &apos;ZANCANARO&apos; &apos;0&apos; &apos;E:\BT\7.0\MaxWin\Zancanaro\DFe\XML\001\ENVIO\PROCESSADO\Env_NFe42171295809927000183550010000097241000258535.xml&apos;</Debugger_RunParams>
+        <Debugger_RunParams>6 ZANCANARO 0 E:\BT\7.0\MaxWin\Zancanaro\DFe\XML\001\Retorno\retcc_42171295809927000183550010000097141000415510.xml</Debugger_RunParams>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
         <VerInfo_MinorVer>3</VerInfo_MinorVer>
         <Debugger_HostApplication>E:\BT\7.0\MaxWin\Zancanaro\MAXXML\MaxXML.exe</Debugger_HostApplication>
@@ -190,6 +190,7 @@
             <Form>foProgressao</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="J:\fontes\Tpevento.pas"/>
         <None Include="ModelSupport_MaxXML\default.txaPackage"/>
         <None Include="ModelSupport_MaxXML\default.txvpck"/>
         <None Include="ModelSupport_MaxXML\uPadraoEdicao\default.txvpck"/>
@@ -890,9 +891,9 @@
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

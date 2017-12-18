@@ -29,6 +29,7 @@ Const
  clInutilizada = clFuchsia;
  clXmlDefeito = clBlue;
  clNaoIdent = clNavy;
+ clCartaCorrecao = clMaroon;
 
   cnMaxServices = 4096;
   SERVICE_KERNEL_DRIVER       = $00000001;
@@ -719,6 +720,9 @@ procedure pSalveName(pFieldName, pExt: string; var wFileName: string);
 var wStr : String;
 begin
   wStr := AnsiUpperCase(pFieldName);
+  if (wStr = 'XMLCC') then
+   wFileName := 'retcc_'+ wFileName + '.'+pExt;
+
   if (wStr = 'XMLENVIO')  or ( wStr = 'XMLEXTEND') then
    wFileName := 'Env_NFe'+ wFileName + '.'+pExt;
 

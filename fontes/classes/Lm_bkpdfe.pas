@@ -11,8 +11,6 @@ type
   TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
   TTipoXML = (txTodos, txNFE_Env, txNFe_EnvExt,txNFE_EnvLote, txNFe_EnvExtLote, txRet_Sai, txCan_, txCan_Ext, txCan_Lote, txCan_ExtLote, txRetEven, txCartaCorrecao);
 
-
-
   [attTabela('LM_BKPDFE')]
   TLm_bkpdfe = class(TTabela)
   private
@@ -40,8 +38,9 @@ type
     FProtocoloaut: string;
     FXmlerro : TStream;
     FSelecao: string;
-    FCheckBox: SmallInt;
+    FCheckBox: smallInt;
     FCNPJDest: string;
+    FTPEvento: Integer;
   public
     [attPK]
     property Id: Integer read FId write FId;
@@ -70,6 +69,7 @@ type
     property Selecao: string read FSelecao write FSelecao;
     property CheckBox: SmallInt read FCheckBox write FCheckBox;
     property CNPJDest: string read FCNPJDest write FCNPJDest;
+    property tpEvento: Integer read FtpEvento write FtpEvento;
   end;
 
 type
@@ -118,6 +118,7 @@ type
                     ffSELECAO,
                     ffCHECKBOX,
                     ffCNPJDEST,
+                    ffTPEvento,
                     ffFILTRODETALHADO);
 
   TOrdenaBy = (obyASCENDENTE, obyDESCEDENTE, obyNone);
@@ -193,10 +194,12 @@ var
     wControle : Integer;
     wSQL : string;
     wOperacao : TOperacaoTab;
+    wArquivo : String;
 begin
   try
     with DM_NFEDFE do
     begin
+      wArquivo := pObjXML.Chave;
       wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
       AddLog('CHAMADAPELOMAX',GetCurrentDir,'wOperacao: ['+ TConvert<TOperacaoTab>.EnumConvertStr(wOperacao)+']', true);
 
@@ -216,6 +219,9 @@ begin
       end;
 
       Result := (wControle > 0);
+      if Result then
+         ShowMessage('Chave: '+wArquivo+' '+TConvert<TOperacaoTab>.EnumConvertStr(wOperacao) );
+
       AddLog('CHAMADAPELOMAX',GetCurrentDir,'wControle: ['+ IntToStr(wControle) +']', true);
     end;
   except on E: Exception do
@@ -363,6 +369,9 @@ var wDataSet : TDataSet;
 
       if pObjXML.CNPJDEST = '' then
       pObjXML.CNPJDEST := FieldByName('CNPJDEST').AsString;
+
+      if pObjXML.TPEvento = 0 then
+      pObjXML.TPEvento := FieldByName('TPEvento').AsInteger;
 
       wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
@@ -518,6 +527,9 @@ var wDataSet : TDataSet;
 
       if pObjXML.CNPJDEST = '' then
       pObjXML.CNPJDEST := FieldByName('CNPJDEST').AsString;
+
+      if pObjXML.TPEvento = 0 then
+      pObjXML.TPEvento := FieldByName('TPEvento').AsInteger;
 
       wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
@@ -729,6 +741,9 @@ begin
         if not Assigned(wDataSet.FindField('XMLCARTACORRECAO')) then
           wSql.Add('ALTER TABLE LM_BKPDFE ADD XMLCARTACORRECAO BLOB SUB_TYPE 0 SEGMENT SIZE 80');
 
+        if not Assigned(wDataSet.FindField('TPEvento')) then
+          wSql.Add('ALTER TABLE LM_BKPDFE ADD TPEvento Integer');
+
         if wSql.Count > 0 then
         for I := 0 to wSql.Count-1 do
         begin
@@ -891,6 +906,8 @@ begin
     ffXMLEXTENDCANC: begin pFiltro('ID') end;
     ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
     ffCNPJDEST : begin pFiltro('CNPJDEST') end;
+    ffTPEvento : begin pFiltro('TPEvento') end;
+
   end;
 end;
 
@@ -951,6 +968,7 @@ begin
     XmlCartaCorrecao := nil;
     Selecao := '';
     CNPJDest := '';
+    TPEvento := 0;
   end;
 end;
 

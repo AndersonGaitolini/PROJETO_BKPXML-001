@@ -146,9 +146,18 @@ type
     cdsBkpdfeCNPJDEST: TStringField;
     cdsBkpdfeXMLINUTILIZACAO: TBlobField;
     cdsBkpdfeXMLCARTACORRECAO: TBlobField;
+    dsTPEvento: TDataSource;
+    cdsTPEvento: TClientDataSet;
+    provTPEvento: TDataSetProvider;
+    sqlTPEvento: TFDQuery;
+    cdsTPEventoID: TIntegerField;
+    cdsTPEventoCODEVENTO: TIntegerField;
+    cdsTPEventoDESCRICAO: TStringField;
+    cdsBkpdfeTPEVENTO: TIntegerField;
 
     procedure DataModuleCreate(Sender: TObject);
     procedure conConexaoFDBeforeDisconnect(Sender: TObject);
+    procedure dsTPEventoDataChange(Sender: TObject; Field: TField);
   private
     { Private declarations }
   public
@@ -193,6 +202,11 @@ begin
   DaoObjetoXML := TDaoBkpdfe.Create;
 
   CNPJDOC := TCNPJDOC.Create;
+end;
+
+procedure TDM_NFEDFE.dsTPEventoDataChange(Sender: TObject; Field: TField);
+begin
+
 end;
 
 { TConecxaoBD }
