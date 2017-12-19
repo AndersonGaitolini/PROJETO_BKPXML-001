@@ -201,7 +201,6 @@ begin
     begin
       wArquivo := pObjXML.Chave;
       wOperacao := DaoObjetoXML.fConsObj4Gravar(pObjXML,['chave', 'Idf_documento']);
-      AddLog('CHAMADAPELOMAX',GetCurrentDir,'wOperacao: ['+ TConvert<TOperacaoTab>.EnumConvertStr(wOperacao)+']', true);
 
       if (wOperacao =  otUpadate) then
       begin
@@ -219,10 +218,6 @@ begin
       end;
 
       Result := (wControle > 0);
-      if Result then
-         ShowMessage('Chave: '+wArquivo+' '+TConvert<TOperacaoTab>.EnumConvertStr(wOperacao) );
-
-      AddLog('CHAMADAPELOMAX',GetCurrentDir,'wControle: ['+ IntToStr(wControle) +']', true);
     end;
   except on E: Exception do
          begin
@@ -747,13 +742,13 @@ begin
         if wSql.Count > 0 then
         for I := 0 to wSql.Count-1 do
         begin
-          dao.StartTransaction;
+//          dao.StartTransaction;
           Dao.ConsultaSqlExecute(wSql.Strings[I]);
-          Dao.Commit;
+//          Dao.Commit;
         end;
       except
         on E: Exception do
-            Dao.RollBack;
+//            Dao.RollBack;
       end;
     finally
       FreeAndNil(wSql);

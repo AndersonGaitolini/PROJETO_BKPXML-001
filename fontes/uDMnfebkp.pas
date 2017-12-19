@@ -334,8 +334,8 @@ begin
 //    DM_NFEDFE.conConexaoFD.Open;
 
     Result := Conn.Connected;
-//    if Result then
-//      DaoObjetoXML.pAtualizaBD;
+    if Result and (ParamStr(1)= '0') then
+      DaoObjetoXML.pAtualizaBD;
 
     FConectado := Result;
   except

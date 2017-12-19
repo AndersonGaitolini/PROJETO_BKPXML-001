@@ -2307,7 +2307,7 @@ end;
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
              Statusxml := cXMLErro;
-             wArrayObjXML[J] := ObjetoXML;
+             wArrayObjXML[J-1] := ObjetoXML;
              exit;
            end;
         end;
@@ -2409,7 +2409,7 @@ end;
         end;
 
         Dataalteracao := Today;
-        wArrayObjXML[J] := ObjetoXML;
+        wArrayObjXML[J-1] := ObjetoXML;
         exit;
       end;
 
@@ -2437,7 +2437,7 @@ end;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
-             wArrayObjXML[J] := ObjetoXML;
+             wArrayObjXML[J-1] := ObjetoXML;
              Statusxml := cXMLErro;
            end;
         end;
@@ -2510,7 +2510,7 @@ end;
           end;
         end;
 
-        wArrayObjXML[J] := ObjetoXML;
+        wArrayObjXML[J-1] := ObjetoXML;
         exit;
       end;
 
@@ -2540,7 +2540,7 @@ end;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
-             wArrayObjXML[J] := ObjetoXML;
+             wArrayObjXML[J-1] := ObjetoXML;
              Statusxml := cXMLErro;
              exit;
            end;
@@ -2576,28 +2576,27 @@ end;
         XmlCartaCorrecao := wStream;
 
         Dataalteracao := Today;
-        wArrayObjXML[J] := ObjetoXML;
+        wArrayObjXML[J-1] := ObjetoXML;
         exit;
       end;
 
       if LowerCase(ExtractFileName(wFileSource)) = 'retcc_*.xml'  then
       begin
+        wPathFile := IncludeTrailingPathDelimiter(ExtractFilePath(wFileSource));
         wErro := FindFirst(wFileSource, faAnyFile, wFRec);
         wOK := wErro = 0;
+        wFileSource :=  wPathFile + wFrec.Name;
 
         while wOK do
         begin
           pSetLength(J);
-          wFileSource := wFRec.Name;
           ObjetoXML := TLm_bkpdfe.Create;
-          wXmlName := ExtractFileName(wFileSource);
-          wCNPJAux :=  fGetCNPJPelaChave(wXmlName);
-          wChaveAux := fGetChaveFilename(wXmlName);
+          wCNPJAux :=  fGetCNPJPelaChave(ExtractFileName(wFileSource));
+          wChaveAux := fGetChaveFilename(ExtractFileName(wFileSource));
 
           Tipo := '1';
           wXMLProcessado := False;
           wStream := TMemoryStream.Create;
-
           wFileStream := TFileStream.Create(wFileSource,0);
           try
             XMLArq.LoadFromStream(wFileStream,xetUTF_8);
@@ -2612,7 +2611,7 @@ end;
                Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
                Dataemissao := fGetDataXMLPelaChave(wChaveAux);
                chave := wChaveAux;
-               wArrayObjXML[J] := ObjetoXML;
+               wArrayObjXML[J-1] := ObjetoXML;
                Statusxml := cXMLErro;
                exit;
              end;
@@ -2648,10 +2647,11 @@ end;
           XmlCartaCorrecao := wStream;
 
           Dataalteracao := Today;
-          wArrayObjXML[J] := ObjetoXML;
+          wArrayObjXML[J-1] := ObjetoXML;
 
           wErro := FindNext(wFRec);
           wOK := (wErro = 0);
+          wFileSource := wPathFile + wFRec.Name;
 
           if wOk then
             Continue
@@ -2685,7 +2685,7 @@ end;
              Idf_documento := fGetIdf_DocPelaChave(wChaveAux);
              Dataemissao := fGetDataXMLPelaChave(wChaveAux);
              chave := wChaveAux;
-             wArrayObjXML[J] := ObjetoXML;
+             wArrayObjXML[J-1] := ObjetoXML;
              Statusxml := cXMLErro;
              exit;
            end;
@@ -2715,7 +2715,7 @@ end;
         end;
 
         FileClose(wFileStream.Handle);
-        wArrayObjXML[J] := ObjetoXML;
+        wArrayObjXML[J-1] := ObjetoXML;
         exit;
       end;
     end;

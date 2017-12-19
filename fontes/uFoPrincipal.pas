@@ -170,13 +170,12 @@ type
     lbConsultas: TLabel;
     btnFIltroSQL: TBitBtn;
     bvl1: TBevel;
-    pnlProgressWheel: TPanel;
-    pbw1: TProgressWheel;
-    btnPause: TButton;
-    btnStop: TButton;
     mmGeraClasse: TMenuItem;
     Shape5: TShape;
     Label2: TLabel;
+    pnlProgressWheel: TPanel;
+    pbw1: TProgressWheel;
+    btnStop: TButton;
     procedure FormCreate(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -501,9 +500,9 @@ end;
 procedure TfoPrincipal.btnStopClick(Sender: TObject);
 var wCardinal : CArdinal;
 begin
-  wCardinal := StrToIntDef( InputBox('Determine o Sleep', 'Sleep', '30'),0);
-  if (Assigned(wRotinas)) and (wRotinas.Suspended) then
-    wRotinas.Sleep(wCardinal);
+//  wCardinal := StrToIntDef( InputBox('Determine o Sleep', 'Sleep', '30'),0);
+//  if (Assigned(wRotinas)) and (wRotinas.Suspended) then
+//    wRotinas.Sleep(wCardinal);
 
   if MessageDlg('Deseja para o processo?', mtConfirmation, mbYesNo, 0) = mrYes then
   begin
@@ -1576,7 +1575,7 @@ begin
     wRotinas := TRotinas.Create;
 
 //  DaoObjetoXML.pAtualizaTabela;
-  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.5';
+  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.6';
   pSetaCores;
   pIniciaGrid;
 //  pProgressBarStyle;
