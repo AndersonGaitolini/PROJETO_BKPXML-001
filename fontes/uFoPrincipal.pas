@@ -14,7 +14,7 @@ uses
   REST.Backend.BindSource, REST.Backend.PushDevice,System.TypInfo, Vcl.Buttons,uRotinas,
   Vcl.DBCtrls, Vcl.AppEvnts, JvBaseDlg, JvSelectDirectory,System.MaskUtils,
   IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient,
-  ProgressWheel;
+  ProgressWheel, Vcl.Mask;
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
@@ -166,7 +166,6 @@ type
     shpAguardando: TShape;
     lb7: TLabel;
     shp7: TShape;
-    edConsultaSQL: TEdit;
     lbConsultas: TLabel;
     btnFIltroSQL: TBitBtn;
     bvl1: TBevel;
@@ -176,6 +175,8 @@ type
     pnlProgressWheel: TPanel;
     pbw1: TProgressWheel;
     btnStop: TButton;
+    edConsDocDest: TMaskEdit;
+    cbbConsDocDest: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -192,7 +193,6 @@ type
     procedure btnPelaChaveClick(Sender: TObject);
     procedure pmExpTodosClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure dbgNfebkpColExit(Sender: TObject);
     procedure dbgNfebkpKeyPress(Sender: TObject; var Key: Char);
     procedure dbgNfebkpKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -252,13 +252,23 @@ type
     procedure pmRefazXMLClick(Sender: TObject);
     procedure pmFiltrodetalhadoClick(Sender: TObject);
     procedure btnFIltroSQLClick(Sender: TObject);
-    procedure edConsultaSQLChange(Sender: TObject);
-    procedure edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
+    procedure edConsDocDestChange(Sender: TObject);
+    procedure edConsDocDestKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
       Field: TField; State: TGridDrawState);
     procedure btnPauseClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
+    procedure lb5Click(Sender: TObject);
+    procedure cbbConsDocDestChange(Sender: TObject);
+    procedure dbgNfebkpCellClick(Column: TColumn);
+    procedure edConsDocDestExit(Sender: TObject);
+    procedure dbgNfebkpMouseWheel(Sender: TObject; Shift: TShiftState;
+      WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+    procedure edConsDocDestDblClick(Sender: TObject);
+    procedure lb2MouseEnter(Sender: TObject);
+    procedure lb2MouseLeave(Sender: TObject);
+    procedure lb2DblClick(Sender: TObject);
 
 //  protected
 //    procedure DoExecute; override;
@@ -293,7 +303,10 @@ type
     procedure pRemoveSelTodasLinhas;
     procedure pIniciaGrid;
     procedure pMenuFiltroData(pFieldFiltros : TFieldFiltros);
-
+    procedure pCarregaPainelPrincipal;
+    procedure pCarregaMenuPrincipal;
+    procedure pCarregaRodapePrincipal;
+    procedure pPosicionaDocDest;
   public
     { Public declarations }
     procedure pAtualizaGrid;
@@ -430,20 +443,14 @@ end;
 
 procedure TfoPrincipal.btnFIltroSQLClick(Sender: TObject);
 begin
-  if Trim(LowerCase(wValue)) = '' then
+
+  if edConsDocDest.CanFocus then
   begin
-    if edConsultaSQL.CanFocus then
-    begin
-     edConsultaSQL.SetFocus;
-     edConsultaSQL.SelStart := 1;
-    end;
-  end
-  else
-  begin
-   DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, FLastOrderBy, CNPJDOC.Documento, 'CNPJDEST'{wLastField}, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
-   if dbgNfebkp.DataSource.DataSet.RecordCount > 0 then
-     edConsultaSQL.Clear;
+   edConsDocDest.SetFocus;
+   edConsDocDest.SelStart := 1;
   end;
+
+  DaoObjetoXML.pFiltraOrdena(ffCNPJDEST, FLastOrderBy, edConsDocDest.Text, 'CNPJDEST'{wLastField}, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
 end;
 
 procedure TfoPrincipal.btnInserirClick(Sender: TObject);
@@ -518,6 +525,12 @@ begin
   DaoObjetoXML.pFiltraOrdena(ffDATAALTERACAO,FLastOrderBy,CNPJDOC.Documento,'cnpj', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date,'','');
 end;
 
+procedure TfoPrincipal.cbbConsDocDestChange(Sender: TObject);
+begin
+  edConsDocDest.Clear;
+  pPosicionaDocDest;
+end;
+
 procedure TfoPrincipal.cbbEmpCNPJChange(Sender: TObject);
 begin
    if not Assigned(CNPJDOC) then
@@ -583,6 +596,30 @@ begin
   DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, FLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   dbgNfebkp.Refresh;
   dbgNfebkp.DataSource.DataSet.First;
+end;
+
+procedure TfoPrincipal.pCarregaMenuPrincipal;
+begin
+  wFetchALL := mmFetchAll.Checked;
+end;
+
+procedure TfoPrincipal.pCarregaPainelPrincipal;
+begin
+  //Carrega datas do filtro principal
+  pDataFiltro;
+  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, FLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
+  dbgNfebkp.Refresh;
+
+  //Consulta de CPF/CNPJ Destinatário
+  cbbConsDocDest.ItemIndex := 2;
+  edConsDocDest.EditMask := '99.999.999/9999-99;0;_';
+
+
+end;
+
+procedure TfoPrincipal.pCarregaRodapePrincipal;
+begin
+//
 end;
 
 procedure TfoPrincipal.pDataFiltro;
@@ -1321,23 +1358,44 @@ begin
 
 end;
 
-procedure TfoPrincipal.edConsultaSQLChange(Sender: TObject);
+procedure TfoPrincipal.edConsDocDestChange(Sender: TObject);
 begin
-  wValue := Trim(LowerCase(edConsultaSQL.Text));
-  if (Length(wValue) = 14) and (fValidaCNPJ(wValue, true)) then
+//  wValue := Trim(LowerCase(edConsDocDest.Text));
+//  if (Length(wValue) = 14) and (fValidaCNPJ(wValue)) then
+//  begin
+//    edConsDocDest.Text := wValue;
+//    edConsDocDest.SelStart := Length( edConsDocDest.Text);
+//  end;
+//
+//  if (Length(wValue) = 9) and (fValidCPF(wValue)) then
+//  begin
+//    edConsDocDest.Text := wValue;
+//    edConsDocDest.SelStart := Length( edConsDocDest.Text);
+//  end;
+end;
+
+procedure TfoPrincipal.edConsDocDestDblClick(Sender: TObject);
+begin
+  edConsDocDest.Clear;
+end;
+
+procedure TfoPrincipal.edConsDocDestExit(Sender: TObject);
+begin
+  wValue := Trim(LowerCase(edConsDocDest.Text));
+  if (Length(wValue) = 14) and (fValidaCNPJ(wValue)) then
   begin
-    edConsultaSQL.Text := wValue;
-    edConsultaSQL.SelStart := Length( edConsultaSQL.Text);
+    edConsDocDest.Text := wValue;
+    edConsDocDest.SelStart := Length( edConsDocDest.Text);
   end;
 
-  if (Length(wValue) = 9) and (fValidCPF(wValue, true)) then
+  if (Length(wValue) = 9) and (fValidCPF(wValue)) then
   begin
-    edConsultaSQL.Text := wValue;
-    edConsultaSQL.SelStart := Length( edConsultaSQL.Text);
+    edConsDocDest.Text := wValue;
+    edConsDocDest.SelStart := Length( edConsDocDest.Text);
   end;
 end;
 
-procedure TfoPrincipal.edConsultaSQLKeyUp(Sender: TObject; var Key: Word;
+procedure TfoPrincipal.edConsDocDestKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   if key = vk_Return then
@@ -1369,10 +1427,15 @@ begin
     DaoObjetoXML.pFiltraOrdena(wLastFieldFiltros, FLastOrderBy, CNPJDOC.Documento,wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
 end;
 
-procedure TfoPrincipal.dbgNfebkpColExit(Sender: TObject);
+procedure TfoPrincipal.dbgNfebkpCellClick(Column: TColumn);
 begin
-//   if dbgNfebkp.SelectedField.FieldName = dbchkCHECKBOX.DataField then
-//     dbchkCHECKBOX.Visible := False
+  if Length(Column.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString) = 11 then
+    cbbConsDocDest.ItemIndex := 0
+  else
+    cbbConsDocDest.ItemIndex := 1;
+
+  pPosicionaDocDest;
+    edConsDocDest.Text := Column.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString;
 end;
 
 procedure TfoPrincipal.dbgNfebkpDblClick(Sender: TObject);
@@ -1541,6 +1604,18 @@ begin
 //  end;
 end;
 
+procedure TfoPrincipal.dbgNfebkpMouseWheel(Sender: TObject; Shift: TShiftState;
+  WheelDelta: Integer; MousePos: TPoint; var Handled: Boolean);
+begin
+  if Length(TDBGrid(Sender).Columns.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString) = 11 then
+    cbbConsDocDest.ItemIndex := 0
+  else
+    cbbConsDocDest.ItemIndex := 1;
+
+  pPosicionaDocDest;
+  edConsDocDest.Text := TDBGrid(Sender).Columns.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString;
+end;
+
 procedure TfoPrincipal.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   FreeAndNil(wListaSelecionados);
@@ -1575,7 +1650,7 @@ begin
     wRotinas := TRotinas.Create;
 
 //  DaoObjetoXML.pAtualizaTabela;
-  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.6';
+  foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.7';
   pSetaCores;
   pIniciaGrid;
 //  pProgressBarStyle;
@@ -1627,10 +1702,8 @@ end;
 
 procedure TfoPrincipal.FormShow(Sender: TObject);
 begin
-  pDataFiltro;
-  DaoObjetoXML.pFiltraOrdena(ffDATAEMISSAO, FLastOrderBy, CNPJDOC.Documento, wLastField, dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
-  dbgNfebkp.Refresh;
-  wFetchALL := mmFetchAll.Checked;
+  pCarregaMenuPrincipal;
+  pCarregaPainelPrincipal;
 end;
 
 procedure TfoPrincipal.pSalveName(pFieldName: string; var wFileName: string);
@@ -1685,7 +1758,6 @@ end;
 function TfoPrincipal.fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
 var
  wDataSet : TDataSet;
-
   procedure pSelectRows;
   var wLinha: Integer;
   begin
@@ -1747,6 +1819,50 @@ begin
   finally
 //    wDataSet.Free;
   end;
+end;
+
+procedure TfoPrincipal.lb2DblClick(Sender: TObject);
+var wTipStatXML: TStatusXML;
+begin
+  with TLabel(Sender)do
+  begin
+    Font.Color := clBlue;
+
+    case tag of
+      1000: begin wTipStatXML := tsxNormal; end;      //Normal
+      1001: begin wTipStatXML := tsxNormAguard end;   //Aguard. Retorno
+      1002: begin wTipStatXML := tsxCanecelada end;   //Cancelada
+      1003: begin wTipStatXML := tsxCancAguard end;   //Aguard. Retorno cancelado
+      1004: begin wTipStatXML := tsxDenegada; end;    //Denegada
+      1005: begin wTipStatXML := tsxInutilizada; end; //Inutilizada
+      1006: begin wTipStatXML := tsxDefeito; end;     //Defeito
+      1007: begin wTipStatXML := tsxCartaCorr; end;   //Carta Correção
+    end;
+
+    wValue := TConvert<TStatusXML>.EnumConvertStr(wTipStatXML);
+    DaoObjetoXML.pFiltraOrdena(ffStatusXml, FLastOrderBy, '*', 'statusxml', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date, wValue);
+  end;
+end;
+
+procedure TfoPrincipal.lb2MouseEnter(Sender: TObject);
+begin
+  with TLabel(Sender)do
+  begin
+    Font.Color := clBlue;
+  end;
+end;
+
+procedure TfoPrincipal.lb2MouseLeave(Sender: TObject);
+begin
+  with TLabel(Sender)do
+  begin
+    Font.Color := clBlack;
+  end;
+end;
+
+procedure TfoPrincipal.lb5Click(Sender: TObject);
+begin
+  //
 end;
 
 procedure TfoPrincipal.pRemoveSelTodasLinhas;
@@ -1975,6 +2091,16 @@ begin
   finally
     FreeAndNil(foLogin);
   end;
+end;
+
+procedure TfoPrincipal.pPosicionaDocDest;
+begin
+  if cbbConsDocDest.ItemIndex = 0 then
+    edConsDocDest.EditMask := '999.999.999-99;0;'
+  else
+   edConsDocDest.EditMask := '99.999.999/9999-99;0;';
+
+  edConsDocDest.SelStart := 0;
 end;
 
 function TfoPrincipal.OpenTabela: boolean;

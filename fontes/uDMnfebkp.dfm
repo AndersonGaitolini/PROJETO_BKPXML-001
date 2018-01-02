@@ -13,7 +13,6 @@ object DM_NFEDFE: TDM_NFEDFE
       'DriverID=FB')
     UpdateOptions.AssignedValues = [uvEInsert, uvEUpdate, uvUpdateChngFields, uvUpdateMode, uvLockWait, uvRefreshDelete]
     UpdateOptions.LockWait = True
-    Connected = True
     LoginPrompt = False
     Transaction = fdtrTransacao
     BeforeDisconnect = conConexaoFDBeforeDisconnect

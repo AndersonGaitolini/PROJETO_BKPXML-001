@@ -810,11 +810,31 @@ const cAsc = 'Asc'; cdesc = 'desc';
       wAnd := false;
       str1 := str1 + 'Select * from lm_bkpdfe where ';
 
-      if (pCNPJDest <> '*') and (fValidaCNPJ(pCNPJDest)) then
+      if auxFF = ffCNPJDEST then
       begin
-//        wFetchAll := False;
-        str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and',['CNPJ', pCNPJDest]);
+        if (pCNPJDest <> '') and (fValidaCNPJ(pCNPJDest)) then
+          str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and',['CNPJDEST', pCNPJDest])
       end;
+
+      if auxFF = ffSTATUSXML then
+      begin
+        if (not wV1Empty) then
+        begin
+          case TConvert<TStatusXML>.StrConvertEnum(pValue1) of
+            tsxNormAguard: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 001]);
+            tsxNormal: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 100]);
+            tsxCartaCorr: str1 := str1 + Format('(%s in (%d, %d)) and (%s = %d) and',['STATUSXML',101, 135,'TPEVENTO', 110110]);
+            tsxCancAguard: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 004]);
+            tsxCanecelada: str1 := str1 + Format('(%s IN (%d, %d)) and',['STATUSXML', 101,135]);
+            tsxDenegada:   str1 := str1 + Format('(%s = %d) and',['STATUSXML', 303]);
+            tsxInutilizada: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 662]);
+            tsxDefeito: str1 := str1 + Format('(%s = %d) and',['STATUSXML', -999]);
+          end;
+
+        end;
+
+      end;
+
 
       if wDataVal then
         if wOrdData then
@@ -901,6 +921,7 @@ begin
     ffXMLEXTENDCANC: begin pFiltro('ID') end;
     ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
     ffCNPJDEST : begin pFiltro('CNPJDEST') end;
+    ffSTATUSXML : begin pFiltro('STATUSXML') end;
     ffTPEvento : begin pFiltro('TPEvento') end;
 
   end;

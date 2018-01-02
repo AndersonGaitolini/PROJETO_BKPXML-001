@@ -334,7 +334,7 @@ begin
 //    DM_NFEDFE.conConexaoFD.Open;
 
     Result := Conn.Connected;
-    if Result and (ParamStr(1)= '0') then
+    if Result and (ParamStr(1)= '') then
       DaoObjetoXML.pAtualizaBD;
 
     FConectado := Result;
@@ -358,8 +358,11 @@ end;
 
 procedure TConecxaoBD.pListaSessaoINI;
 begin
-  FListaSessao := fListaSessaoINIFile;
-  fListaSessaoINIFile.Free;
+  try
+    FListaSessao := fListaSessaoINIFile;
+  finally
+    fListaSessaoINIFile.Free;
+  end;
 end;
 
 procedure TConecxaoBD.pIniPath;

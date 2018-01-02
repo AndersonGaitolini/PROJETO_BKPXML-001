@@ -56,6 +56,8 @@ type
     TTipoClass = (tiLabel, tiButton, tiBitBtn, tiEdit, tiPanel, tiComboBox, tiTodos);
     DayType = (Domingo, Segunda, Terca, Quarta, Quinta, Sexta, Sabado);
     TTipoDocumento = (tdCNPJ, tdCPF, tdPIS);
+    TStatusXML = (tsxNormAguard, tsxNormal, tsxCancAguard, tsxCanecelada, tsxDenegada, tsxInutilizada, tsxDefeito, tsxCartaCorr);
+
 
   Type
   TGenerico = 0..255;
@@ -177,10 +179,14 @@ var I,J : Integer;
     wINI : TIniFile;
     wSessao : Boolean;
     wList, wSLPerfil : TStringList;
+
 begin
    wList := TStringList.create;
    wSLPerfil := TStringList.create;
    wINI := TIniFile.Create(ConecxaoBD.IniFile);
+   if not FileExists(ConecxaoBD.IniFile) then
+     wINI.WriteString(FNomePC, 'Alterado', FormatDateTime('hh:nn:ss',Now));
+
    try
      try
        wList.LoadFromFile(ConecxaoBD.IniFile);
