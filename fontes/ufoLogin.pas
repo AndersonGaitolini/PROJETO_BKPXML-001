@@ -6,25 +6,22 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, ufoLoginPadrao, Vcl.Menus,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,uDMnfebkp,Configuracoes, Vcl.ComCtrls,
-  uMetodosUteis, Usuarios, Data.DB;
+  uMetodosUteis, Usuarios, Data.DB, Vcl.Imaging.jpeg;
 
 type
   TfoLogin = class(TfoLoginPadrao)
     btnCancelar: TBitBtn;
-    statMsg: TStatusBar;
     lbSenha: TLabel;
     lbMAXXML: TLabel;
-    mmMenuLogin: TMainMenu;
-    Configura1: TMenuItem;
-    mmConexoBD: TMenuItem;
+    img1: TImage;
+    lb1: TLabel;
+    btnConfig: TBitBtn;
     procedure btnAcessarClick(Sender: TObject);
     procedure edSenhaExit(Sender: TObject);
     procedure edUsuarioExit(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure btnCancelarClick(Sender: TObject);
-    procedure edUsuarioChange(Sender: TObject);
-    procedure edSenhaChange(Sender: TObject);
-    procedure mmConexoBDClick(Sender: TObject);
+    procedure btnConfigClick(Sender: TObject);
   private
     { Private declarations }
     statusCon : string;
@@ -38,21 +35,39 @@ type
 var
   foLogin: TfoLogin;
 
-
-//  wTabConect : TT_conectado;
 implementation
-
+
 uses
   uFoConexao;
 
-
-
-{$R *.dfm}
+{$R *.dfm}
 
 procedure TfoLogin.btnCancelarClick(Sender: TObject);
 begin
   inherited;
   ModalResult := mrCancel;
+end;
+
+procedure TfoLogin.btnConfigClick(Sender: TObject);
+begin
+  inherited;
+    foConexao := TfoConexao.Create(Application);
+  try
+    foConexao.ShowModal;
+
+    if ConecxaoBD.Conectado then
+    begin
+      btnConfig.Visible := false;
+      lb1.Caption := 'Base de dados: Conectado!';
+    end
+    else
+    begin
+      btnConfig.Visible := true;
+      lb1.Caption := 'Base de dados: Desconectado';
+    end;
+  finally
+    FreeAndNil(foConexao);
+  end;
 end;
 
 procedure TfoLogin.btnAcessarClick(Sender: TObject);
@@ -103,21 +118,9 @@ begin
   end;
 end;
 
-procedure TfoLogin.edSenhaChange(Sender: TObject);
-begin
-  inherited;
-//  tabUsuarios.Usuario := Trim(edUsuario.Text);
-end;
-
 procedure TfoLogin.edSenhaExit(Sender: TObject);
 begin;
    tabUsuarios.senha := Trim(edSenha.Text);
-end;
-
-procedure TfoLogin.edUsuarioChange(Sender: TObject);
-begin
-  inherited;
-//  tabUsuarios.Usuario := Trim(edUsuario.Text);
 end;
 
 procedure TfoLogin.edUsuarioExit(Sender: TObject);
@@ -127,16 +130,22 @@ end;
 
 procedure TfoLogin.FormCreate(Sender: TObject);
 begin
-  statMsg.Panels[0].Text := 'Base de dados:';
+//  statMsg.Panels[0].Text := 'Base de dados:';
 
   if ConecxaoBD.Conectado then
-    statusCon := 'Conectado!'
+  begin
+    btnConfig.Visible := false;
+    lb1.Caption := 'Base de dados: Conectado!';
+  end
   else
-    statusCon := 'Desconectada';
+  begin
+    btnConfig.Visible := true;
+    lb1.Caption := 'Base de dados: Desconectado';
+  end;
 
   edUsuario.Clear;
   edSenha.Clear;
-  statMsg.Panels[1].Text := statusCon;
+//  statMsg.Panels[1].Text := statusCon;
   if not Assigned(tabUsuarios) then
     tabUsuarios := TUsuarios.Create;
 
@@ -144,40 +153,7 @@ begin
     daoLogin := TDaoLogin.Create;
 end;
 
-procedure TfoLogin.mmConexoBDClick(Sender: TObject);
-begin
-  inherited;
-  foConexao := TfoConexao.Create(Application);
-  try
-    foConexao.ShowModal;
-
-    if ConecxaoBD.Conectado then
-      statusCon := 'Conectado!'
-    else
-      statusCon := 'Desconectado!';
-
-    statMsg.Panels[1].Text := statusCon;
-  finally
-    FreeAndNil(foConexao);
-  end;
-end;
-
 initialization
-
-//  tabUsuarios := TUsuarios.Create;
-//  daoLogin := TDaoLogin.Create;
-//
-//  tabUsuarios.Usuario := Trim(ParamStr(1));
-//  tabUsuarios.Senha   := Trim(ParamStr(2));
-//
-//if (tabUsuarios.Usuario <> '') and ( tabUsuarios.Senha <> '') then
-//begin
-//    if daoLogin.fLogar(tabUsuarios) then
-//    begin
-//        foLogin.ModalResult := mrOk;
-//        foLogin.Close;
-//    end
-//end;
 
 end.
 

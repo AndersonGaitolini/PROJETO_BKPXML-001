@@ -6,8 +6,6 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
   JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock, WinSvc, Vcl.FileCtrl;
-
-
 Const
   Threshold2000 : Integer = 2000;
 
@@ -21,15 +19,15 @@ Const
   HoursInDay = 24;
   MinutesInHour = 60;
 
- clProcessado = clBlack;
- clEnvAguard = clGreen;
- clCancAguard = clPurple;
- clCancProcessado = clRed;
- clDenegada = clSilver;
- clInutilizada = clFuchsia;
- clXmlDefeito = clBlue;
- clNaoIdent = clNavy;
- clCartaCorrecao = clMaroon;
+  clProcessado = clBlack;
+  clEnvAguard = clGreen;
+  clCancAguard = clPurple;
+  clCancProcessado = clRed;
+  clDenegada = clSilver;
+  clInutilizada = clFuchsia;
+  clXmlDefeito = clBlue;
+  clNaoIdent = clNavy;
+  clCartaCorrecao = clMaroon;
 
   cnMaxServices = 4096;
   SERVICE_KERNEL_DRIVER       = $00000001;
@@ -44,30 +42,24 @@ Const
   SERVICE_WIN32 = (SERVICE_WIN32_OWN_PROCESS or SERVICE_WIN32_SHARE_PROCESS);
 
   SERVICE_INTERACTIVE_PROCESS = $00000100;
-
   SERVICE_TYPE_ALL = (SERVICE_WIN32 or SERVICE_ADAPTER or SERVICE_DRIVER  or SERVICE_INTERACTIVE_PROCESS);
 
 type
+  TGenerico = 0..255;
   TSvcA = array[0..cnMaxServices] of TEnumServiceStatus;
   PSvcA = ^TSvcA;
+  TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
+  TTipoClass = (tiLabel, tiButton, tiBitBtn, tiEdit, tiPanel, tiComboBox, tiTodos);
+  DayType = (Domingo, Segunda, Terca, Quarta, Quinta, Sexta, Sabado);
+  TTipoDocumento = (tdCNPJ, tdCPF, tdPIS);
+  TStatusXML = (tsxNormAguard, tsxNormal, tsxCancAguard, tsxCanecelada, tsxDenegada, tsxInutilizada, tsxDefeito, tsxCartaCorr);
 
-  type
-    TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
-    TTipoClass = (tiLabel, tiButton, tiBitBtn, tiEdit, tiPanel, tiComboBox, tiTodos);
-    DayType = (Domingo, Segunda, Terca, Quarta, Quinta, Sexta, Sabado);
-    TTipoDocumento = (tdCNPJ, tdCPF, tdPIS);
-    TStatusXML = (tsxNormAguard, tsxNormal, tsxCancAguard, tsxCanecelada, tsxDenegada, tsxInutilizada, tsxDefeito, tsxCartaCorr);
-
-
-  Type
-  TGenerico = 0..255;
-
-   TConvert<T:Record> = class
-     public
-       class procedure PopulateListEnum(AList: TStrings);
-       class function StrConvertEnum(const AStr: string):T;
-       class function EnumConvertStr(const eEnum:T):string;
-     end;
+ TConvert<T:Record> = class
+ public
+   class procedure PopulateListEnum(AList: TStrings);
+   class function StrConvertEnum(const AStr: string):T;
+   class function EnumConvertStr(const eEnum:T):string;
+ end;
 
   function fValidaCNPJ(var pCNPJ: string; pMascara: boolean=false): boolean;
   function fValidaCNPJ2(pCNPJDoc: string; pMascara: boolean=false): boolean;
@@ -78,11 +70,10 @@ type
   function getINI(pIniFilePath, prSessao, prSubSessao: string; prValorDefault: string = ''): string;
 
   function fPingIP(pHost : String) :boolean;
-//  function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
   function fArqIni: string;
   procedure pAtivaCamposForm(pForm: TForm; pEnable: boolean; pLista : array of TTipoClass);
-  function fNomePC: string;
-  function fLocalIP : string;
+  function fNomePC: string; //Retorna o nome da máquina
+  function fLocalIP : string; //Retorna o IP da máquina
   function ExtractName(const Filename: String): String;
   function DateXMLToDate(pDateXML: String): TDate;
   procedure fOpenDirectory(var pFileName: string);
@@ -102,7 +93,6 @@ type
   procedure pSalveName(pFieldName, pExt: string; var wFileName: string);
   procedure pGetDirList(pDirectory: String; var pListaDir: TStringList; SubPastas: Boolean);
 
-
   function fMascaraCNPJ(pString: string): string;
   function fMascaraDoc(pSTR: string; pDoc : TTipoDocumento): string;
   function fTiraMascaraCNPJ(pString: string): string;
@@ -115,8 +105,6 @@ type
   function fInverte(pValor: string; pTipo: Boolean; Pos: LongInt): string;
   function fConsideraPrimeiros(pValor, pNum: LongInt):string;
   function fColocaVerificador(pValor: string; pNum: LongInt):string;
-//  function fDesCriptStr(pString : string) : string;
-//  function fCripStr(pString : string) : string;
 
   function fServiceStop(sMachine,sService : string ) : boolean;
   function fServiceStart(sMachine, sService : string ) : boolean;
@@ -135,43 +123,6 @@ implementation
 
 uses
   uDMnfebkp;
-
-//  { Criptografa uma String }
-//  function fCripStr(pString : string) : string;
-//  var
-//    i   : Integer;
-//    ist : string;
-//  begin
-//     result := '';
-//     if pString = '' then
-//       Exit;
-//
-//     pString    := WideUpperCase(pString);
-//     ist   :='';
-//     for i :=1 to Length(pString) do
-//       ist[i] :=  Chr(ord(pString[i])-30-i);
-//
-//     ist := pString;
-//     result   := ist;
-//  end;
-//
-//  { DesCriptografa uma String }
-//  function fDesCriptStr(pString : string) : string;
-//  var
-//    i   : Integer;
-//    ist : array of widechar;
-//  begin
-//     result := '';
-//     if pString = '' then
-//       Exit;
-//     SetLength(ist, Length(pString));
-//     pString  := UpperCase(pString);
-//     for i:=1 to Length(pString) do
-//       ist[i]:= Chr(ord(pString[i])+30+i);
-//
-//     ist[0] := pString[1];
-//     result   := WideCharToString(ist);
-//  end;
 
 function fListaSessaoINIFile: TStringList;
 var I,J : Integer;
@@ -1156,7 +1107,6 @@ begin
   if pInitialDir <> '' then
      if DirectoryExists(pInitialDir) then
         jopdOpenDir.InitialDir := pInitialDir;
-
   try
      Result := jopdOpenDir.Execute;
      if Result then
@@ -1173,7 +1123,6 @@ begin
   Result := 0;
   if pDateXML = '' then
      exit;
-            //'aaaa-mm-dd
   Result := StrToDate(Copy(pDateXML,9,2)+'/'+ Copy(pDateXML,6,2)+'/'+Copy(pDateXML,1,4));
 end;
 
@@ -1234,7 +1183,6 @@ begin
 
  if GetComputerName(buffer, size) then
    Result := string(buffer);
-
 end;
 
 procedure pAtivaCamposForm(pForm: TForm; pEnable: boolean; pLista : array of TTipoClass);
@@ -1267,7 +1215,6 @@ begin
   IdICMPClient := TIdICMPClient.Create(nil);
   try
     try
-
       IdICMPClient.Host := pHost;
       IdICMPClient.ReceiveTimeout := 500;
       IdICMPClient.Ping;
@@ -1279,108 +1226,6 @@ begin
     IdICMPClient.Free;
   end
 end;
-
-//function ConexaoBD(var prCon: TFDConnection; prDriver: TFDPhysFBDriverLink; pTryConexao: boolean = false):Boolean;
-//var
-//wMSg : string;
-//wDataBase: string;
-//wHost: string;
-//wLog :Boolean;
-////wHandle : THandle;
-//
-////  procedure pIniArquivo(pSource: string);
-////  begin
-////    try
-////      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
-////    except
-////      wHandle := FindWindow( 0,pWideChar(pSource));
-////      FileClose(wHandle);
-////      setINI(fArqIni, 'BD', 'ARQUIVO',wDataBase);
-////    end;
-////  end;
-////
-////  procedure pIniFbClient(pSource: string);
-////  begin
-////    try
-////    setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
-////    except
-////      wHandle := FindWindow( 0,pWideChar(pSource));
-////      FileClose(wHandle);
-////      setINI(fArqIni, 'BD', 'FBCLIENT',wFBClient);
-////    end;
-////  end;
-//
-// begin
-//  wLog := false;
-//  try
-//    try
-//      Result := False;
-//      prCon.Connected := Result;
-//      prCon.Close;
-//
-//      AddLog('LOGMAXXML',GetCurrentDir,'ConexaoBD - ParamStr(0) = ['+ ParamStr(0) + ']',wLog);
-//      if (FileExists(ExtractFileName(ChangeFileExt(Application.ExeName, 'INI')))) then
-//      begin
-//        with prCon.Params do
-//        begin
-//          Values['ConfigName'] := getINI(fArqIni, 'MAXXML',   'ConfigName', '');
-//          Values['Usuario'] := getINI(fArqIni, 'MAXXML',      'Usuario', '');
-//          Values['Password'] := getINI(fArqIni, 'MAXXML',     'Password', '');
-//          Values['Database'] := getINI(fArqIni, 'MAXXML',     'Database', '');
-//          Values['SQLDialect'] := getINI(fArqIni, 'MAXXML',   'SQLDialect', '');
-//          Values['VendorLib'] := getINI(fArqIni, 'MAXXML',    'VendorLib', '');
-//          Values['VendorHome'] := getINI(fArqIni, 'MAXXML',   'VendorHome', '');
-//          Values['DriverId'] := getINI(fArqIni, 'MAXXML',     'DriverId', '');
-//          Values['Port'] := getINI(fArqIni, 'MAXXML',         'Port', '');
-//
-//          if (getINI(fArqIni, 'MAXXML', 'Conexao', '') = 'Remote') then
-//          begin
-//            wHost := getINI(fArqIni, 'MAXXML', 'Server', '');
-//
-//            if not fPingIP(wHost) then
-//            begin
-//               pAppTerminate;
-//               ShowMessage('Sem Conexão de Rede');
-//            end
-//            else
-//            begin
-//              Values['Server'] := wHost;
-//              Values['Protocol'] := getINI(fArqIni, 'MAXXML',     'Protocol', '');
-//              Values['CharacterSet'] := getINI(fArqIni, 'MAXXML', 'CharacterSet', '');
-//            end;
-//          end;
-//        end;
-//      end
-//      else
-//      if (ParamCount = 0)then
-//      begin
-//        foConfiguracao := TfoConfiguracao.Create(Application);
-//        try
-//          foConfiguracao.ShowModal;
-//        finally
-//          FreeAndNil(foConfiguracao);
-//        end;
-//      end;
-//
-//      prCon.Open;
-//      DM_NFEDFE.Conectado := prCon.Connected;
-//      Result := prCon.Connected;
-//
-//    except
-//      on E: Exception do
-//         begin
-//           AddLog('LOGMAXXML',GetCurrentDir,'except Conexão -  [VendorHome: ' +  prDriver.VendorHome +'] VendorLib: [' +  prDriver.VendorLib +'] wDataBase: ['+ wDataBase + ']: Erro:'+
-//           #10#13+ E.Message,wLog);
-//         end;
-//    end;
-//  finally
-//
-//    if not Result  then
-//    begin
-//      pAppTerminate;
-//    end;
-//  end;
-//end;
 
 function fSetAtribute(pPath: string; pAtribute: Cardinal):Boolean;
 var
@@ -1405,8 +1250,6 @@ begin
 //        NewAttributes := NewAttributes or faHidden;
 //        NewAttributes := NewAttributes and not faHidden;
 
-
-         { ...write the new values }
 end;
 
 procedure setINI(pIniFilePath, prSessao, prSubSessao: string; prValor: string ='');
@@ -1439,13 +1282,9 @@ end;
 function fArqIni: string;
 begin
   Result := ExtractFileDir(Application.ExeName) +'\'+ ExtractFileName(ChangeFileExt(Application.ExeName, '.INI'));;
-
-//  if not FileExists(Result) then
-//    setINI(Result,'',ExtractName(Result),'');
 end;
 
 { TConvert }
-
 class procedure TConvert<T>.PopulateListEnum(AList: TStrings);
   var
    i:integer;

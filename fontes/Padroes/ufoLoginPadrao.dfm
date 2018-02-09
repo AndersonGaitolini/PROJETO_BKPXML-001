@@ -2,8 +2,8 @@ object foLoginPadrao: TfoLoginPadrao
   Left = 640
   Top = 540
   Caption = 'Tela de acesso'
-  ClientHeight = 265
-  ClientWidth = 229
+  ClientHeight = 369
+  ClientWidth = 461
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,16 +20,16 @@ object foLoginPadrao: TfoLoginPadrao
   object pnl1: TPanel
     Left = 0
     Top = 0
-    Width = 229
-    Height = 265
+    Width = 461
+    Height = 369
     Margins.Left = 2
     Margins.Top = 2
     Margins.Right = 2
     Margins.Bottom = 2
     Align = alClient
     TabOrder = 0
-    ExplicitWidth = 242
-    ExplicitHeight = 297
+    ExplicitWidth = 229
+    ExplicitHeight = 265
     object lbUserNome: TLabel
       Left = 66
       Top = 132

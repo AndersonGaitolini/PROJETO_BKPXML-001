@@ -1,0 +1,29 @@
+unit uProgressWheel;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, Vcl.Controls;
+
+type
+  TCustomControl1 = class(TCustomControl)
+  private
+    { Private declarations }
+  protected
+    { Protected declarations }
+  public
+    { Public declarations }
+  published
+    { Published declarations }
+  end;
+
+procedure Register;
+
+implementation
+
+procedure Register;
+begin
+  RegisterComponents('Standard', [TCustomControl1]);
+end;
+
+end.

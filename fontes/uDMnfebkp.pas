@@ -156,14 +156,10 @@ type
     cdsBkpdfeTPEVENTO: TIntegerField;
 
     procedure DataModuleCreate(Sender: TObject);
-    procedure conConexaoFDBeforeDisconnect(Sender: TObject);
     procedure dsTPEventoDataChange(Sender: TObject; Field: TField);
   private
-    { Private declarations }
   public
-    { Public declarations }
-    Dao   : TDaoFD;
-
+    Dao: TDaoFD;
   end;
 
 var
@@ -178,11 +174,6 @@ uses
 {%CLASSGROUP 'Vcl.Controls.TControl'}
 
 {$R *.dfm}
-
-procedure TDM_NFEDFE.conConexaoFDBeforeDisconnect(Sender: TObject);
-begin
-//  DM_NFEDFE.conConexaoFD.Close;
-end;
 
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
@@ -211,15 +202,6 @@ end;
 
 { TConecxaoBD }
 
-//constructor TConecxaoBD.Create(pConn: TFDConnection;
-//  pDriver: TFDPhysFBDriverLink);
-//begin
-////  inherited;
-//  FConn := pConn;
-//  FDriver := pDriver;
-//  pIniPath;
-//end;
-
 constructor TConecxaoBD.Create(pConn: TFDConnection);
 begin
   FConn := pConn;
@@ -234,7 +216,6 @@ begin
   DM_NFEDFE.fddrfbDriver.VendorHome                    := FVendorHome;
   DM_NFEDFE.fddrfbDriver.Embedded                      := FEmbedded;
   DM_NFEDFE.fddrfbDriver.DriverID                      := FDriverID;
-//  DM_NFEDFE.conConexaoFD.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
   Conn.Params.DriverID               := DM_NFEDFE.fddrfbDriver.DriverID;
 
   Conn.Params.Values['User_Name']    := FUserName;
@@ -246,16 +227,6 @@ begin
   Conn.Params.Values['Protocol']     := 'ipLocal';
   Conn.Params.Values['Server']       := '';
   Conn.Params.Values['Port']         := FPort;
-//  DM_NFEDFE.conConexaoFD.Params.Values['User_Name']    := FUserName;
-//  DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
-//  DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
-//  DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-////  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
-//  DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
-//  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
-//  DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
-//  DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
-//  DM_NFEDFE.conConexaoFD.Params.Values['Port']         := FPort;
 end;
 
 procedure pConLocalEmbedded;
@@ -270,27 +241,11 @@ begin
   DM_NFEDFE.conConexaoFD.Params.Values['Password']     := FPassword;
   DM_NFEDFE.conConexaoFD.Params.Values['Database']     := FDataBase;
   DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-//  DM_NFEDFE.conConexaoFD.Params.Values['DriverID']     := FDriverID;
   DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := FCharacterSet;
   DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := FProtocol;
   DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
   DM_NFEDFE.conConexaoFD.Params.Values['Server']       := '';
-  DM_NFEDFE.conConexaoFD.Params.Values['Port']                   := FPort;
-
-//    DM_NFEDFE.conConexaoFD.Params.UserName               := FUserName;
-//    DM_NFEDFE.conConexaoFD.Params.Password               := FPassword;
-//    DM_NFEDFE.conConexaoFD.Params.Database               := FDataBase;
-//    DM_NFEDFE.conConexaoFD.ActualDriverID;
-//    DM_NFEDFE.conConexaoFD.Params.Pooled                 := False;
-//    DM_NFEDFE.conConexaoFD.Params.PoolCleanupTimeout     := 30000;
-//    DM_NFEDFE.conConexaoFD.Params.PoolExpireTimeout      := 90000;
-//    DM_NFEDFE.conConexaoFD.Params.PoolMaximumItems       := 50;
-//
-//    DM_NFEDFE.conConexaoFD.Params.Values['Protocol']     := 'ipLocal';
-//    DM_NFEDFE.conConexaoFD.Params.Values['Port']         := '3050';
-//    DM_NFEDFE.conConexaoFD.Params.Values['SQLDialect']   := FSQLDialect;
-//    DM_NFEDFE.conConexaoFD.Params.Values['CharacterSet'] := 'WIN1252';
-//    DM_NFEDFE.conConexaoFD.Params.Values['server']       := '';
+  DM_NFEDFE.conConexaoFD.Params.Values['Port']         := FPort;
 end;
 
 procedure pConRemote;
@@ -311,17 +266,13 @@ begin
   end;
 end;
 
-var I:Integer;
 begin
   Result := False;
   FConectado := False;
 
   Conn.Connected := false;
   Conn.Close;
-//  DM_NFEDFE.conConexaoFD.Connected := false;
-//  DM_NFEDFE.conConexaoFD.Close;
   try
-//    pClearParams;
     case TipoCon of
       tcLocal: pConLocal;
       tcLocalEmbed: pConLocalEmbedded;
@@ -331,8 +282,6 @@ begin
     end;
 
     Conn.Open;
-//    DM_NFEDFE.conConexaoFD.Open;
-
     Result := Conn.Connected;
     if Result and (ParamStr(1)= '') then
       DaoObjetoXML.pAtualizaBD;
@@ -404,21 +353,20 @@ end;
 
 procedure TConecxaoBD.pWriteParams(pSessao: String);
 begin
- setINI(FIniFile, pSessao, 'TipoCon'       ,TConvert<TTipoConexao>.EnumConvertStr(FTipoCon));
- setINI(FIniFile, pSessao, 'User_Name'     ,FUserName     );
- setINI(FIniFile, pSessao, 'Password'      ,FPassword     );
- setINI(FIniFile, pSessao, 'Database'      ,FDataBase     );
- setINI(FIniFile, pSessao, 'SQLDialect'    ,FSQLDialect   );
- setINI(FIniFile, pSessao, 'DriverID'      ,FDriverID     );
- setINI(FIniFile, pSessao, 'CharacterSet'  ,FCharacterSet );
- setINI(FIniFile, pSessao, 'Server'        ,FServer       );
- setINI(FIniFile, pSessao, 'Protocol'      ,FProtocol     );
- setINI(FIniFile, pSessao, 'Port'          ,FPort         );
- setINI(FIniFile, pSessao, 'VendorLib'     ,FVendorLib    );
- setINI(FIniFile, pSessao, 'VendorHome'    ,FVendorHome   );
- setINI(FIniFile, pSessao, 'Embedded'      ,BoolToStr(FEmbedded));
+  setINI(FIniFile, pSessao, 'TipoCon'       ,TConvert<TTipoConexao>.EnumConvertStr(FTipoCon));
+  setINI(FIniFile, pSessao, 'User_Name'     ,FUserName     );
+  setINI(FIniFile, pSessao, 'Password'      ,FPassword     );
+  setINI(FIniFile, pSessao, 'Database'      ,FDataBase     );
+  setINI(FIniFile, pSessao, 'SQLDialect'    ,FSQLDialect   );
+  setINI(FIniFile, pSessao, 'DriverID'      ,FDriverID     );
+  setINI(FIniFile, pSessao, 'CharacterSet'  ,FCharacterSet );
+  setINI(FIniFile, pSessao, 'Server'        ,FServer       );
+  setINI(FIniFile, pSessao, 'Protocol'      ,FProtocol     );
+  setINI(FIniFile, pSessao, 'Port'          ,FPort         );
+  setINI(FIniFile, pSessao, 'VendorLib'     ,FVendorLib    );
+  setINI(FIniFile, pSessao, 'VendorHome'    ,FVendorHome   );
+  setINI(FIniFile, pSessao, 'Embedded'      ,BoolToStr(FEmbedded));
 end;
-
 end.
 
 

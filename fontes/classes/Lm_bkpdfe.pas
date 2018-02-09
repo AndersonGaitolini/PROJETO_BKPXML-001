@@ -307,12 +307,6 @@ var wDataSet : TDataSet;
 
       if (pObjXML.StatusXml = 0) then
         pObjXML.StatusXml := FieldByName('Statusxml').AsInteger;
-//      else
-//      if((FieldByName('Status').AsInteger in [1,4]) and  (pObjXML.Status >= 1) )  then
-
-//      if ((pObjXML.Status in [1,4]) and (pObjXML.Status
-//          (pObjXML.Status >= 100) and (pObjXML.Status > wDataSet.FieldByName('Status').AsInteger)  then
-//        pObjXML.Status
 
       if pObjXML.CNPJ = '' then
       pObjXML.CNPJ := FieldByName('CNPJ').AsString;
@@ -676,7 +670,7 @@ begin
   try
     Result := TConvert<TFieldFiltros>.EnumConvertStr(pFieldFiltros);
   except
-     Result := ''
+     Result := '';
   end;
 end;
 
@@ -830,11 +824,8 @@ const cAsc = 'Asc'; cdesc = 'desc';
             tsxInutilizada: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 662]);
             tsxDefeito: str1 := str1 + Format('(%s = %d) and',['STATUSXML', -999]);
           end;
-
         end;
-
       end;
-
 
       if wDataVal then
         if wOrdData then
@@ -851,34 +842,15 @@ const cAsc = 'Asc'; cdesc = 'desc';
       if pUpDown <> obyNone then
         str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
 
-//        ShowMessage('SQL '+str1);
       DM_NFEDFE.Dao.StartTransaction;
       Result := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
       DM_NFEDFE.Dao.Commit;
       DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
 
-
-
-//        with DM_NFEDFE.dsBkpdfe.DataSet do
-//        begin
-//          First;
-//          while not Eof do
-//          begin
-//            if Length( FieldByName('CNPJDEST').AsString) = 14 then
-//              FieldByName('CNPJDEST'). := '99.999.999\/9999\-99;0;_'
-//            else
-//            if Length(FieldByName('CNPJDEST').AsString) = 11 then
-//              FieldByName('CNPJDEST').EditMask := '999.999.999\-99;0;_';
-//           Next;
-//          end;
-//        end;
     except on E: Exception do
            begin
              ShowMessage('Método: pFiltro!'+#10#13+
              'Exception: '+e.Message);
-
-//             if not fConexaoBD then
-//               ShowMessage('Não reconectou!');
            end;
     end;
   end;
@@ -905,7 +877,7 @@ begin
     ffID: begin end;
     ffCHAVE: begin pFiltro('CHAVE') end;
     ffIDF_DOCUMENTO: begin pFiltro('IDF_DOCUMENTO') end;
-    ffDATAEMISSAO: begin pFiltro('DATAEMISSAO') end;//pFiltroData('DATAEMISSAO') end;
+    ffDATAEMISSAO: begin pFiltro('DATAEMISSAO') end;
     ffDATARECTO: begin pFiltro('DATARECTO') end;
     ffMOTIVO: begin pFiltro('MOTIVO') end;
     ffPROTOCOLOCANC: begin pFiltro('PROTOCOLOCANC') end;
@@ -923,10 +895,8 @@ begin
     ffCNPJDEST : begin pFiltro('CNPJDEST') end;
     ffSTATUSXML : begin pFiltro('STATUSXML') end;
     ffTPEvento : begin pFiltro('TPEvento') end;
-
   end;
 end;
-
 
 procedure TDaoBkpdfe.pFiltraOrdena2(pFieldFiltros: TFieldFiltros;
   pUpDown: TOrdenaBy; pCNPJDest: string; pListFields: TStringList);
@@ -953,7 +923,6 @@ begin
   finally
   end;
 end;
-
 
 procedure TDaoBkpdfe.pLimpaObjetoXML(var pObjXML: TLm_bkpdfe);
 begin
@@ -1009,11 +978,9 @@ begin
 
       wDataSet.Next;
     end;
-
   finally
     wDataSet.Free;
   end;
-
 end;
 
 procedure TCNPJDOC.setDocumento(const Value: string);
@@ -1028,5 +995,5 @@ procedure TCNPJDOC.setParametro(const Value: boolean);
 begin
   FParametro := Value;
 end;
-
 end.
+

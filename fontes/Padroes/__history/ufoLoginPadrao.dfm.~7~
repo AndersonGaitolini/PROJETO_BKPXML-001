@@ -1,0 +1,80 @@
+object foLoginPadrao: TfoLoginPadrao
+  Left = 640
+  Top = 540
+  Caption = 'Tela de acesso'
+  ClientHeight = 265
+  ClientWidth = 229
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -10
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  KeyPreview = True
+  OldCreateOrder = False
+  Position = poDesktopCenter
+  OnClose = FormClose
+  OnKeyPress = FormKeyPress
+  PixelsPerInch = 96
+  TextHeight = 12
+  object pnl1: TPanel
+    Left = 0
+    Top = 0
+    Width = 229
+    Height = 265
+    Margins.Left = 2
+    Margins.Top = 2
+    Margins.Right = 2
+    Margins.Bottom = 2
+    Align = alClient
+    TabOrder = 0
+    ExplicitWidth = 242
+    ExplicitHeight = 297
+    object lbUserNome: TLabel
+      Left = 66
+      Top = 132
+      Width = 26
+      Height = 12
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = 'Nome'
+    end
+    object edUsuario: TEdit
+      Left = 66
+      Top = 78
+      Width = 97
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      TabOrder = 0
+    end
+    object edSenha: TEdit
+      Left = 66
+      Top = 108
+      Width = 97
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      PasswordChar = '*'
+      TabOrder = 1
+    end
+    object btnAcessar: TBitBtn
+      Left = 77
+      Top = 167
+      Width = 60
+      Height = 20
+      Margins.Left = 2
+      Margins.Top = 2
+      Margins.Right = 2
+      Margins.Bottom = 2
+      Caption = '&Acessar'
+      TabOrder = 2
+    end
+  end
+end

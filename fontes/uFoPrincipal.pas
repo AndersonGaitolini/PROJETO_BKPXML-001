@@ -14,7 +14,7 @@ uses
   REST.Backend.BindSource, REST.Backend.PushDevice,System.TypInfo, Vcl.Buttons,uRotinas,
   Vcl.DBCtrls, Vcl.AppEvnts, JvBaseDlg, JvSelectDirectory,System.MaskUtils,
   IdBaseComponent, IdComponent, IdRawBase, IdRawClient, IdIcmpClient,
-  ProgressWheel, Vcl.Mask;
+  ProgressWheel, Vcl.Mask, uProgressWheel;
 
 type
   TOrdena = (ordCodigo, ordData, ordChave);
@@ -27,7 +27,6 @@ type
 //  end;
 
   TfoPrincipal = class(TForm)
-    ilPrincipal: TImageList;
     tmrTempo: TTimer;
     pmExpSelecao: TMenuItem;
     ilMenu: TImageList;
@@ -177,6 +176,8 @@ type
     btnStop: TButton;
     edConsDocDest: TMaskEdit;
     cbbConsDocDest: TComboBox;
+    mmConfigConn: TMenuItem;
+    mmConfigconexo1: TMenuItem;
     procedure FormCreate(Sender: TObject);
     procedure mniReconectarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -255,11 +256,8 @@ type
     procedure edConsDocDestChange(Sender: TObject);
     procedure edConsDocDestKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
-      Field: TField; State: TGridDrawState);
     procedure btnPauseClick(Sender: TObject);
     procedure btnStopClick(Sender: TObject);
-    procedure lb5Click(Sender: TObject);
     procedure cbbConsDocDestChange(Sender: TObject);
     procedure dbgNfebkpCellClick(Column: TColumn);
     procedure edConsDocDestExit(Sender: TObject);
@@ -269,6 +267,7 @@ type
     procedure lb2MouseEnter(Sender: TObject);
     procedure lb2MouseLeave(Sender: TObject);
     procedure lb2DblClick(Sender: TObject);
+    procedure mmConfigConnClick(Sender: TObject);
 
 //  protected
 //    procedure DoExecute; override;
@@ -307,6 +306,7 @@ type
     procedure pCarregaMenuPrincipal;
     procedure pCarregaRodapePrincipal;
     procedure pPosicionaDocDest;
+    procedure pTrocaUsuario;
   public
     { Public declarations }
     procedure pAtualizaGrid;
@@ -918,6 +918,19 @@ finally
 end;
 end;
 
+procedure TfoPrincipal.mmConfigConnClick(Sender: TObject);
+begin
+    foConexao := TfoConexao.Create(Application);
+  try
+    foConexao.ShowModal;
+    if not ConecxaoBD.Conectado then
+      pTrocaUsuario;
+
+  finally
+    FreeAndNil(foConexao);
+  end;
+end;
+
 procedure TfoPrincipal.pmConfigUsauriosClick(Sender: TObject);
 begin
   FoConsUsuario := TfoConsUsuario.Create(Application);
@@ -1435,7 +1448,7 @@ begin
     cbbConsDocDest.ItemIndex := 1;
 
   pPosicionaDocDest;
-    edConsDocDest.Text := Column.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString;
+  edConsDocDest.Text := Column.Grid.DataSource.DataSet.FieldByName('cnpjdest').AsString;
 end;
 
 procedure TfoPrincipal.dbgNfebkpDblClick(Sender: TObject);
@@ -1467,10 +1480,11 @@ end;
 procedure TfoPrincipal.dbgNfebkpDrawColumnCell(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
   const IsChecked : array[Boolean] of Integer = (DFCS_BUTTONCHECK, DFCS_BUTTONCHECK or DFCS_CHECKED);
-var wStream : TStream;
-    wFileName, wSTR : String;
-    wRow, wStatus : Integer;
+var
     wColor: TColor;
+    wStream : TStream;
+    wRow, wStatus : Integer;
+    wFileName, wSTR : String;
 
   procedure pSetColorLinhas;
   begin
@@ -1561,12 +1575,6 @@ begin
   end;
 end;
 
-procedure TfoPrincipal.dbgNfebkpDrawDataCell(Sender: TObject; const Rect: TRect;
-  Field: TField; State: TGridDrawState);
-begin
-  //
-end;
-
 procedure TfoPrincipal.dbgNfebkpKeyPress(Sender: TObject; var Key: Char);
 var wOK : Boolean;
     wMR,I : Integer;
@@ -1627,11 +1635,11 @@ var i,k:Integer;
 
  procedure pSetaCores;
  begin
-   clCorGrid00 := StrToInt('$D6FEE1'); //Menta suave
-   clCorGrid01 := StrToInt('$ffd7e1'); //Algodão-Doce framboesa
-   clCorGrid02 := StrToInt('$fdfad0'); //Laranja Cream
-   clCorGrid03 := StrToInt('$ffffda'); //Amarelo suave
-   clCorGrid04 := StrToInt('$B4D0F7'); //Azul calcinha
+   clCorGrid00 := StrToInt('$D6FEE1');
+   clCorGrid01 := StrToInt('$ffd7e1');
+   clCorGrid02 := StrToInt('$fdfad0');
+   clCorGrid03 := StrToInt('$ffffda');
+   clCorGrid04 := StrToInt('$B4D0F7');
  end;
 
  procedure pProgressBarStyle;
@@ -1649,7 +1657,6 @@ begin
   if not Assigned(wRotinas) then
     wRotinas := TRotinas.Create;
 
-//  DaoObjetoXML.pAtualizaTabela;
   foPrincipal.Caption := 'SOUIS - MAXXML Versão 1.7';
   pSetaCores;
   pIniciaGrid;
@@ -1755,13 +1762,33 @@ begin
   end;
 end;
 
+procedure TfoPrincipal.pTrocaUsuario;
+var wShowResult : Byte;
+begin
+  foLogin := TfoLogin.Create(Application);
+  try
+    wShowResult := foLogin.ShowModal;
+
+    if wShowResult = mrOk then
+    begin
+      wVisible := wRotinas.fMaster(tabUsuarios);
+      statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
+    end
+    else
+      Application.Terminate;
+
+  finally
+    FreeAndNil(foLogin);
+  end;
+end;
+
 function TfoPrincipal.fSelecionaLinhaGrid(pSelecao : TSelectRowsGrid = sgTodos; pCNPJ : String = '*'): Int64;
 var
  wDataSet : TDataSet;
+
   procedure pSelectRows;
   var wLinha: Integer;
   begin
-
     with wDataSet do
     begin
       Last;
@@ -1772,15 +1799,12 @@ var
         Next;
       end;
     end;
-
   end;
-
 
   procedure pSelectRowsFiltro;
     var wLinha: Integer;
   begin
     Result :=0;
-
     with dbgNfebkp.Datasource.DataSet do
     begin
       Last;
@@ -1792,9 +1816,7 @@ var
         Prior;
       end;
     end;
-
   end;
-
 
 begin
   try
@@ -1827,7 +1849,6 @@ begin
   with TLabel(Sender)do
   begin
     Font.Color := clBlue;
-
     case tag of
       1000: begin wTipStatXML := tsxNormal; end;      //Normal
       1001: begin wTipStatXML := tsxNormAguard end;   //Aguard. Retorno
@@ -1860,16 +1881,10 @@ begin
   end;
 end;
 
-procedure TfoPrincipal.lb5Click(Sender: TObject);
-begin
-  //
-end;
-
 procedure TfoPrincipal.pRemoveSelTodasLinhas;
 var
 wlLinha: Integer;
 begin
-//  DaoObjetoXML.fFiltraOrdena(ffDATAALTERACAO,wLastOrderBy,'Dataalteracao', dtpDataFiltroINI.Date, dtpDataFiltroFin.Date);
   with dbgNfebkp.DataSource.DataSet do
   begin
     First;
@@ -1879,12 +1894,12 @@ begin
       Next;
     end;
   end;
-
 end;
 
 procedure TfoPrincipal.pUpdateCampoCNPJE;
-var k : Integer;
-    wCNPJ: string;
+var
+  k : Integer;
+  wCNPJ: string;
 begin
 if Assigned(CNPJDOC) then
   begin
@@ -1917,7 +1932,6 @@ if Assigned(CNPJDOC) then
           cbbEmpCNPJ.Items.Add('CNPJ: '+ wCNPJ);
       end;
     end;
-
 
     if wCNPJ = '*' then
        cbbEmpCNPJ.ItemIndex := 0
@@ -1981,9 +1995,7 @@ procedure TfoPrincipal.pmRefazAutorizacaoTodosClick(Sender: TObject);
 var
     wI : Integer;
     wColumn : TColumn;
-//    wPathInit : TStringList;
 begin
-//   wPathInit := TStringList.Create;
    jopdDirDir := TJvSelectDirectory.Create(Application);
    try
      wPathXML := ExtractFileDir(ParamStr(0));
@@ -1999,18 +2011,14 @@ begin
      jopdDirDir.Title := 'Seleceione o diretório dos Processados.';
     if jopdDirDir.Execute then
       wPathXML  := jopdDirDir.Directory;
-//     fOpenDirectory(wPathXML);
 
     if (wPathXML = '') OR (NOT DirectoryExists(wPathXML)) then
       exit;
 
     pRotinasProgress(emLoadXMLNFe);
-
    finally
-//     wPathInit.free;
      jopdDirDir.Free;
    end;
-
 end;
 
 procedure TfoPrincipal.pmRefazXMLClick(Sender: TObject);
@@ -2065,32 +2073,29 @@ end;
 procedure TfoPrincipal.mniReconectarClick(Sender: TObject);
 var statusCon : string;
 begin
-//  if ConexaoBD(DM_NFEDFE.conConexaoFD, DM_NFEDFE.fddrfbDriver) then
-//   statusCon := 'Conectado'
-//  else
-//   statusCon := 'Desconecado';
 
-//  statPrincipal.Panels[1].text := statusCon;
 end;
 
 procedure TfoPrincipal.pmTrocarUsuarioClick(Sender: TObject);
-var wShowResult : Byte;
+//var wShowResult : Byte;
 begin
-  foLogin := TfoLogin.Create(Application);
-  try
-    wShowResult := foLogin.ShowModal;
 
-    if wShowResult = mrOk then
-    begin
-      wVisible := wRotinas.fMaster(tabUsuarios);
-      statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
-    end
-    else
-    Application.Terminate;
-
-  finally
-    FreeAndNil(foLogin);
-  end;
+ pTrocaUsuario;
+//  foLogin := TfoLogin.Create(Application);
+//  try
+//    wShowResult := foLogin.ShowModal;
+//
+//    if wShowResult = mrOk then
+//    begin
+//      wVisible := wRotinas.fMaster(tabUsuarios);
+//      statPrincipal.Panels[0].Text := 'Usuário: '+ tabUsuarios.Usuario;
+//    end
+//    else
+//      Application.Terminate;
+//
+//  finally
+//    FreeAndNil(foLogin);
+//  end;
 end;
 
 procedure TfoPrincipal.pPosicionaDocDest;
@@ -2156,8 +2161,6 @@ end;
 //  inherited;
 //end;
 initialization
-
-
 
 end.
 

@@ -1328,7 +1328,6 @@ var
         end;
 
         FileClose(wFileStream.Handle);
-
         pCompress(wFileSource, wStream,false);
         if wCNPJAux <> CNPJ then
         begin
@@ -1987,8 +1986,6 @@ var
               if Length(Motivocanc)>20 then
                 Motivocanc := copy(Motivocanc,1,20);
 
-//              if pEmail <> '' then
-//                      Emailsnotificados := pEmail;
               Dataalteracao := Today;
               FileClose(wFileStream.Handle);
               pCompress(wFileSource,wStream,false);
@@ -2039,7 +2036,6 @@ var
         SetLength(wArrayObjXML, wJ);
         ObjetoXML := TLm_bkpdfe.Create;
         wXmlName := ExtractFileName(wFileSource);
-//        wCNPJAux :=  fGetCNPJPelaChave(wXmlName);
         wChaveAux := fGetChaveFilename(wXmlName);
 
         Tipo := '1';
@@ -2135,13 +2131,11 @@ var
  end;
 
 begin
-  Result := False;
-
-  XMLArq     := TXMLDocument.Create(Application);
+  Result     := False;
   wDaoXML    := TDaoBkpdfe.Create;
   wObjConfig := TConfiguracoes.Create;
   wDaoConfig := TDaoConfiguracoes.Create;
-
+  XMLArq     := TXMLDocument.Create(Application);
   try
     try
       if not pParametro then
@@ -2177,27 +2171,26 @@ end;
 function fLoadXMLNFeParam(pTipo : Byte; pChave,
   pEmail: string): Boolean;
 var
-  wDataSet   : TDataSet;
-  wDaoXML    : TDaoBkpdfe;
-  ObjetoXML, ObjXMLAux : TLm_bkpdfe;
+  wErro, j: integer;
   wStream    : TStream;
+  wDataSet   : TDataSet;
+  wFRec      : TSearchRec;
+  wDaoXML    : TDaoBkpdfe;
+  XMLArq     : TXMLDocument;
   wFileStream : TFileStream;
   wMemoStream : TMemoryStream;
-  wFRec      : TSearchRec;
-  wErro, j: integer;
-  XMLArq     : TXMLDocument;
-  wArrayObjXML : array of TLm_bkpdfe;
-  wNodeXML, wNodeInfNFe, wNodeNfeProc, wNodeDest, wNodeEmit: IXMLNode;
   wFileSource, wFileDest: string;
-  wXmlName, wZipName,wChaveAux,wPathFile, wCNPJAux: string;
+  ObjetoXML, ObjXMLAux : TLm_bkpdfe;
+  wArrayObjXML : array of TLm_bkpdfe;
   wXMLEnvio, wXMLProcessado,wOK, wYesAll: boolean;
-
+  wXmlName, wZipName,wChaveAux,wPathFile, wCNPJAux: string;
+  wNodeXML, wNodeInfNFe, wNodeNfeProc, wNodeDest, wNodeEmit: IXMLNode;
 
 procedure pCompressInterno(const ASrc: string; var vDest: TStream; aEHStringStream: Boolean);
 var
   FileIni: TFileStream;
-  Zip:     TCompressionStream;
   tString: TStringStream;
+  Zip: TCompressionStream;
 begin
   tString := nil;
   FileIni := nil;
@@ -2571,10 +2564,8 @@ end;
         end;
 
         FileClose(wFileStream.Handle);
-
         pCompressInterno(wFileSource, wStream,false);
         XmlCartaCorrecao := wStream;
-
         Dataalteracao := Today;
         wArrayObjXML[J-1] := ObjetoXML;
         exit;
@@ -2642,13 +2633,10 @@ end;
           end;
 
           FileClose(wFileStream.Handle);
-
           pCompressInterno(wFileSource, wStream,false);
           XmlCartaCorrecao := wStream;
-
           Dataalteracao := Today;
           wArrayObjXML[J-1] := ObjetoXML;
-
           wErro := FindNext(wFRec);
           wOK := (wErro = 0);
           wFileSource := wPathFile + wFRec.Name;
@@ -2768,11 +2756,11 @@ end;
 function TRotinas.fExportaPDF(pLista: TStringList): Integer;
 var
   wOK : boolean;
+  wFRec      : TSearchRec;
   wDaoXML    : TDaoBkpdfe;
+  wObjetoXML : TLm_bkpdfe;
   wObjConfig : TConfiguracoes;
   wDaoConfig : TDaoConfiguracoes;
-  wObjetoXML : TLm_bkpdfe;
-  wFRec      : TSearchRec;
   wErro, wI,wJ, wTotSave  : integer;
   wFileSource,wPathSave, wPathArq, wFileName: string;
 
@@ -2785,7 +2773,6 @@ var
     wObjConfig.id := pIDConfig;
     Result := (wDaoConfig.fCarregaConfiguracoes(wObjConfig,['id']).RecordCount = 1);
   end;
-
 
   function fCarregaPAthPDF: String;
   var wPathMAX : string;
@@ -2850,8 +2837,7 @@ begin
       end;
 
     except on E: Exception do
-      ShowMessage('Método: fExportaPDF' + #10#13+
-                   E.Message);
+      ShowMessage('Método: fExportaPDF' + #10#13+E.Message);
     end;
 
   finally
@@ -2905,7 +2891,7 @@ begin
   xmlNCab := xmldoc_nfe.DocumentElement.childNodes.First.ChildNodes.FindNode('emit');
   if Not (xmlNCab.ChildNodes.First = Nil) Then
   begin
-    widstrRetorno := funcvarXML(xmlNCab.ChildNodes['CNPJ'   ]); // CGC Fornecedor
+    widstrRetorno := funcvarXML(xmlNCab.ChildNodes['CNPJ'   ]); // CNPJ Fornecedor
     widstrRetorno := funcvarXML(xmlNCab.ChildNodes['CPF'    ]); // CPF Fornecedor
     widstrRetorno := funcvarXML(xmlNCab.ChildNodes['xNome'  ]); // Razão Social do Fornecedor
     widstrRetorno := funcvarXML(xmlNCab.ChildNodes['xFant'  ]); // Nome Fantasia
@@ -2967,7 +2953,6 @@ begin
 end;
 
 {TRotinas}
-
 function TRotinas.fDirectoryTreeFileCount(PInitialDir: String): Cardinal;
 var
   SearchRecord: TSearchRec;

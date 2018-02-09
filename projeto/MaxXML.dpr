@@ -20,7 +20,6 @@ uses
   ufoGerarClasse in 'J:\fontes\ORM\ufoGerarClasse.pas' {foGeraClasse},
   Lm_bkpdfe in 'J:\fontes\classes\Lm_bkpdfe.pas',
   uPadraoEdicao in 'J:\fontes\Padroes\uPadraoEdicao.pas' {frmPadraoEdi},
-  uLoadXML in 'J:\fontes\uLoadXML.pas',
   ufoLoginPadrao in 'J:\fontes\Padroes\ufoLoginPadrao.pas' {foLoginPadrao},
   ufoLogin in 'J:\fontes\ufoLogin.pas' {foLogin},
   Usuarios in 'J:\fontes\classes\Usuarios.pas',
@@ -74,7 +73,6 @@ begin
     ConecxaoBD.pReadParams(FNomePC);
     ConecxaoBD.pConecta;
 
-//    GotoLogin:
     Lm_bkpdfe.CNPJDOC.Documento := '*';
     Lm_bkpdfe.CNPJDOC.Fantasia  := 'Todas empresas';
     Lm_bkpdfe.CNPJDOC.Parametro := false;
@@ -84,18 +82,18 @@ begin
 
     if ShowResult = mrOk then
     begin
-      wMsg := foLogin.statMsg.Panels[1].Text;
+//      wMsg := foLogin.statMsg.Panels[1].Text;
       SoapUsuario :=  tabUsuarios;
 
       FreeAndNil(foLogin); //Libera o form de Login da memória
-      Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela main
+      Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela principal
       tabUsuarios := SoapUsuario;
       Application.Run; //Roda a aplicação
       SoapUsuario.Free;
      end
     else
-    if ShowResult = mrCAncel then //Caso o retorno da tela de Login seja mrCancel então
-      Application.Terminate; //Encerra a aplicação  end
+    if ShowResult = mrCAncel then //Caso o retorno da tela de Login seja mrCancel então:
+      Application.Terminate; //Encerra a aplicação
   end
   else
   if wTipo = cXMLConsulta then
@@ -104,8 +102,6 @@ begin
     ConecxaoBD.pConecta;
     if not ConecxaoBD.Conectado then
     begin
-//      Application.CreateForm(TfoConexao, foConexao);
-//      if not ConecxaoBD.Conectado then
         Application.Terminate;
         exit;
     end;
@@ -163,9 +159,6 @@ begin
   else
   if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut,cXMLCartaCorr]) then
   begin
-//    if ParamCount > 0 then
-//    for I := 0 to ParamCount do
-//      uMetodosUteis.AddLog('LOGMAXXML'+IntToStr(ParamCount),GetCurrentDir,'CALL_PARAMETROS: ' + ParamStr(i),true);
     ConecxaoBD.pReadParams(FNomePC);
     ConecxaoBD.pConecta;
 

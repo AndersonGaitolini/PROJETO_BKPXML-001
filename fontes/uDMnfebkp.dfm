@@ -1,8 +1,8 @@
 object DM_NFEDFE: TDM_NFEDFE
   OldCreateOrder = False
   OnCreate = DataModuleCreate
-  Height = 403
-  Width = 364
+  Height = 343
+  Width = 308
   object conConexaoFD: TFDConnection
     Params.Strings = (
       'CharacterSet=WIN1252'
@@ -15,36 +15,35 @@ object DM_NFEDFE: TDM_NFEDFE
     UpdateOptions.LockWait = True
     LoginPrompt = False
     Transaction = fdtrTransacao
-    BeforeDisconnect = conConexaoFDBeforeDisconnect
-    Left = 28
-    Top = 77
+    Left = 22
+    Top = 19
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
-    Left = 237
-    Top = 78
+    Left = 231
+    Top = 20
   end
   object fdWaitCursor: TFDGUIxWaitCursor
     Provider = 'Forms'
-    Left = 101
-    Top = 79
+    Left = 95
+    Top = 21
   end
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
     VendorLib = 'C:\fb\bin\fbembed.dll'
     Embedded = True
-    Left = 169
-    Top = 79
+    Left = 163
+    Top = 21
   end
   object dsConfiguracoes: TDataSource
     DataSet = cdsConfiguracoes
-    Left = 170
-    Top = 139
+    Left = 164
+    Top = 81
   end
   object dsBkpdfe: TDataSource
     DataSet = cdsBkpdfe
-    Left = 173
-    Top = 256
+    Left = 167
+    Top = 198
   end
   object cdsBkpdfe: TClientDataSet
     Aggregates = <>
@@ -180,8 +179,8 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provBkpdfe'
     StoreDefs = True
-    Left = 21
-    Top = 256
+    Left = 15
+    Top = 198
     object cdsBkpdfeID: TIntegerField
       FieldName = 'ID'
       Origin = 'ID'
@@ -301,28 +300,28 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object provBkpdfe: TDataSetProvider
     DataSet = sqlBkpDfe
-    Left = 97
-    Top = 256
+    Left = 91
+    Top = 198
   end
   object sqlBkpDfe: TFDQuery
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from LM_bkpdfe')
-    Left = 249
-    Top = 257
+    Left = 243
+    Top = 199
   end
   object dsUsuarios: TDataSource
     DataSet = cdsUsuarios
-    Left = 170
-    Top = 198
+    Left = 164
+    Top = 140
   end
   object cdsUsuarios: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'provUsuarios'
-    Left = 18
-    Top = 198
+    Left = 12
+    Top = 140
     object cdsUsuariosID: TIntegerField
       FieldName = 'ID'
       Origin = 'ID'
@@ -346,23 +345,23 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object provUsuarios: TDataSetProvider
     DataSet = sqlUsuarios
-    Left = 94
-    Top = 198
+    Left = 88
+    Top = 140
   end
   object sqlUsuarios: TFDQuery
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from usuarios')
-    Left = 246
-    Top = 198
+    Left = 240
+    Top = 140
   end
   object cdsConfiguracoes: TClientDataSet
     Aggregates = <>
     Params = <>
     ProviderName = 'provConfiguracoes'
-    Left = 19
-    Top = 138
+    Left = 13
+    Top = 80
     object intgrfldConfiguracoesID: TIntegerField
       FieldName = 'ID'
       Required = True
@@ -456,22 +455,22 @@ object DM_NFEDFE: TDM_NFEDFE
     end
   end
   object provConfiguracoes: TDataSetProvider
-    Left = 94
-    Top = 139
+    Left = 88
+    Top = 81
   end
   object sqlConfiguracoes: TFDQuery
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from configuracoes')
-    Left = 247
-    Top = 138
+    Left = 241
+    Top = 80
   end
   object dsTPEvento: TDataSource
     DataSet = cdsTPEvento
     OnDataChange = dsTPEventoDataChange
-    Left = 169
-    Top = 332
+    Left = 163
+    Top = 274
   end
   object cdsTPEvento: TClientDataSet
     Aggregates = <>
@@ -494,8 +493,8 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provTPEvento'
     StoreDefs = True
-    Left = 19
-    Top = 333
+    Left = 13
+    Top = 275
     object cdsTPEventoID: TIntegerField
       FieldName = 'ID'
       Required = True
@@ -510,15 +509,15 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object provTPEvento: TDataSetProvider
     DataSet = sqlTPEvento
-    Left = 96
-    Top = 331
+    Left = 90
+    Top = 273
   end
   object sqlTPEvento: TFDQuery
     Connection = conConexaoFD
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from tpevento')
-    Left = 246
-    Top = 334
+    Left = 240
+    Top = 276
   end
 end

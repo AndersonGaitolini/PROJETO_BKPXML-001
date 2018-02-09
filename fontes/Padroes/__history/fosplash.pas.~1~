@@ -1,0 +1,47 @@
+unit fosplash;
+
+interface
+
+uses
+  fosplashBas,
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ExtCtrls, StdCtrls, Buttons, TB97, uBttDisable, Menus, jpeg, TB97Ctls;
+
+type
+  TmgFoSplash = class(TmgFoSplashBas)
+  private
+  public
+  end;
+
+function AcessoSplash(var Nome, Senha: string): integer;
+  
+implementation
+
+{$R *.DFM}
+
+function AcessoSplash(var Nome, Senha: string): integer;
+var
+  mgSplash : TmgFoSplash;
+begin
+  Result := mrCancel;
+  mgSplash := TmgFoSplash.Create(Application);
+  try
+    with mgSplash do
+    begin
+      Left := (Screen.Width - Width) div 2;
+      Top := (Screen.Height - Height) div 2;
+
+      edUsuario.Text  := Nome;
+      edSenha.Text := Senha;
+
+      Result := ShowModal;
+
+      Nome  := edUsuario.Text;
+      Senha := edSenha.Text;
+    end;
+  finally
+    mgSplash.Free;
+  end;
+end;
+
+end.
