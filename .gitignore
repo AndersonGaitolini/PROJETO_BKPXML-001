@@ -4,3 +4,8 @@ fontes/__history/
 *.dcu
 dcu/*dcu
 *.Bat
+.svn/entries
+.svn/format
+*.svn-base
+.svn/wc.db
+.svn/wc.db-journal
