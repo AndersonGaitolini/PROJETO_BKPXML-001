@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>MaxXML.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Application</AppType>
@@ -59,7 +59,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_UsePackage>FireDACTDataDriver;FireDACSqliteDriver;FireDACDSDriver;frxTee22;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DataSnapProviderClient;DBXSybaseASEDriver;frxe22;DbxCommonDriver;vclimg;DUnitXRuntime;dbxcds;DatasnapConnectorsFreePascal;appanalytics;vcldb;vcldsnap;fmxFireDAC;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;vclribbon;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;adortl;FireDACASADriver;frx22;bindcompfmx;FireDACODBCDriver;RESTBackendComponents;emsclientfiredac;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;DBXOdbcDriver;ibmonitor;vclFireDAC;xmlrtl;DataSnapNativeClient;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;soaprtl;bindengine;vclactnband;FMXTee;TeeUI;bindcompvcl;vclie;frxDB22;FireDACADSDriver;vcltouch;emsclient;VclSmp;FireDAC;DBXInformixDriver;FireDACMSSQLDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
+        <DCC_UsePackage>FireDACTDataDriver;FireDACSqliteDriver;FireDACDSDriver;frxTee22;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DataSnapProviderClient;DBXSybaseASEDriver;frxe22;DbxCommonDriver;vclimg;DUnitXRuntime;dbxcds;DatasnapConnectorsFreePascal;appanalytics;vcldb;vcldsnap;fmxFireDAC;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;vclribbon;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;CodeSiteExpressPkg;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;adortl;FireDACASADriver;frx22;bindcompfmx;FireDACODBCDriver;RESTBackendComponents;emsclientfiredac;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;DBXOdbcDriver;ibmonitor;vclFireDAC;xmlrtl;DataSnapNativeClient;svnui;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;soaprtl;bindengine;vclactnband;FMXTee;TeeUI;bindcompvcl;vclie;frxDB22;FireDACADSDriver;vcltouch;emsclient;VclSmp;FireDAC;DBXInformixDriver;FireDACMSSQLDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;svn;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;prjProgressWheel;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
@@ -69,6 +69,9 @@
         <DCC_UsePackage>FireDACTDataDriver;FireDACSqliteDriver;FireDACDSDriver;DBXSqliteDriver;FireDACPgDriver;fmx;IndySystem;TeeDB;tethering;vclib;DBXInterBaseDriver;DataSnapClient;DataSnapServer;DataSnapCommon;DataSnapProviderClient;DBXSybaseASEDriver;DbxCommonDriver;vclimg;dbxcds;DatasnapConnectorsFreePascal;appanalytics;vcldb;vcldsnap;fmxFireDAC;DBXDb2Driver;DBXOracleDriver;CustomIPTransport;vclribbon;dsnap;IndyIPServer;fmxase;vcl;IndyCore;DBXMSSQLDriver;IndyIPCommon;CloudService;FmxTeeUI;FireDACIBDriver;DataSnapFireDAC;FireDACDBXDriver;soapserver;inetdbxpress;dsnapxml;FireDACInfxDriver;FireDACDb2Driver;adortl;FireDACASADriver;bindcompfmx;FireDACODBCDriver;RESTBackendComponents;emsclientfiredac;rtl;dbrtl;DbxClientDriver;FireDACCommon;bindcomp;inetdb;Tee;DBXOdbcDriver;ibmonitor;vclFireDAC;xmlrtl;DataSnapNativeClient;ibxpress;IndyProtocols;DBXMySQLDriver;FireDACCommonDriver;bindcompdbx;soaprtl;bindengine;vclactnband;FMXTee;TeeUI;bindcompvcl;vclie;FireDACADSDriver;vcltouch;emsclient;VclSmp;FireDAC;DBXInformixDriver;FireDACMSSQLDriver;Intraweb;VCLRESTComponents;DataSnapConnectors;DataSnapServerMidas;dsnapcon;DBXFirebirdDriver;inet;fmxobj;FireDACMySQLDriver;soapmidas;vclx;DBXSybaseASADriver;FireDACOracleDriver;fmxdae;RESTComponents;FireDACMSAccDriver;dbexpress;DataSnapIndy10ServerTransport;IndyIPClient;$(DCC_UsePackage)</DCC_UsePackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
+        <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <VerInfo_Locale>1046</VerInfo_Locale>
+        <DCC_ExeOutput>E:\EXE LIBERADOS\</DCC_ExeOutput>
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_Optimize>false</DCC_Optimize>
@@ -77,18 +80,15 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <Debugger_RunParams>0 MASTER 1739525</Debugger_RunParams>
         <VerInfo_AutoGenVersion>true</VerInfo_AutoGenVersion>
         <VerInfo_MinorVer>3</VerInfo_MinorVer>
-        <Debugger_HostApplication>E:\BT\7.0\MaxWin\Zancanaro\MAXXML\MaxXML.exe</Debugger_HostApplication>
-        <Icon_MainIcon>MaxXML_Icon1.ico</Icon_MainIcon>
-        <DCC_DcuOutput>J:\dcu\</DCC_DcuOutput>
-        <VerInfo_Locale>1046</VerInfo_Locale>
-        <DCC_BplOutput>J:\projeto\</DCC_BplOutput>
-        <DCC_ExeOutput>E:\BT\7.0\MaxWin\Zancanaro\MAXXML\</DCC_ExeOutput>
-        <DCC_DcpOutput>J:\projeto\</DCC_DcpOutput>
+        <Icon_MainIcon>MaxXML_Icon2.ico</Icon_MainIcon>
+        <DCC_DcuOutput>..\dcu\</DCC_DcuOutput>
+        <DCC_BplOutput>..\projeto\</DCC_BplOutput>
+        <DCC_ExeOutput>E:\BT\7.0\4.0\MAXWIN\PAIOL\MAXXML</DCC_ExeOutput>
+        <DCC_DcpOutput>..\projeto\</DCC_DcpOutput>
         <VerInfo_Build>2</VerInfo_Build>
-        <DCC_UnitSearchPath>J:\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.3.0.2;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
@@ -101,12 +101,12 @@
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.2.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_MinorVer>2</VerInfo_MinorVer>
-        <DCC_BplOutput>J:\projeto\</DCC_BplOutput>
-        <DCC_DcuOutput>J:\dcu\</DCC_DcuOutput>
-        <DCC_ExeOutput>E:\BT\7.0\MaxWin\Zancanaro\MAXXML\</DCC_ExeOutput>
-        <DCC_DcpOutput>J:\projeto\</DCC_DcpOutput>
+        <DCC_BplOutput>..\projeto\</DCC_BplOutput>
+        <DCC_DcuOutput>..\dcu</DCC_DcuOutput>
+        <DCC_ExeOutput>E:\BT\7.0\4.0\MAXECV\KAETE\MAXXML</DCC_ExeOutput>
+        <DCC_DcpOutput>..\projeto\</DCC_DcpOutput>
         <VerInfo_Locale>1046</VerInfo_Locale>
-        <DCC_UnitSearchPath>J:\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <Icon_MainIcon>MaxXML_Icon.ico</Icon_MainIcon>
     </PropertyGroup>
@@ -114,82 +114,78 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="J:\fontes\uDMnfebkp.pas">
+        <DCCReference Include="..\fontes\uDMnfebkp.pas">
             <Form>DM_NFEDFE</Form>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uMetodosUteis.pas"/>
-        <DCCReference Include="J:\fontes\Padroes\uPadraoCons.pas">
+        <DCCReference Include="..\fontes\uMetodosUteis.pas"/>
+        <DCCReference Include="..\fontes\Padroes\uPadraoCons.pas">
             <Form>frmPadraoCons</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoPrincipal.pas">
+        <DCCReference Include="..\fontes\uFoPrincipal.pas">
             <Form>foPrincipal</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\ORM\Atributos.pas"/>
-        <DCCReference Include="J:\fontes\ORM\Base.pas"/>
-        <DCCReference Include="J:\fontes\ORM\DaoFD.pas"/>
-        <DCCReference Include="J:\fontes\ORM\GerarClasse.BancoFirebird.pas"/>
-        <DCCReference Include="J:\fontes\ORM\GerarClasse.BancoMySQL.pas"/>
-        <DCCReference Include="J:\fontes\ORM\GerarClasse.pas"/>
-        <DCCReference Include="J:\fontes\ORM\GerarClasseFireDac.pas"/>
-        <DCCReference Include="J:\fontes\classes\Configuracoes.pas"/>
-        <DCCReference Include="J:\fontes\ORM\ufoGerarClasse.pas">
+        <DCCReference Include="..\fontes\ORM\Atributos.pas"/>
+        <DCCReference Include="..\fontes\ORM\Base.pas"/>
+        <DCCReference Include="..\fontes\ORM\DaoFD.pas"/>
+        <DCCReference Include="..\fontes\ORM\GerarClasse.BancoFirebird.pas"/>
+        <DCCReference Include="..\fontes\ORM\GerarClasse.BancoMySQL.pas"/>
+        <DCCReference Include="..\fontes\ORM\GerarClasse.pas"/>
+        <DCCReference Include="..\fontes\ORM\GerarClasseFireDac.pas"/>
+        <DCCReference Include="..\fontes\classes\Configuracoes.pas"/>
+        <DCCReference Include="..\fontes\ORM\ufoGerarClasse.pas">
             <Form>foGeraClasse</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\classes\Lm_bkpdfe.pas"/>
-        <DCCReference Include="J:\fontes\Padroes\uPadraoEdicao.pas">
+        <DCCReference Include="..\fontes\classes\Lm_bkpdfe.pas"/>
+        <DCCReference Include="..\fontes\Padroes\uPadraoEdicao.pas">
             <Form>frmPadraoEdi</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\Padroes\ufoLoginPadrao.pas">
+        <DCCReference Include="..\fontes\Padroes\ufoLoginPadrao.pas">
             <Form>foLoginPadrao</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\ufoLogin.pas">
+        <DCCReference Include="..\fontes\ufoLogin.pas">
             <Form>foLogin</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\classes\Usuarios.pas"/>
-        <DCCReference Include="J:\fontes\Padroes\uFoConsultaPadrao.pas">
+        <DCCReference Include="..\fontes\classes\Usuarios.pas"/>
+        <DCCReference Include="..\fontes\Padroes\uFoConsultaPadrao.pas">
             <Form>foConsultaPadrao</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoConsConfiguracao.pas">
+        <DCCReference Include="..\fontes\uFoConsConfiguracao.pas">
             <Form>foConsConfiguracoes</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\classes\ConfigPadrao.pas"/>
-        <DCCReference Include="J:\fontes\uFoConfigPadrao.pas">
+        <DCCReference Include="..\fontes\classes\ConfigPadrao.pas"/>
+        <DCCReference Include="..\fontes\uFoConfigPadrao.pas">
             <Form>foConfigPadrao</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uRotinas.pas"/>
-        <DCCReference Include="J:\fontes\uFoXMLSimulacao.pas">
+        <DCCReference Include="..\fontes\uRotinas.pas"/>
+        <DCCReference Include="..\fontes\uFoXMLSimulacao.pas">
             <Form>foXMLSimulcao</Form>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoCadUsuario.pas">
-            <Form>foCadUsuario</Form>
-        </DCCReference>
-        <DCCReference Include="J:\fontes\uFoConsUsuario.pas">
-            <Form>foConsUsuario</Form>
-        </DCCReference>
-        <DCCReference Include="J:\fontes\Padroes\uPadraoForm.pas">
+        <DCCReference Include="..\fontes\Padroes\uPadraoForm.pas">
             <Form>foPadraoForm</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="J:\fontes\ufoTamanhoArquivos.pas">
+        <DCCReference Include="..\fontes\ufoTamanhoArquivos.pas">
             <Form>foTamArquivos</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uDirectoryTreeSize.pas"/>
-        <DCCReference Include="J:\fontes\uProgressThread.pas"/>
-        <DCCReference Include="J:\fontes\uFoFiltroDetalhe.pas">
+        <DCCReference Include="..\fontes\uDirectoryTreeSize.pas"/>
+        <DCCReference Include="..\fontes\uProgressThread.pas"/>
+        <DCCReference Include="..\fontes\uFoFiltroDetalhe.pas">
             <Form>foFiltroDetalahado</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoConexao.pas">
+        <DCCReference Include="..\fontes\uFoConexao.pas">
             <Form>foConexao</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="J:\fontes\uFoProgressao.pas">
+        <DCCReference Include="..\fontes\uFoProgressao.pas">
             <Form>foProgressao</Form>
+        </DCCReference>
+        <DCCReference Include="..\fontes\Tpevento.pas"/>
+        <DCCReference Include="..\Componentes\Progress Wheel Bar\uProgressWheel.pas"/>
+        <DCCReference Include="..\Componentes\Progress Wheel Bar\ProgressWheel.pas"/>
+        <DCCReference Include="..\fontes\SplitView.pas"/>
+        <DCCReference Include="..\fontes\uFoAutoriza.pas">
+            <Form>foAutoriza</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="J:\fontes\Tpevento.pas"/>
         <None Include="ModelSupport_MaxXML\default.txaPackage"/>
         <None Include="ModelSupport_MaxXML\default.txvpck"/>
         <None Include="ModelSupport_MaxXML\uPadraoEdicao\default.txvpck"/>
@@ -255,6 +251,27 @@
                     <Excluded_Packages Name="$(BDSBIN)\bcbofficexp220.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k220.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp220.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFe.bpl">ACBr - Nota Fiscal Eletrônica - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFCeECFVirtual.bpl">ACBr - Implementação ECF Virtual NFCe. Permite usar ACBrECF para emitir NFCe como se fosse um ECF</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFeDanfeESCPOS.bpl">ACBr - DANFe para NFC-e Impressora Serial - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_CTe.bpl">ACBr - Conhecimento de Transporte Eletrônico - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFSe.bpl">ACBr - Nota Fiscal de Serviço Eletrônica - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_MDFe.bpl">ACBr - Manifesto de Documentos Fiscais Eletrônico - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_GNRE.bpl">ACBr - Guia Nacional de Recolhimento de Tributos Estaduais - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_SATExtratoESCPOS.bpl">ACBr - Extrato Cupom Fiscal Eletrônico SAT para Serial - (http://www.projectoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_BlocoX.bpl">ACBr - Bloco X - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFeDanfeFR.bpl">ACBr - DANFe em FastReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_CTeDacteFR.bpl">ACBr - DACTe em FastReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFSeDanfseFR.bpl">ACBr - DANFSe em FastReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_MDFeDamdfeFR.bpl">ACBr - DAMDFe em FastReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_GNREGuiaFR.bpl">ACBr - GNRE Impressão da Guia em FastReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFeDanfeRL.bpl">ACBr - DANFe em FortesReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_CTeDacteRL.bpl">ACBr - DACTe em FortesReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_NFSeDanfseRL.bpl">ACBr - DANFSe em FortesReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_MDFeDamdfeRL.bpl">ACBr - DAMDFe em FortesReport - (http://www.projetoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_SATExtratoRL.bpl">ACBr - Extrato Cupom Fiscal Eletrônico SAT para Fortes Report - (http://www.projectoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_GNREGuiaRL.bpl">ACBr - GNRE Impressão em FortesReport - (http://www.projectoacbr.com.br/)</Excluded_Packages>
+                    <Excluded_Packages Name="E:\projeto2\ACBrTrunk2-master\ACBrTrunk2-master\Lib\Delphi\LibD22\ACBr_SATWS.bpl">ACBrSATWS - Consulta de lotes enviados de CF-e-SAT - (http://www.projetoacbr.com.br/)</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="1">
@@ -330,7 +347,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_MaxXML\uFoConsultaPadrao\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="E:\BT\7.0\4.0\MAXWIN\CWB\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MaxXML.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="ModelSupport_MaxXML\uDMnfebkp\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -342,13 +365,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_MaxXML\uDMnfebkp\default.txvpck" Configuration="Debug" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_MaxXML\default.txaPackage" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="ModelSupport_MaxXML\default.txaPackage" Configuration="Release" Class="ProjectFile">
+                <DeployFile LocalName="ModelSupport_MaxXML\uFoConsultaPadrao\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
@@ -375,6 +398,12 @@
                 <DeployFile LocalName="ModelSupport_MaxXML\Configpadrao\default.txvpck" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="E:\BT\7.0\4.0\MAXWIN\CWB\MAXXML\MaxXML.rsm" Configuration="Debug" Class="DebugSymbols">
+                    <Platform Name="Win32">
+                        <RemoteName>MaxXML.rsm</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -411,12 +440,6 @@
                 <DeployFile LocalName="ModelSupport_MaxXML\Configpadrao\default.txaPackage" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="E:\BT\7.0\MaxWin\Zancanaro\MAXXML\MaxXML.exe" Configuration="Release" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>MaxXML.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -543,6 +566,12 @@
                 <DeployFile LocalName="ModelSupport_MaxXML\uMetodosUteis\default.txvpck" Configuration="Debug" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\MaxXML.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>MaxXML.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -699,12 +728,6 @@
                 <DeployFile LocalName="ModelSupport_MaxXML\Usuarios\default.txvpck" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="E:\BT\7.0\MaxWin\Zancanaro\MAXXML\MaxXML.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>MaxXML.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -1126,13 +1149,13 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Win32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSDevice64" Name="$(PROJECTNAME).app"/>
-                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
                 <ProjectRoot Platform="Win64" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME).app"/>
+                <ProjectRoot Platform="iOSDevice32" Name="$(PROJECTNAME).app"/>
             </Deployment>
             <Platforms>
                 <Platform value="Win32">True</Platform>

@@ -121,7 +121,7 @@ begin
      if (Trim(edCNPJDest.Text) <> '') then
      begin
        wObjCNPJ.StrInicial := Trim(edCNPJDest.Text);
-       if ( (fValidaCNPJ(wObjCNPJ.StrInicial)) or (fValidCPF(wObjCNPJ.StrInicial)) )then
+       if ( (fValidaCNPJ(wObjCNPJ.StrInicial)) or (fValidaCPF(wObjCNPJ.StrInicial)) )then
          wLista.AddObject('CNPJDEST', @wObjCNPJ);
      end;
 

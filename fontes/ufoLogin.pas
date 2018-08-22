@@ -73,7 +73,6 @@ end;
 procedure TfoLogin.btnAcessarClick(Sender: TObject);
 var wSenhaAtual: string;
     wDataSet : TDataSet;
-
 begin
   if not ConecxaoBD.Conectado then
   begin
@@ -93,10 +92,10 @@ begin
     if wDataSet.RecordCount = 0 then 
     begin
       tabUsuarios.Id := daoUsuarios.fNextID(tabUsuarios);
-      DM_NFEDFE.dao.Inserir(tabUsuarios);
+      DM_NFEDFE.dao.Inserir(tabUsuarios,['usuario', 'senha']);
     end
     else 
-    if wDataSet.RecordCount = 1 then   
+    if wDataSet.RecordCount = 1 then
     begin
       if wDataSet.FieldByName('senha').AsString <> wSenhaAtual then
       begin

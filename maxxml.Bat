@@ -29,4 +29,5 @@ pause
 goto exitit
 
 :exitit
+echo 'Informe um diretório válido!'
 exit

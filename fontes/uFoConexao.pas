@@ -44,6 +44,8 @@ type
     cbbPerfilCon: TComboBox;
     lbPerfilCon: TLabel;
     lbTipoCon: TLabel;
+    edPorta: TLabeledEdit;
+    edServer: TLabeledEdit;
     procedure FormShow(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -57,6 +59,9 @@ type
     procedure cbbTipoConChange(Sender: TObject);
     procedure btnSalvaIniClick(Sender: TObject);
     procedure cbbPerfilConChange(Sender: TObject);
+    procedure cbbPerfilConDblClick(Sender: TObject);
+    procedure cbbPerfilConClick(Sender: TObject);
+    procedure edServerDblClick(Sender: TObject);
   private
     { Private declarations }
     wListaServicos: TStringList;
@@ -113,8 +118,8 @@ begin
     CharacterSet := 'WIN1252';
     Protocol     := 'Local';
     VendorLib    := 'fbclient.dll';
-    Server       := '';
-    Port         := '3050';
+    Server       := trim(LowerCase(edServer.Text));//'127.0.0.1';
+    Port         := trim(edPorta.text); //'3050';
   end;
 end;
 
@@ -137,7 +142,8 @@ begin
     DriverID     := 'FBEmbed';
     CharacterSet := 'WIN1252';
     wPath := Trim(UpperCase(edServerName.Text));
-    Protocol     := 'Local';
+    Protocol     := 'ipLocal';
+    Server       := trim(LowerCase(edServer.Text));//'127.0.0.1';
     Embedded     := true;
     if (cbbTipoCon.ItemIndex = 1) and (FileExists(wPath)) then
     begin
@@ -184,7 +190,7 @@ begin
     CharacterSet := 'WIN1252';
     Server       := trim(UpperCase(edServerName.Text));
     Protocol     := 'TCPIP';
-    Port         := '3050';
+    Port         := trim(edPorta.text);//'3050';
   end;
 end;
 
@@ -268,7 +274,7 @@ end;
 
 procedure TfoConexao.btnSalvaIniClick(Sender: TObject);
 begin
-  ConecxaoBD.pWriteParams(ConecxaoBD.SessaoAtual);
+  ConecxaoBD.pWriteParams(UpperCase(ConecxaoBD.SessaoAtual));
 end;
 
 procedure TfoConexao.cbbPerfilConChange(Sender: TObject);
@@ -279,8 +285,31 @@ begin
 
  pShowBotaoConectar;
  pShowStatusBar;
+
  ConecxaoBD.pReadParams(cbbPerfilCon.Items[cbbPerfilCon.ItemIndex]);
  pLerParametros;
+end;
+
+procedure TfoConexao.cbbPerfilConClick(Sender: TObject);
+var wItem:string;
+    wIndex: integer;
+begin
+ wIndex := cbbPerfilCon.ItemIndex;
+ wItem := cbbPerfilCon.Items[wIndex];
+ wIndex := cbbPerfilCon.Items.IndexOf(fNomePC);
+ if Trim(wItem) = '' then
+   if wIndex < 0 then
+     cbbPerfilCon.Items.Add(fNomePC)
+   else
+     cbbPerfilCon.Items[wIndex];
+end;
+
+procedure TfoConexao.cbbPerfilConDblClick(Sender: TObject);
+var str: string;
+begin
+  str := UpperCase(fNomePC);
+  if cbbPerfilCon.Items.IndexOf(str) < 0 then
+   cbbPerfilCon.Items.Add(str);
 end;
 
 procedure TfoConexao.cbbTipoConChange(Sender: TObject);
@@ -304,7 +333,7 @@ begin
     1:  begin
           edServerName.Visible := true;
           edServerName.EditLabel.Caption := 'Caminho do '+ QuotedStr('fbembed.dll');
-          edServerName.Text :=  IncludeTrailingPathDelimiter(ConecxaoBD.VendorHome)  + 'BIN\' +ConecxaoBD.VendorLib;
+          edServerName.Text :=  IncludeTrailingPathDelimiter(ConecxaoBD.VendorHome)  + '..fb\bin\' +ConecxaoBD.VendorLib;
           btnPing.Visible := true;
           btnPing.Caption := '...';
         end;
@@ -323,6 +352,33 @@ begin
 
 end;
 
+
+procedure TfoConexao.edServerDblClick(Sender: TObject);
+var
+ msg: string;
+begin
+  //
+  if Trim(edServer.Text) = '' then
+  begin
+    edServer.Text := '127.0.0.1';
+    if edServer.CanFocus then
+     edServer.SelStart := Length(edServer.Text);
+  end
+  else
+  begin
+    msg :=  'Deseja alterar '+QuotedStr(edServer.text)+ ' por: '+QuotedStr('127.0.0.1')+' ?';
+    if MessageDlg(msg, mtConfirmation, [mbYes,mbNo],0) = mrYes then
+    begin
+      edServer.Clear;
+      edServer.Text := '127.0.0.1';
+      if edServer.CanFocus then
+        edServer.SelStart := Length(edServer.Text);
+    end;
+
+  end;
+
+
+end;
 
 //procedure TfoConfiguracao.edNFCePathEnvioExit(Sender: TObject);
 //begin
@@ -431,6 +487,9 @@ begin
   edUsuarioBD.Text    := ConecxaoBD.UserName;
   edSenhaBD.Text      := ConecxaoBD.Password;
   edDataBase.Text     := ConecxaoBD.Database;
+  edPorta.Text        := ConecxaoBD.Port;
+  edServer.Text       := ConecxaoBD.Server;
+
   case ConecxaoBD.TipoCon of
 
     tcLocal      : cbbTipoCon.ItemIndex := 0;

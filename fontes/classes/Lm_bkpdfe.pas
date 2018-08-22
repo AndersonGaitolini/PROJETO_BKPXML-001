@@ -5,7 +5,8 @@ interface
 uses
   Base, System.SysUtils, Atributos, System.Classes,Data.DB,
   uDMnfebkp,FireDAC.Comp.Client,Vcl.DBGrids,
-  Datasnap.DBClient, Datasnap.Provider,Vcl.Forms,Vcl.Dialogs,Vcl.Controls;
+  Datasnap.DBClient, Datasnap.Provider,Vcl.Forms,Vcl.Dialogs,Vcl.Controls, System.Contnrs,
+  System.Generics.Collections,uMetodosUteis, System.DateUtils;
 type
   TPushXML = (pshNone, pshEnvio1st, pshEnvioSinc);
   TLoadXML = (lxNone,lxXMLEnvio, lxXMLProc, lxXMLRetSai, lxXMLArquivo, lxXMLFull);
@@ -41,6 +42,7 @@ type
     FCheckBox: smallInt;
     FCNPJDest: string;
     FTPEvento: Integer;
+    FModelo  : string;
   public
     [attPK]
     property Id: Integer read FId write FId;
@@ -70,6 +72,9 @@ type
     property CheckBox: SmallInt read FCheckBox write FCheckBox;
     property CNPJDest: string read FCNPJDest write FCNPJDest;
     property tpEvento: Integer read FtpEvento write FtpEvento;
+    property Modelo : string read FModelo write FModelo;
+
+    constructor create overload;
   end;
 
 type
@@ -119,7 +124,8 @@ type
                     ffCHECKBOX,
                     ffCNPJDEST,
                     ffTPEvento,
-                    ffFILTRODETALHADO);
+                    ffFILTRODETALHADO,
+                    ffModelo);
 
   TOrdenaBy = (obyASCENDENTE, obyDESCEDENTE, obyNone);
   TOperacaoTab = (otUpadate, otInsert, otNone);
@@ -140,13 +146,12 @@ type
 
     procedure pLimpaObjetoXML(var pObjXML   : TLm_bkpdfe);
     procedure pAtualizaBD;
-    procedure pFiltraOrdena2 (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*';
-                             pListFields: TStringList = nil);
+//    function pFiltraOrdena (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*'; pFieldDetalhe: TFieldFiltros = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
+//                            pValue1: string = '';pValue2: string = ''): TDataSet;
 
-    function pFiltraOrdena (pFieldFiltros : TFieldFiltros = ffDATAEMISSAO; pUpDown: TOrdenaBy = obyNone; pCNPJDest: string = '*'; pFieldName: string = ''; pDtINI: TDate = 0; pDtFin: TDate = 0 ;
-                            pValue1: string = '';pValue2: string = ''): TDataSet;
+    function fFiltroOrdAnoMes(pMes, pAno: word; pTipoDataFiltros, pFieldFiltrosDetalhe, pFieldOrder: TFieldFiltros; pUpDown: TOrdenaBy; pCNPJEmi: string = '*'; pValue1: string = ''; pValue2: string = ''; pFetchALL: Boolean = False): TDataSet;
     function fFiltroFieldToFiledName(pFieldFiltros : TFieldFiltros):string;
-    function fFieldNameToFiltroField(pFieldName: String): TFieldFiltros;
+    function fFieldNameToFiltroField(pFieldDetalhe: String): TFieldFiltros;
 
     constructor create; overload;
   end;
@@ -154,6 +159,7 @@ type
 type
   TCNPJDOC = class(TObject)
    private
+   FDocParam: String;
    FDocumento: String;
    FFantasia : String;
    FParametro: boolean;
@@ -166,7 +172,45 @@ type
    property Documento: String read FDocumento write setDocumento;
    property Parametro: boolean read FParametro write setParametro;
 
-   function fListaEmpresas: TStringList;
+   function fListaEmpresas(pMes, pAno: word): TStringList;
+  end;
+
+  arrMesesInt = Array [1..12] of byte;
+  arrMesesStr = Array [1..12] of String;
+
+  TAnoMeses = Record
+    Ano      : word;
+    Meses    : arrMesesInt;
+    MesesStr : arrMesesStr;
+  end;
+
+  TGETMAXMIN = (gMax, gMin);
+  TPilhaAnoMes = class(TOBject)
+  private
+    FDataMax  : TDate;
+    FDataMin  : TDate;
+    AnoMeses : TAnoMeses;
+
+    ListaAnoMeses : TStringList;
+    function GetDate(pGet: TGETMAXMIN):Tdate;
+    function GetDataMax: TDate;
+    function GetDataMin: TDate;
+  public
+    MesLista : TStringList;
+    AnoStack : TStack<String>;
+    MesStack : TStack<String>;
+    MesesAnoStack: TStack<TAnoMeses>;
+
+    function CarregaMesesAno: Boolean;
+    function PreencheAnoMes: Boolean;
+    function PreencheMes(pAno: word): Boolean;
+    procedure AtualizaDataMaxMin;
+    property DataMax  : TDate read GetDataMax;
+    property DataMin  : TDate read GetDataMin;
+//    property MesLista : TStringList read FMesLista;
+
+    constructor Create;
+    destructor Destroy;
   end;
 
   var
@@ -180,7 +224,9 @@ type
 implementation
 
 uses
-  uMetodosUteis, uRotinas, Usuarios, uFoPrincipal;
+  uRotinas, Usuarios, uFoPrincipal;
+
+const cAsc = 'Asc'; cdesc = 'desc';
 
 { TDaoBkpdfe }
 
@@ -305,8 +351,67 @@ var wDataSet : TDataSet;
       if (pObjXML.Id < 1) then
       pObjXML.Id := FieldByName('id').AsInteger;
 
-      if (pObjXML.StatusXml = 0) then
-        pObjXML.StatusXml := FieldByName('Statusxml').AsInteger;
+//       AddLog('pReplaceIfNecessario',GetCurrentDir,'Carregou: '+IntToStr(pObjXML.StatusXml)+' Gravado: '+IntToStr(wDataSet.FieldByName('Statusxml').AsInteger),true);
+       case pObjXML.StatusXml of
+         -999:begin end;
+
+         001: begin  //XML Envio aguardando
+                if (wDataSet.FieldByName('Statusxml').AsInteger >=100) then
+                 pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger;
+              end;
+
+         004: begin //XML Cancelamento Envio aguardando
+                if (wDataSet.FieldByName('Statusxml').AsInteger = 101) then
+                 pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger;
+              end;
+
+         100: begin //XML Envio Processado
+                if (wDataSet.FieldByName('Statusxml').AsInteger > 100) then
+                case wDataSet.FieldByName('Statusxml').AsInteger of
+                  101: begin
+                         if ((Trim(wDataSet.FieldByName('Protocoloaut').AsString) <> '') and
+                             (Trim(wDataset.FieldByName('Protocolocanc').AsString) <> '')) then
+                          pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger;
+                       end;
+
+                  135: begin
+                        if (Trim(wDataset.FieldByName('Protocoloaut').AsString) <> '') then
+                          pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger
+                       end;
+                end;
+
+              end;
+
+         101: begin  //XML Cancel. Processado
+                if (wDataSet.FieldByName('Statusxml').AsInteger > 101) then
+                 pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger;
+//                if (pObjXML.TPEvento = 110111) then
+              end;
+
+         135: begin  //XML Carta Correção
+                if (wDataSet.FieldByName('Statusxml').AsInteger > 135) then
+                 pObjXML.StatusXml := wDataSet.FieldByName('Statusxml').AsInteger;
+              end;
+
+         110,
+         205,
+         301,
+         302,
+         303:  begin
+
+               end;//Denegada
+
+         206,
+         256,
+         662: begin end;//Inutilizada
+
+
+
+
+       else
+
+       end;
+
 
       if pObjXML.CNPJ = '' then
       pObjXML.CNPJ := FieldByName('CNPJ').AsString;
@@ -361,6 +466,9 @@ var wDataSet : TDataSet;
 
       if pObjXML.TPEvento = 0 then
       pObjXML.TPEvento := FieldByName('TPEvento').AsInteger;
+
+      if (pObjXML.Modelo = '') then
+      pObjXML.Modelo := FieldByName('Modelo').AsString;
 
       wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
@@ -520,6 +628,9 @@ var wDataSet : TDataSet;
       if pObjXML.TPEvento = 0 then
       pObjXML.TPEvento := FieldByName('TPEvento').AsInteger;
 
+      if pObjXML.Modelo = '' then
+      pObjXML.Modelo := FieldByName('MODELO').AsString;
+
       wStream := wDataSet.CreateBlobStream(wDataSet.FieldByName('XMLERRO'),bmReadWrite);
       if Assigned(wStream) then
       begin
@@ -655,11 +766,11 @@ begin
   end;
 end;
 
-function TDaoBkpdfe.fFieldNameToFiltroField(pFieldName: String): TFieldFiltros;
+function TDaoBkpdfe.fFieldNameToFiltroField(pFieldDetalhe: String): TFieldFiltros;
 var wFieldFiltros : TFieldFiltros;
 begin
  try
-   Result := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldName);
+   Result := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldDetalhe);
  except
    Result := ffNone;
  end;
@@ -674,6 +785,130 @@ begin
   end;
 end;
 
+function TDaoBkpdfe.fFiltroOrdAnoMes(pMes, pAno: word; pTipoDataFiltros, pFieldFiltrosDetalhe,  pFieldOrder: TFieldFiltros; pUpDown: TOrdenaBy; pCNPJEmi: string = '*'; pValue1: string = ''; pValue2: string = ''; pFetchALL: Boolean = False): TDataSet;
+
+  var
+  DataIniStr, DataFinStr, str1, str2: string;
+  wDataSet : TDataSet;
+  wUpDown: string;
+  wV1Empty, wV2Empty : boolean;
+
+  sSQL, sFieldDetalhe, sFieldOrder : String;
+  wOrdData,wDataVal, wFetchAll, wAnd: Boolean;
+  wList : TList;
+  i:Integer;
+  wFilename: string;
+  wOpen : TOpenDialog;
+  wAno, wMes, wDia : word;
+
+  function ExtrairFiled(pFieldFiltrosDetalhe: TFieldFiltros): string;
+  var wPos: Word;
+  begin
+    Result := TConvert<TFieldFiltros>.EnumConvertStr(pFieldFiltrosDetalhe);
+
+    wPos := Pos(Result,'ff');
+    if wPos >= 0 then
+      Result := UpperCase(copy(Result, 3,length(Result)));
+  end;
+
+begin
+  Result := nil;
+
+  if pUpDown = obyNone then
+    pUpDown:= obyASCENDENTE;
+
+  case pUpDown of
+    obyASCENDENTE: wUpDown := cAsc;
+    obyDESCEDENTE: wUpDown := cdesc;
+  end;
+
+  sFieldDetalhe := ExtrairFiled(pFieldFiltrosDetalhe);
+  sFieldOrder := ExtrairFiled(pFieldOrder);
+
+  wOrdData := ((pFieldFiltrosDetalhe = ffDATARECTO) or (pFieldFiltrosDetalhe = ffDATAALTERACAO) or (pFieldFiltrosDetalhe = ffDATAEMISSAO));
+  try
+    if not ((pAno > 0) and ((pMes > 0) and (pMes in [1..12]))) then
+      exit;
+
+    DateTimeToString(DataIniStr, 'yyyy/mm/dd', EncodeDate(pAno,pMes,01));
+    DataIniStr := QuotedStr(DataIniStr);
+
+    DecodeDate(EndOfTheMonth(EncodeDate(pAno,pMes,01)),wAno, wMes, wDia);
+    DateTimeToString(DataFinStr, 'yyyy/mm/dd', EncodeDate(pAno,pMes, wDia));
+    DataFinStr := QuotedStr(DataFinStr);
+
+    wAnd := false;
+    sSQL := sSQL + 'Select * from lm_bkpdfe ';
+
+    if not(pFieldFiltrosDetalhe in[ffCHAVE,ffIDF_DOCUMENTO])  then
+    begin
+      if wOrdData then
+        sSQL := sSQL +  Format('where (%s between %s and %s) ',[sFieldDetalhe, DataIniStr, DataFinStr])
+      else
+        sSQL := sSQL + Format('where (DATAEMISSAO between %s and %s) ',[DataIniStr, DataFinStr]);
+    end;
+
+    if not(pFieldFiltrosDetalhe in[ffCNPJ, ffCHAVE,ffIDF_DOCUMENTO]) and (pCNPJEmi <> '') and  (pCNPJEmi <> '*') and ((fValidaCNPJ(pCNPJEmi)) or (fValidaCPF(pCNPJEmi))) then
+       sSQL := sSQL + Format('and (%s like '+QuotedStr('%s')+') ',['CNPJ', '%'+pCNPJEmi+'%']);
+
+
+    case pFieldFiltrosDetalhe of
+      ffSTATUSXML:
+      begin
+        if (not wV1Empty) then
+        begin
+          case TConvert<TStatusXML>.StrConvertEnum(pValue1) of
+            tsxNormAguard: sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', 001]);
+            tsxNormal: sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', 100]);
+            tsxCartaCorr: sSQL := sSQL + Format('and (%s in (%d, %d)) and (%s = %d) ',['STATUSXML',101, 135,'TPEVENTO', 110110]);
+            tsxCancAguard: sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', 004]);
+            tsxCanecelada: sSQL := sSQL + Format('and (%s IN (%d, %d)) ',['STATUSXML', 101,135]);
+            tsxDenegada:   sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', 303]);
+            tsxInutilizada: sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', 662]);
+            tsxDefeito: sSQL := sSQL + Format('and (%s = %d) ',['STATUSXML', -999]);
+          end;
+        end;
+      end;
+
+      ffCNPJDEST:
+      begin
+        sSQL := sSQL + Format('and (%s like '+QuotedStr('%s')+') ',[sFieldDetalhe, '%'+pValue1+'%'])
+      end;
+
+      ffModelo:
+      begin
+        sSQL := sSQL + Format('and (%s = '+QuotedStr('%s')+') ',[sFieldDetalhe, copy(pValue1,1,2)]);
+      end;
+
+      ffCNPJ: begin
+                sSQL := sSQL + Format('and (%s like '+QuotedStr('%s')+') ',[sFieldDetalhe, '%'+pValue1+'%']);
+              end;
+
+      ffIDF_DOCUMENTO,
+               ffCHAVE : sSQL := sSQL + Format('where (%s like '+QuotedStr('%s')+') ',[sFieldDetalhe, '%'+pValue1+'%']);
+      ffPROTOCOLOAUT,
+      ffPROTOCOLOCANC: begin
+                         sSQL := sSQL + Format('and (%s like '+QuotedStr('%s')+') ',[sFieldDetalhe, '%'+pValue1+'%']);
+                       end;
+
+    end;
+
+    if pUpDown <> obyNone then
+      sSQL := sSQL + Format(' order by %s, %s %s',[sFieldOrder, 'idf_documento', wUpDown]);
+
+    DM_NFEDFE.Dao.StartTransaction;
+    Result := DM_NFEDFE.Dao.ConsultaSql(sSQL, pFetchALL);
+    DM_NFEDFE.Dao.Commit;
+    DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(sSQL, pFetchALL);
+
+  except on E: Exception do
+         begin
+           ShowMessage('Método: fFiltroOrdAnoMes!'+#10#13+
+           'Exception: '+e.Message);
+         end;
+  end;
+end;
+
 function TDaoBkpdfe.fNextId(pObjXML: TLm_bkpdfe): integer;
 var wDataSet: TDataset;
 begin
@@ -682,24 +917,26 @@ begin
 
   Result := 0;
   pObjXML.Id := Result;
-  wDataSet := TDataSet.Create(Application);
+//  wDataSet := TDataSet.Create(Application);
   try
     try
-      wDataSet := DM_NFEDFE.dao.ConsultaAll(pObjXML,'id' );
-      wDataSet.Close;
-      wDataSet.Open;
-      wDataSet.last;
-      Result := wDataSet.FieldByName('id').AsInteger+1;
+//      wDataSet := DM_NFEDFE.dao.ConsultaAll(pObjXML,'id' );
+      Result := DM_NFEDFE.Dao.ConsultaSql('SELECT MAX(lm_bkpdfe.id) FROM lm_bkpdfe').FieldByName('MAX').AsInteger;
+      Inc(Result);
+      //  wDataSet.Close;
+//      wDataSet.Open;
+//      wDataSet.last;
+//      Result := wDataSet.FieldByName('id').AsInteger+1;
     except on E: Exception do
              ShowMessage('Método: fNextId!'+#10#13 + 'Exception: '+e.Message);
     end;
   finally
-    FreeAndNil(wDataSet);
+//    FreeAndNil(wDataSet);
   end;
 end;
 
 procedure TDaoBkpdfe.pAtualizaBD;
-VAR wDataSet : TdataSet;
+var wDataSet : TdataSet;
     wSql: TStringList;
     I :Integer;
 begin
@@ -733,6 +970,9 @@ begin
         if not Assigned(wDataSet.FindField('TPEvento')) then
           wSql.Add('ALTER TABLE LM_BKPDFE ADD TPEvento Integer');
 
+        if not Assigned(wDataSet.FindField('MODELO')) then
+          wSql.Add('ALTER TABLE LM_BKPDFE ADD MODELO VARCHAR(02) CHARACTER SET WIN1252 COLLATE WIN1252');
+
         if wSql.Count > 0 then
         for I := 0 to wSql.Count-1 do
         begin
@@ -750,159 +990,6 @@ begin
   end;
 end;
 
-function TDaoBkpdfe.pFiltraOrdena(pFieldFiltros: TFieldFiltros;
-  pUpDown: TOrdenaBy; pCNPJDest, pFieldName: string; pDtINI, pDtFin: TDate; pValue1,
-  pValue2: string): TDataset;
-
-var data1STR, data2STR, str1, str2: string;
-    wDataSet : TDataSet;
-    wUpDown: string;
-    wV1Empty, wV2Empty : boolean;
-const cAsc = 'Asc'; cdesc = 'desc';
-
-  procedure pFiltroData(pFieldOrder:string);
-  begin
-    try
-      with DM_NFEDFE, sqlBkpDfe do
-      begin
-        DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
-        data1STR := QuotedStr(data1STR);
-        DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
-        data2STR := QuotedStr(data2STR);
-
-        str1 := ('Select * from lm_bkpdfe where ');
-        str1 :=  str1 + Format('(%s between %s and %s) ',[pFieldName,data1STR, data2STR]);
-
-        if pUpDown = obyNone then
-        begin
-          str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
-        end;
-      end;
-    except on E: Exception do
-               ShowMessage('Método: pFiltroData!'+#10#13+
-                           'Exception: '+e.Message);
-    end;
-  end;
-
-  procedure pFiltro(pFieldOrder:string);
-  var wOrdData,wDataVal, wFetchAll, wAnd: Boolean;
-      auxFF : TFieldFiltros;
-      wList : TList;
-      i:Integer;
-      wFilename: string;
-      wOpen : TOpenDialog;
-  begin
-    auxFF := TConvert<TFieldFiltros>.StrConvertEnum('ff'+pFieldOrder);
-    wOrdData := ((auxFF = ffDATARECTO) or (auxFF = ffDATAALTERACAO) or (auxFF = ffDATAEMISSAO));
-    try
-      wDataVal := (pDtINI > 0) or (pDtFin > 0);
-      DateTimeToString(data1STR, 'yyyy/mm/dd', pDtINI);
-      data1STR := QuotedStr(data1STR);
-      DateTimeToString(data2STR, 'yyyy/mm/dd', pDtFin);
-      data2STR := QuotedStr(data2STR);
-
-      wAnd := false;
-      str1 := str1 + 'Select * from lm_bkpdfe where ';
-
-      if auxFF = ffCNPJDEST then
-      begin
-        if (pCNPJDest <> '') and (fValidaCNPJ(pCNPJDest)) then
-          str1 := str1 + Format('(%s like '+QuotedStr('%s')+') and',['CNPJDEST', pCNPJDest])
-      end;
-
-      if auxFF = ffSTATUSXML then
-      begin
-        if (not wV1Empty) then
-        begin
-          case TConvert<TStatusXML>.StrConvertEnum(pValue1) of
-            tsxNormAguard: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 001]);
-            tsxNormal: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 100]);
-            tsxCartaCorr: str1 := str1 + Format('(%s in (%d, %d)) and (%s = %d) and',['STATUSXML',101, 135,'TPEVENTO', 110110]);
-            tsxCancAguard: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 004]);
-            tsxCanecelada: str1 := str1 + Format('(%s IN (%d, %d)) and',['STATUSXML', 101,135]);
-            tsxDenegada:   str1 := str1 + Format('(%s = %d) and',['STATUSXML', 303]);
-            tsxInutilizada: str1 := str1 + Format('(%s = %d) and',['STATUSXML', 662]);
-            tsxDefeito: str1 := str1 + Format('(%s = %d) and',['STATUSXML', -999]);
-          end;
-        end;
-      end;
-
-      if wDataVal then
-        if wOrdData then
-          str1 := str1 +  Format('(%s between %s and %s ) ',[pFieldOrder, data1STR, data2STR])
-        else
-          str1 := str1 + Format('(dataemissao between %s and %s ) ',[data1STR, data2STR]);
-
-      if not (wV1Empty) and (pFieldName = 'CNPJDEST') and wDataVal then
-         str1 := str1 + Format(' and (%s like '+QuotedStr('%s')+')',[pFieldName, '%'+pValue1+'%'])
-      else
-      if not (wV1Empty) and (pFieldName = 'CNPJDEST') and not wDataVal then
-         str1 := str1 + Format(' (%s like '+QuotedStr('%s')+')',[pFieldName, '%'+pValue1+'%']);
-
-      if pUpDown <> obyNone then
-        str1 := str1 + Format(' order by %s %s',[pFieldOrder, wUpDown]);
-
-      DM_NFEDFE.Dao.StartTransaction;
-      Result := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
-      DM_NFEDFE.Dao.Commit;
-      DM_NFEDFE.dsBkpdfe.DataSet := DM_NFEDFE.Dao.ConsultaSql(str1, foPrincipal.FetchALL);
-
-    except on E: Exception do
-           begin
-             ShowMessage('Método: pFiltro!'+#10#13+
-             'Exception: '+e.Message);
-           end;
-    end;
-  end;
-
-begin
-  Result := nil;
-  pFieldName := UpperCase(Trim(pFieldName));
-
-   if Length(pCNPJDest) = 18 then
-    pCNPJDest := fTiraMascaraCNPJ(pCNPJDest);
-
-  if pUpDown = obyNone then
-    pUpDown:= obyASCENDENTE;
-
-  wV1Empty := pValue1 = '';
-  wV2Empty := pValue2 = '';
-
-  case pUpDown of
-    obyASCENDENTE: wUpDown := cAsc;
-    obyDESCEDENTE: wUpDown := cdesc;
-  end;
-
-  case pFieldFiltros of
-    ffID: begin end;
-    ffCHAVE: begin pFiltro('CHAVE') end;
-    ffIDF_DOCUMENTO: begin pFiltro('IDF_DOCUMENTO') end;
-    ffDATAEMISSAO: begin pFiltro('DATAEMISSAO') end;
-    ffDATARECTO: begin pFiltro('DATARECTO') end;
-    ffMOTIVO: begin pFiltro('MOTIVO') end;
-    ffPROTOCOLOCANC: begin pFiltro('PROTOCOLOCANC') end;
-    ffPROTOCOLORECTO: begin pFiltro('PROTOCOLORECTO') end;
-    ffDATAALTERACAO: begin pFiltro('DATAALTERACAO') end;
-    ffTIPO: begin pFiltro('TIPO') end;
-    ffEMAILSNOTIFICADOS: begin pFiltro('EMAILSNOTIFICADOS') end;
-    ffTIPOAMBIENTE: begin pFiltro('TIPOAMBIENTE') end;
-    ffXMLENVIO: begin pFiltro('ID') end;
-    ffXMLEXTEND: begin pFiltro('ID') end;
-    ffMOTIVOCANC: begin pFiltro('MOTIVOCANC') end;
-    ffXMLENVIOCANC: begin pFiltro('ID') end;
-    ffXMLEXTENDCANC: begin pFiltro('ID') end;
-    ffPROTOCOLOAUT: begin pFiltro('PROTOCOLOAUT') end;
-    ffCNPJDEST : begin pFiltro('CNPJDEST') end;
-    ffSTATUSXML : begin pFiltro('STATUSXML') end;
-    ffTPEvento : begin pFiltro('TPEvento') end;
-  end;
-end;
-
-procedure TDaoBkpdfe.pFiltraOrdena2(pFieldFiltros: TFieldFiltros;
-  pUpDown: TOrdenaBy; pCNPJDest: string; pListFields: TStringList);
-begin
-
-end;
 
 function TDaoBkpdfe.fTotalArquivos(pObjXML: TLm_bkpdfe): Integer;
 begin
@@ -954,31 +1041,54 @@ begin
     Selecao := '';
     CNPJDest := '';
     TPEvento := 0;
+    Modelo := '';
   end;
 end;
 
 { TCNPJDOC }
-function TCNPJDOC.fListaEmpresas: TStringList;
+function TCNPJDOC.fListaEmpresas(pMes, pAno: word): TStringList;
 var wDataSet : TDataSet;
+    bExit: boolean;
     wI: Integer;
-    wCNPJ: string;
+    sCNPJ, sSQL: string;
+    wAno, wMes, wDia : word;
+    DataIniStr, DataFinStr: string;
 begin
   wDataSet := TDataSet.Create(Application);
   Result := TStringList.Create;
   try
-    if not Assigned(ObjetoXML) then
-       ObjetoXML := TLm_bkpdfe.Create;
+//    if not Assigned(ObjetoXML) then
+//       ObjetoXML := TLm_bkpdfe.Create;
+    if ((pAno <= 1899) and not(pMes in [1..12])) then
+    begin
+      bExit := true;
+      Exit;
+    end;
 
-    wDataSet := DM_NFEDFE.Dao.ConsultaSql('select cnpj, count(*) FROM lm_bkpdfe group by cnpj');
+    DateTimeToString(DataIniStr, 'yyyy/mm/dd', EncodeDate(pAno,pMes,01));
+    DataIniStr := QuotedStr(DataIniStr);
+
+    DecodeDate(EndOfTheMonth(EncodeDate(pAno,pMes,01)),wAno, wMes, wDia);
+    DateTimeToString(DataFinStr, 'yyyy/mm/dd', EncodeDate(pAno,pMes, wDia));
+    DataFinStr := QuotedStr(DataFinStr);
+
+    sSQL := sSQL + 'select CNPJ, count(*) FROM lm_bkpdfe ';
+    sSQL := sSQL + Format('where (%s between %s and %s) ',['DATAEMISSAO', DataIniStr, DataFinStr]);
+    sSQL := sSQL + 'group by CNPJ';
+    wDataSet := DM_NFEDFE.Dao.ConsultaSql(sSQL);
+
+    wDataSet.First;
     for wI := 0 to wDataSet.RecordCount-1 do
     begin
-      wCNPJ := wDataSet.FieldByName('CNPJ').AsString;
-      if Trim(wCNPJ) <> ''  then
-        Result.Add(Trim(wCNPJ));
+      sCNPJ := wDataSet.FieldByName('CNPJ').AsString;
+      if Trim(sCNPJ) <> ''  then
+        Result.Add(Trim(sCNPJ));
 
       wDataSet.Next;
     end;
   finally
+    if bExit then
+      Result := nil;
     wDataSet.Free;
   end;
 end;
@@ -995,5 +1105,203 @@ procedure TCNPJDOC.setParametro(const Value: boolean);
 begin
   FParametro := Value;
 end;
-end.
+{ TPilhaAnoMes }
 
+procedure TPilhaAnoMes.AtualizaDataMaxMin;
+begin
+  FDataMAX := GetDataMax;
+  FDataMin := GetDataMin;
+end;
+
+function TPilhaAnoMes.CarregaMesesAno: Boolean;
+var
+ I, X, iMesMax, iMesMin, iAnoMax, iAnoMin, AnoX,MesX  : Integer;
+ pDataMAX, pDataMin, DateX : TDate;
+ sMes, sAno : String;
+begin
+  Result   := false;
+  pDataMax := GetDataMax;
+  pDataMin := GetDataMin;
+
+  MesesAnoStack.Clear;
+  DateX :=  EncodeDate(1899,12,30);
+  if (pDataMin >= pDataMAX) and (pDataMin = DateX)then
+  begin //or pDataMin =
+     AnoMeses.Ano := 0;
+     MesesAnoStack.Push(AnoMeses);
+     Result   := True;
+    exit;
+  end;
+
+  iMesMax := Mes(pDataMax);
+  iAnoMax := Ano(pDataMax);
+
+  iMesMin := Mes(pDataMin);
+  iAnoMin := Ano(pDataMin);
+
+  for I := iAnoMin to iAnoMax do
+    AnoStack.Push(IntToStr(i));
+
+  DateX := pDataMin;
+  while pDataMax >= DateX  do
+  begin
+    AnoX := Ano(DateX);
+    MesX := Mes(DateX);
+    with AnoMeses do
+    begin
+      Ano   := AnoX;
+      for I := MesX to 12 do
+      begin
+//        if (MesX in [1..12]) and ((I in [iMesMin..12]) or (I in [1..iMesMax]))then //and (I in [iMesMin, iMesMax]) then
+        begin
+          Meses[I] := I;
+          MesesStr[I] := RetornaMes2(I);
+        end
+//        else
+//        begin
+//          Meses[I] := 0;
+//          MesesStr[I] := '';
+//        end;
+      end;
+
+      MesesAnoStack.Push(AnoMeses);
+    end;
+    DateX:= EncodeDate(Ano(DateX)+1,01,01);
+  end;
+  Result := (MesesAnoStack.Count > 0);
+end;
+
+constructor TPilhaAnoMes.Create;
+begin
+  FDataMax := 0;
+  FDataMin := 0;
+  AnoStack := TStack<String>.Create;
+  MesStack := TStack<String>.Create;
+  MesLista := TStringList.Create;
+  MesesAnoStack := TStack<TAnoMeses>.Create;
+end;
+
+destructor TPilhaAnoMes.Destroy;
+begin
+  FDataMax := 0;
+  FDataMin := 0;
+  AnoStack.Free;
+  MesStack.Free;
+  MesLista.Free;
+  MesesAnoStack.Free;
+end;
+
+function TPilhaAnoMes.GetDataMax: TDate;
+begin
+ Result := GetDate(gMax);
+end;
+
+function TPilhaAnoMes.GetDataMin: TDate;
+begin
+  Result := GetDate(gMin);
+end;
+
+function TPilhaAnoMes.GetDate(pGet: TGETMAXMIN): Tdate;
+var
+sParam , sSQL: String;
+begin
+  if pGet = gMax then
+    sParam := 'MAX'
+  else
+    sParam := 'MIN';
+
+  Result := 0;
+  try
+    sSQL := Format('SELECT %s (dataemissao) FROM lm_bkpdfe',[sParam]);
+    Result := DM_NFEDFE.Dao.ConsultaSql(sSQL).FieldByName(sParam).AsDateTime;
+    if Result <= 1899 then //Data Nula
+      Result := 0;
+  finally
+
+  end;
+end;
+
+function TPilhaAnoMes.PreencheAnoMes: Boolean;
+var
+ I, iMesMax, iMesMin, iAnoMax, iAnoMin  : Integer;
+ pDataMAX, pDataMin :TDate;
+ sMes, sAno : String;
+begin
+  Result   := false;
+  pDataMax := GetDataMax;
+  pDataMin := GetDataMin;
+
+  iMesMax := Mes(pDataMax);
+  iAnoMax := Ano(pDataMax);
+
+  iMesMin := Mes(pDataMin);
+  iAnoMin := Ano(pDataMin);
+
+  MesStack.Clear;
+  if pDataMin > pDataMAX then
+    exit;
+
+  for i:= iMesMin to iMesMax do
+    MesStack.Push(RetornaMes2(i));
+
+  for I := iAnoMin to iAnoMax do
+    AnoStack.Push(IntToStr(i));
+
+  if (MesStack.Count > 0) and (AnoStack.Count > 0) then
+    Result := true;
+end;
+
+function TPilhaAnoMes.PreencheMes(pAno: word): Boolean;
+var
+ sParam , sSQL,DataIniStr,DataFinStr: String;
+ wDSet : TDataSet;
+ sMes : String;
+begin
+  DateTimeToString(DataIniStr, 'yyyy/mm/dd', EncodeDate(pAno,01,01));
+  DataIniStr := QuotedStr(DataIniStr);
+
+  DateTimeToString(DataFinStr, 'yyyy/mm/dd', EncodeDate(pAno,12, 31));
+  DataFinStr := QuotedStr(DataFinStr);
+
+  Result := false;
+  MesStack.Clear;
+  MesLista.Clear;
+  wDSet := TDataSet.Create(Application);
+
+  try
+    sSQL := 'SELECT DATAEMISSAO FROM lm_bkpdfe ';
+    sSQL := sSQL + Format('where lm_bkpdfe.dataemissao between %s and %s ',[DataIniStr, DataFinStr]);
+    sSQL := sSQL + 'group by dataemissao';
+    wDSet := DM_NFEDFE.Dao.ConsultaSql(sSQL);
+
+    wDSet.First;
+    Result := (wDSet.RecordCount > 0);
+    if not Result then
+      exit;
+
+    while Not wDSet.Eof do
+    begin
+      sMes := RetornaMes2(Mes(Tdate(wDSet.FieldByName('DATAEMISSAO').AsDateTime)));
+      if MesLista.IndexOf(sMes) < 0 then
+      begin
+         MesLista.Add(sMes);
+         MesStack.Push(sMes);
+      end;
+
+      wDSet.Next;
+    end;
+  finally
+    wDSet.Free
+  end;
+
+end;
+
+{ TLm_bkpdfe }
+
+constructor TLm_bkpdfe.create;
+begin
+  inherited;
+  //teste aqui
+end;
+
+end.

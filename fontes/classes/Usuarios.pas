@@ -3,7 +3,8 @@ unit Usuarios;
 interface
 
 uses
-  Base, Atributos,Data.DB,Vcl.Dialogs,uDMnfebkp, System.SysUtils,uMetodosUteis, Vcl.Forms;
+  Base, Atributos,Data.DB,Vcl.Dialogs,uDMnfebkp, System.SysUtils,uMetodosUteis, Vcl.Forms,
+  System.Classes;
 
  type
    TEventoTelaUsuario = (etuSalvar, etuInserir, etuEditar, etuDeletar, etuConsultar);
@@ -15,12 +16,15 @@ uses
     FUsuario: string;
     FSenha: string;
     FConfigSalva: Integer;
+    FLoggerUser: TStream;
   public
     [attPK]
     property Id: Integer read FId write FId;
     property Usuario: string read FUsuario write FUsuario;
     property Senha: string read FSenha write FSenha;
     property ConfigSalva: Integer read FConfigSalva write FConfigSalva;
+    property LoggerUser: TStream read FLoggerUser write FLoggerUser;
+    constructor create overload;
   end;
 
    TDaoLogin = class(TObject)
@@ -37,6 +41,7 @@ uses
      function fExcluir(pTab : TUsuarios): Boolean;
      function fBuscar(pTab: TUsuarios): TDataSet;
      function fNextID(ptab : TUsuarios): Integer;
+     procedure pAtuBaseUsuario;
 
    private
 
@@ -73,6 +78,39 @@ begin
 
 end;
 
+procedure TDaoCadUsuario.pAtuBaseUsuario;
+var wDataSet : TdataSet;
+    wSql: TStringList;
+    I :Integer;
+begin
+  with DM_NFEDFE do
+  begin
+    wSql := TStringList.Create;
+    try
+      try
+        wDataSet := Dao.ConsultaSql('SELECT * FROM USUARIOS');
+
+        if not Assigned(wDataSet.FindField('LOGGERUSER')) then
+          wSql.Add('ALTER TABLE USUARIOS ADD LOGGERUSER BLOB SUB_TYPE 0 SEGMENT SIZE 80');
+
+        if wSql.Count > 0 then
+        for I := 0 to wSql.Count-1 do
+        begin
+//          dao.StartTransaction;
+          Dao.ConsultaSqlExecute(wSql.Strings[I]);
+//          Dao.Commit;
+        end;
+      except
+        on E: Exception do
+//            Dao.RollBack;
+      end;
+    finally
+      FreeAndNil(wSql);
+      FreeAndNil(wDataSet);
+    end;
+  end;
+end;
+
 function TDaoCadUsuario.fBuscar(pTab: TUsuarios): TDataSet;
 var Registros : Integer;
   wDataSet : TDataSet;
@@ -96,7 +134,7 @@ begin
     Result := False;
     with DM_NFEDFE do
      begin
-       Dao.StartTransaction;
+        Dao.StartTransaction;
         try
           Result := (Dao.Excluir(pTab) > 0);
           Dao.Commit;
@@ -202,6 +240,14 @@ begin
 
     wId := DM_NFEDFE.sqlUsuarios.FieldByName('id').AsInteger;
   end;
+end;
+
+{ TUsuarios }
+
+constructor TUsuarios.create;
+begin
+  inherited;
+  FLoggerUser := TMemoryStream.Create;
 end;
 
 end.

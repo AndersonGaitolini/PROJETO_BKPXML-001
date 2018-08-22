@@ -1,6 +1,7 @@
 object DM_NFEDFE: TDM_NFEDFE
   OldCreateOrder = False
   OnCreate = DataModuleCreate
+  OnDestroy = DataModuleDestroy
   Height = 343
   Width = 308
   object conConexaoFD: TFDConnection
@@ -8,15 +9,19 @@ object DM_NFEDFE: TDM_NFEDFE
       'CharacterSet=WIN1252'
       'User_Name=sysdba'
       'Password=masterkey'
-      'Database=E:\BT\7.0\MaxWin\Zancanaro\MAXXML\BACKUPXML.FDB'
-      'Port=3050'
+      'Database=E:\BT\7.0\4.0\MAXECV\KAETE\MAXXML\BACKUPXML.FDB'
+      'Port=3051'
+      'Server=127.0.0.1'
       'DriverID=FB')
+    ResourceOptions.AssignedValues = [rvAutoReconnect]
+    ResourceOptions.AutoReconnect = True
     UpdateOptions.AssignedValues = [uvEInsert, uvEUpdate, uvUpdateChngFields, uvUpdateMode, uvLockWait, uvRefreshDelete]
     UpdateOptions.LockWait = True
     LoginPrompt = False
     Transaction = fdtrTransacao
+    OnError = conConexaoFDError
     Left = 22
-    Top = 19
+    Top = 21
   end
   object fdtrTransacao: TFDTransaction
     Connection = conConexaoFD
@@ -31,8 +36,9 @@ object DM_NFEDFE: TDM_NFEDFE
   object fddrfbDriver: TFDPhysFBDriverLink
     DriverID = 'FBEmbed'
     VendorLib = 'C:\fb\bin\fbembed.dll'
+    OnDriverCreated = fddrfbDriverDriverCreated
     Embedded = True
-    Left = 163
+    Left = 164
     Top = 21
   end
   object dsConfiguracoes: TDataSource
@@ -179,8 +185,8 @@ object DM_NFEDFE: TDM_NFEDFE
     Params = <>
     ProviderName = 'provBkpdfe'
     StoreDefs = True
-    Left = 15
-    Top = 198
+    Left = 16
+    Top = 205
     object cdsBkpdfeID: TIntegerField
       FieldName = 'ID'
       Origin = 'ID'
@@ -296,6 +302,10 @@ object DM_NFEDFE: TDM_NFEDFE
     end
     object cdsBkpdfeTPEVENTO: TIntegerField
       FieldName = 'TPEVENTO'
+    end
+    object cdsBkpdfeMODELO: TStringField
+      FieldName = 'MODELO'
+      Size = 2
     end
   end
   object provBkpdfe: TDataSetProvider
@@ -455,8 +465,9 @@ object DM_NFEDFE: TDM_NFEDFE
     end
   end
   object provConfiguracoes: TDataSetProvider
+    DataSet = sqlConfiguracoes
     Left = 88
-    Top = 81
+    Top = 80
   end
   object sqlConfiguracoes: TFDQuery
     Connection = conConexaoFD
@@ -468,7 +479,6 @@ object DM_NFEDFE: TDM_NFEDFE
   end
   object dsTPEvento: TDataSource
     DataSet = cdsTPEvento
-    OnDataChange = dsTPEventoDataChange
     Left = 163
     Top = 274
   end
@@ -517,7 +527,7 @@ object DM_NFEDFE: TDM_NFEDFE
     Transaction = fdtrTransacao
     SQL.Strings = (
       'select * from tpevento')
-    Left = 240
+    Left = 241
     Top = 276
   end
 end

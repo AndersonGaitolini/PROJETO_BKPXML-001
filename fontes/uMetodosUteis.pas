@@ -5,8 +5,20 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, System.IniFiles,
   Data.SqlExpr, FireDAC.Comp.Client,Vcl.ComCtrls,Generics.Collections,TypInfo,System.DateUtils,
-  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,System.StrUtils,IdIcmpClient,System.MaskUtils, Winsock, WinSvc, Vcl.FileCtrl;
+  JvBaseDlg, JvSelectDirectory, FireDAC.Phys.FB,IdIcmpClient,System.MaskUtils, Winsock, WinSvc, Vcl.FileCtrl,TlHelp32;
 Const
+//  ArrMeses = ['JANEIRO','FEVEREIRO','MARCO','ABRIL','MAIO','JUNHO','JULHO','AGOSTO','SETEMBRO','OUTUBRO','NOVEMBRO','DEZEMBRO'];
+
+
+  cXMLConsulta   = 0;
+  cXMLEnvio      = 1;
+  cXMLProcessado = 2;
+  cXMLCancProc   = 3;
+  cXMLCancEnvio  = 4;
+  cXMLInut       = 5;
+  cXMLCartaCorr  = 6;
+  cXMLLote       = 7;
+
   Threshold2000 : Integer = 2000;
 
   MinTime = 0;
@@ -44,8 +56,13 @@ Const
   SERVICE_INTERACTIVE_PROCESS = $00000100;
   SERVICE_TYPE_ALL = (SERVICE_WIN32 or SERVICE_ADAPTER or SERVICE_DRIVER  or SERVICE_INTERACTIVE_PROCESS);
 
-type
+  type
   TGenerico = 0..255;
+  CharSet = set of Char;
+
+  ArrayString = array of String;
+  ArrayInteger = array of Integer;
+
   TSvcA = array[0..cnMaxServices] of TEnumServiceStatus;
   PSvcA = ^TSvcA;
   TOperacao = (opInserir, opAlterar, opExcluir, opOK, opNil);
@@ -63,11 +80,20 @@ type
 
   function fValidaCNPJ(var pCNPJ: string; pMascara: boolean=false): boolean;
   function fValidaCNPJ2(pCNPJDoc: string; pMascara: boolean=false): boolean;
-  function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
+  function fValidaCPF(pCPF : string; pMascara: boolean=false): boolean;
   function fIsNumeric(pStr : String) : Boolean;
   procedure AddLog(pNameLog,pDirLog, aStr: string; pActiveAll: boolean = false);
   procedure setINI(pIniFilePath, prSessao, prSubSessao: string; prValor: string = '');
   function getINI(pIniFilePath, prSessao, prSubSessao: string; prValorDefault: string = ''): string;
+  procedure LogStream(pNameLog,pDirLog, aStr: string; var pStream: TStream);
+
+  function Dia(data:Tdate):word;
+  function Mes(data:Tdate):word;  function Ano(data:Tdate):word;
+  function RetornaMes1( data:TDate):string;
+  function RetornaMes2( Mes: Word):string;
+  function ProximoMes( xData : TDate ):TDate;
+  function Extenso(Valor : Extended): String;
+  function StrMesToInt( MesExtenso: string):byte;
 
   function fPingIP(pHost : String) :boolean;
   function fArqIni: string;
@@ -112,21 +138,87 @@ type
 
   function ServiceRunning(sMachine, sService: PChar): Boolean;
   function ServiceGetStatus(sMachine, sService: PChar): DWORD;
+  function pProcessExists(pExeFileName: string; var pProcessCount: integer): Boolean;
 
   procedure pAppTerminate;
   function fSetAtribute(pPath: string; pAtribute: Cardinal): Boolean;
   function fListaSessaoINIFile: TStringList;
+
+  procedure pMsg(pStr: string);
+  function Filter(S : String; CS : CharSet) : String;
+  // Procedimento recursivo para construir uma lista de Dir\Arquivos.exe
+  procedure FindFiles(Var FilesList: TStringList; StartDir, FileMask: string);
+
 
   var
    wOpe : TOperacao = opNil;
 implementation
 
 uses
-  uDMnfebkp;
+  uDMnfebkp, System.StrUtils;
+
+procedure pMsg(pStr: string);
+begin
+  ShowMessage(pStr);
+end;
+
+procedure FindFiles(Var FilesList: TStringList; StartDir, FileMask: string);
+var
+  SR: TSearchRec;
+  DirList: TStringList;
+  IsFound: Boolean;
+  i: integer;
+begin
+  if StartDir[length(StartDir)] <> '\' then
+    StartDir := StartDir + '\';
+
+  { Build a list of the files in directory StartDir
+     (not the directories!)                         }
+
+  IsFound :=
+    FindFirst(StartDir+FileMask, faAnyFile-faDirectory, SR) = 0;
+  while IsFound do begin
+    FilesList.Add(StartDir + SR.Name);
+    IsFound := FindNext(SR) = 0;
+  end;
+  FindClose(SR);
+
+  // Build a list of subdirectories
+  DirList := TStringList.Create;
+  IsFound := FindFirst(StartDir+'*.*', faAnyFile, SR) = 0;
+  while IsFound do begin
+    if ((SR.Attr and faDirectory) <> 0) and (SR.Name[1] <> '.') then
+      DirList.Add(StartDir + SR.Name);
+    IsFound := FindNext(SR) = 0;
+  end;
+  FindClose(SR);
+
+  // Scan the list of subdirectories
+  for i := 0 to DirList.Count - 1 do
+    FindFiles(FilesList, DirList[i], FileMask);
+
+  DirList.Free;
+end;
+
+function Filter(S : String; CS : CharSet) : String;
+var
+  I : Word;
+  Len : Word;
+begin
+  Len := 0;
+  for I := 1 to Length(S) do
+    if not(S[I] in CS) then
+    begin
+      inc(Len);
+      Filter[Len] := S[I];
+    end;
+//  Filter[0] := Char(Len);
+end;
 
 function fListaSessaoINIFile: TStringList;
 var I,J : Integer;
     wLinha : String;
+    wTamLinha: Integer;
     wINI : TIniFile;
     wSessao : Boolean;
     wList, wSLPerfil : TStringList;
@@ -144,10 +236,11 @@ begin
        for I := 0 to wList.Count-1 do
        begin
          wLinha := wList.Strings[I];
-         if Length(wLinha) = 0 then
+         wTamLinha :=  Length(wLinha);
+         if wTamLinha = 0 then
            Continue;
 
-         wSessao := (wLinha[1] = '[') and (wLinha[Length(wLinha)] = ']');
+         wSessao := (wLinha[1] = '[') and (wTamLinha> 2) and (Trim(Copy(wLinha,2,wTamLinha-1)) <> '') and (wLinha[wTamLinha] = ']');
          if (wSessao) then
          begin
            wLinha := Copy(wLinha, 2, Pos(']',wLinha)-2);
@@ -168,7 +261,7 @@ begin
    end;
 end;
 
-function fValidCPF(pCPF : string; pMascara: boolean=false): boolean;
+function fValidaCPF(pCPF : string; pMascara: boolean=false): boolean;
 var
   v: array[0..1] of Word;
   wCPF: array[0..10] of Byte;
@@ -769,6 +862,35 @@ var
       FreeAndNil(f);
     end;
   end;
+
+procedure LogStream(pNameLog,pDirLog, aStr: string; var pStream: TStream);
+var
+ wIndex: Integer;
+ ArqLog, sMsg: string;
+ slLista :TStringList;
+begin
+  pStream := TMemoryStream.Create;
+  slLista := TStringList.Create;
+  try
+    try
+//      ArqLog := pDirLog+'\'+pNameLog+FormatDateTime('-dd-mm-aaaa',now)+'.log';
+//
+//      if FileExists(ArqLog) then
+//        slLista.LoadFromFile(ArqLog);
+
+       sMSg := Format('[ %s ]: %s', [DateTimeToStr(Now), aStr]);
+//       if (slLista.IndexOf(sMSg) <0) then
+        slLista.Add(sMSg);
+
+       slLista.SaveToStream(pStream);
+    except on E: Exception do
+
+    end;
+  finally
+    FreeAndNil(slLista);
+  end;
+end;
+
 procedure fOpenDirectory(var pFileName: string);
 begin
   if SelectDirectory('Selecione uma pasta', 'C:\', pFileName,[sdNewFolder, sdShowEdit, sdShowShares, sdNewUI, sdShowFiles,
@@ -1207,6 +1329,224 @@ begin
   end;
 end;
 
+
+//Retorma o dia
+function Dia(data:Tdate):word;
+var
+   xDia,xMes,xAno : word;
+begin
+  DecodeDate(data, xAno, xMes, xDia);
+  result :=xDia;
+end;
+
+//retorna o mes
+function Mes(data:Tdate):word;
+var
+   xDia,xMes,xAno : word;
+begin
+  DecodeDate(data, xAno, xMes, xDia);
+  result :=xMes;
+end;
+
+// retorna o ano
+function Ano(data:Tdate):word;
+var
+   xDia,xMes,xAno : word;
+begin
+  DecodeDate(data, xAno, xMes, xDia);
+  result :=xAno;
+end;
+
+function RetornaMes1(data:TDate):string;
+begin
+  case Mes(data) of
+    1 : result := 'JANEIRO';
+    2 : result := 'FEVEREIRO';
+    3 : result := 'MARCO';
+    4 : result := 'ABRIL';
+    5 : result := 'MAIO';
+    6 : result := 'JUNHO';
+    7 : result := 'JULHO';
+    8 : result := 'AGOSTO';
+    9 : result := 'SETEMBRO';
+    10 : result := 'OUTUBRO';
+    11 : result := 'NOVEMBRO';
+    12 : result := 'DEZEMBRO';
+  end;
+end;
+
+function RetornaMes2(Mes: Word):string;
+begin
+  case Mes of
+    01 : result := 'JANEIRO';
+    02 : result := 'FEVEREIRO';
+    03 : result := 'MARÇO';
+    04 : result := 'ABRIL';
+    05 : result := 'MAIO';
+    06 : result := 'JUNHO';
+    07 : result := 'JULHO';
+    08 : result := 'AGOSTO';
+    09 : result := 'SETEMBRO';
+    10 : result := 'OUTUBRO';
+    11 : result := 'NOVEMBRO';
+    12 : result := 'DEZEMBRO';
+  else
+    result := Extenso(Mes);
+  end;
+end;
+
+function StrMesToInt( MesExtenso: string):byte;
+var
+  Meses : array [1..12] of String;
+  I: Integer;
+begin
+  Meses [1] := 'JANEIRO';
+  Meses [2] := 'FEVEREIRO';
+  Meses [3] := 'MARÇO';
+  Meses [4] := 'ABRIL';
+  Meses [5] := 'MAIO';
+  Meses [6] := 'JUNHO';
+  Meses [7] := 'JULHO';
+  Meses [8] := 'AGOSTO';
+  Meses [9] := 'SETEMBRO';
+  Meses [10]:= 'OUTUBRO';
+  Meses [11]:= 'NOVEMBRO';
+  Meses [12]:= 'DEZEMBRO';
+
+  for I := Low(Meses) to High(Meses) do
+  begin
+    Result := 0;
+    if (CompareStr(UpperCase(MesExtenso), Meses[i]) = 0)  then
+    begin
+      Result := i;
+      break;
+    end;
+  end;
+end;
+function ProximoMes( xData : TDate ):TDate;
+var
+   xDia, xMes, xAno : word;
+begin
+  xDia := Dia( xData );
+  xMes := Mes( xData );
+  xAno := Ano( xData );
+
+  xMes := xMes + 1;
+  if xMes > 12 then
+  begin
+    xMes :=1;
+    xAno := xAno + 1;
+  end;
+
+  if (xDia=30) and (xMes=2) then
+    xDia:=28;
+
+  if (xDia=31) and (xMes in [2,4,6,9,11]) then
+    if xMes=2 then
+      xDia:=28
+    else
+      xDia := 30;
+
+  result := EncodeDate( xAno,xMes,xDia );
+end;
+
+function Extenso(Valor : Extended): String;
+var
+Centavos, Centena, Milhar, Milhao, Bilhao, Texto : string;
+const
+Unidades: array [1..9] of string = ('um', 'dois', 'tres', 'quatro',
+'cinco','seis', 'sete', 'oito','nove');
+Dez : array [1..9] of string = ('onze', 'doze', 'treze',
+'quatorze', 'quinze','dezesseis', 'dezessete','dezoito', 'dezenove');
+Dezenas: array [1..9] of string = ('dez', 'vinte', 'trinta',
+'quarenta', 'cinquenta','sessenta', 'setenta','oitenta', 'noventa');
+Centenas: array [1..9] of string = ('cento', 'duzentos',
+'trezentos', 'quatrocentos', 'quinhentos', 'seiscentos','setecentos',
+'oitocentos', 'novecentos');
+
+Function ifs( Expressao: Boolean; CasoVerdadeiro, CasoFalso:
+String): String;
+begin
+if Expressao then Result := CasoVerdadeiro else Result := CasoFalso;
+end;
+
+function MiniExtenso( Valor: ShortString ): string;
+var Unidade, Dezena, Centena: String;
+begin
+  if (Valor[2] = '1') and (Valor[3] <> '0') then
+  begin
+   Unidade := Dez[StrToInt(Valor[3])];
+   Dezena := '';
+  end
+  else
+  begin
+   if Valor[2] <> '0' then Dezena :=
+    Dezenas[StrToInt(Valor[2])];
+
+   if Valor[3] <> '0' then unidade :=
+    Unidades[StrToInt(Valor[3])];
+  end;
+
+  if (Valor[1] = '1') and (Unidade = '') and (Dezena = '') then
+   Centena := 'cem'
+  else
+  if Valor[1] <> '0' then
+   Centena := Centenas[StrToInt(Valor[1])]
+  else
+   Centena := '';
+
+  Result := Centena + ifs( (Centena <> '') and ((Dezena <> '') or (Unidade <> '')),' e ', '') + Dezena +
+  ifs( (Dezena <> '') and (Unidade <> ''), ' e ', '')+ Unidade;
+end;
+
+begin
+  if Valor = 0 then
+  begin
+    Result := '';
+    Exit;
+  end;
+
+  Texto := FormatFloat( '000000000000.00', Valor );
+  Centavos := MiniExtenso( '0' + Copy( Texto, 14, 2 ) );
+  Centena := MiniExtenso( Copy( Texto, 10, 3 ) );
+  Milhar := MiniExtenso( Copy( Texto, 7, 3 ) );
+  if Milhar <> '' then
+  Milhar := Milhar + ' mil';
+  Milhao := MiniExtenso( Copy( Texto, 4, 3 ) );
+  if Milhao <> '' then
+  Milhao := Milhao + ifs( Copy( Texto, 4, 3 ) = '001', ' milhão',
+  ' milhões');
+  Bilhao := MiniExtenso( Copy( Texto, 1, 3 ) );
+  if Bilhao <> '' then
+  Bilhao := Bilhao + ifs( Copy( Texto, 1, 3 ) = '001', ' bilhão',
+  ' bilhões');
+
+  if (Bilhao <> '') and (Milhao + Milhar + Centena = '') then
+  Result := Bilhao + ' de reais'
+  else if (Milhao <> '') and (Milhar + Centena = '') then
+  Result := Milhao + ' de reais'
+  else
+  Result := Bilhao +
+  ifs( (Bilhao <> '') and (Milhao + Milhar + Centena <>
+  ''),
+  ifs((Pos(' e ', Bilhao) > 0) or
+  (Pos( ' e ', Milhao + Milhar + Centena ) > 0
+  ), ', ', ' e '), '')
+  +
+  Milhao +
+  ifs( (Milhao <> '') and (Milhar + Centena <> ''),
+  ifs((Pos(' e ', Milhao) > 0) or
+  (Pos( ' e ', Milhar + Centena ) > 0 ), ', ',
+  ' e '), '') +
+  Milhar +
+  ifs( (Milhar <> '') and (Centena <> ''),
+  ifs(Pos( ' e ', Centena ) > 0, ', ', ' e '), '')
+  +
+  Centena + ifs( Int(Valor) = 1, ' real', ' reais' );
+  if Centavos <> '' then
+  Result := Result + ' e ' + Centavos + ifs( Copy( Texto, 14, 2 )= '01', ' centavo', ' centavos' );
+end;
+
 function fPingIP(pHost : String) :boolean;
 var
   IdICMPClient: TIdICMPClient;
@@ -1425,6 +1765,36 @@ begin
   end;
   Result := dwStat;
 end;
+
+function pProcessExists(pExeFileName: string; var pProcessCount: Integer): Boolean;
+var
+  ContinueLoop: BOOL;
+  FSnapshotHandle: THandle;
+  FProcessEntry32: TProcessEntry32;
+  wCount: Integer;
+begin
+  FSnapshotHandle := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  FProcessEntry32.dwSize := SizeOf(FProcessEntry32);
+  ContinueLoop := Process32First(FSnapshotHandle, FProcessEntry32);
+  Result := False;
+  wCount := 0;
+
+  while Integer(ContinueLoop) <> 0 do
+  begin
+    if ((UpperCase(ExtractFileName(FProcessEntry32.szExeFile)) =
+      UpperCase(pExeFileName)) or (UpperCase(FProcessEntry32.szExeFile) =
+      UpperCase(pExeFileName))) then
+    begin
+      Result := True;
+      Inc(wCount,1);
+    end;
+    ContinueLoop := Process32Next(FSnapshotHandle, FProcessEntry32);
+  end;
+
+  pProcessCount := wCount;
+  CloseHandle(FSnapshotHandle);
+end;
+
 
 function ServiceRunning(sMachine, sService: PChar): Boolean;
 begin

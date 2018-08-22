@@ -21,10 +21,8 @@ inherited foLogin: TfoLogin
     Margins.Top = 3
     Margins.Right = 3
     Margins.Bottom = 3
-    ExplicitLeft = 8
-    ExplicitTop = -6
-    ExplicitWidth = 691
-    ExplicitHeight = 494
+    ExplicitWidth = 456
+    ExplicitHeight = 344
     object lbMAXXML: TLabel [0]
       Left = 165
       Top = 35
@@ -1496,8 +1494,8 @@ inherited foLogin: TfoLogin
       Margins.Bottom = 3
       Anchors = []
       OnExit = edUsuarioExit
-      ExplicitLeft = 60
-      ExplicitTop = 259
+      ExplicitLeft = 61
+      ExplicitTop = 258
     end
     inherited edSenha: TEdit
       Left = 61
@@ -1508,12 +1506,12 @@ inherited foLogin: TfoLogin
       Margins.Bottom = 3
       Anchors = []
       OnExit = edSenhaExit
-      ExplicitLeft = 60
-      ExplicitTop = 285
+      ExplicitLeft = 61
+      ExplicitTop = 284
     end
     inherited btnAcessar: TBitBtn
       Left = 34
-      Top = 307
+      Top = 305
       Margins.Left = 3
       Margins.Top = 3
       Margins.Right = 3
@@ -1522,8 +1520,8 @@ inherited foLogin: TfoLogin
       Caption = '&Entrar'
       Default = True
       OnClick = btnAcessarClick
-      ExplicitLeft = 33
-      ExplicitTop = 308
+      ExplicitLeft = 34
+      ExplicitTop = 305
     end
     object btnCancelar: TBitBtn
       Left = 99
@@ -1540,8 +1538,6 @@ inherited foLogin: TfoLogin
       ModalResult = 2
       TabOrder = 3
       OnClick = btnCancelarClick
-      ExplicitLeft = 97
-      ExplicitTop = 308
     end
     object btnConfig: TBitBtn
       Left = 164
@@ -1558,8 +1554,6 @@ inherited foLogin: TfoLogin
       TabOrder = 4
       Visible = False
       OnClick = btnConfigClick
-      ExplicitLeft = 161
-      ExplicitTop = 308
     end
   end
 end

@@ -154,9 +154,13 @@ type
     cdsTPEventoCODEVENTO: TIntegerField;
     cdsTPEventoDESCRICAO: TStringField;
     cdsBkpdfeTPEVENTO: TIntegerField;
+    cdsBkpdfeMODELO: TStringField;
 
     procedure DataModuleCreate(Sender: TObject);
-    procedure dsTPEventoDataChange(Sender: TObject; Field: TField);
+    procedure conConexaoFDError(ASender, AInitiator: TObject;
+      var AException: Exception);
+    procedure DataModuleDestroy(Sender: TObject);
+    procedure fddrfbDriverDriverCreated(Sender: TObject);
   private
   public
     Dao: TDaoFD;
@@ -175,8 +179,15 @@ uses
 
 {$R *.dfm}
 
+procedure TDM_NFEDFE.conConexaoFDError(ASender, AInitiator: TObject;
+  var AException: Exception);
+begin
+//  ShowMessage('OnError');
+end;
+
 procedure TDM_NFEDFE.DataModuleCreate(Sender: TObject);
 begin
+  conConexaoFD.Close;
   Dao := TDaoFD.Create(conConexaoFD, fdtrTransacao);
   ConecxaoBD := TConecxaoBD.Create(conConexaoFD);
   sqlBkpDfe.Connection := conConexaoFD;
@@ -195,7 +206,12 @@ begin
   CNPJDOC := TCNPJDOC.Create;
 end;
 
-procedure TDM_NFEDFE.dsTPEventoDataChange(Sender: TObject; Field: TField);
+procedure TDM_NFEDFE.DataModuleDestroy(Sender: TObject);
+begin
+//  conConexaoFD.Close;
+end;
+
+procedure TDM_NFEDFE.fddrfbDriverDriverCreated(Sender: TObject);
 begin
 
 end;
@@ -225,7 +241,7 @@ begin
   Conn.Params.Values['CharacterSet'] := FCharacterSet;
   Conn.Params.Values['Protocol']     := FProtocol;
   Conn.Params.Values['Protocol']     := 'ipLocal';
-  Conn.Params.Values['Server']       := '';
+  Conn.Params.Values['Server']       := FServer;
   Conn.Params.Values['Port']         := FPort;
 end;
 
@@ -284,7 +300,10 @@ begin
     Conn.Open;
     Result := Conn.Connected;
     if Result and (ParamStr(1)= '') then
+    begin
       DaoObjetoXML.pAtualizaBD;
+      daoUsuarios.pAtuBaseUsuario;
+    end;
 
     FConectado := Result;
   except
@@ -336,6 +355,13 @@ procedure TConecxaoBD.pReadParams(pSessao: String);
 begin
   FSessaoAtual := pSessao;
   pListaSessaoINI;
+
+  if (Trim(pSessao) <> '') and (FListaSessao.indexof(pSessao)<0) then
+  begin
+    pWriteParams(pSessao);
+    pListaSessaoINI;
+  end;
+
   FTipoCon      := TConvert<TTipoConexao>.StrConvertEnum(getINI(FIniFile, pSessao, 'TipoCon','tcLocal'));
   FUserName     := getINI(FIniFile, pSessao, 'User_Name');
   FPassword     := getINI(FIniFile, pSessao, 'Password');

@@ -4,7 +4,7 @@ object foConexao: TfoConexao
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Configura'#231#245'es do banco de dados'
-  ClientHeight = 287
+  ClientHeight = 325
   ClientWidth = 373
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -28,14 +28,14 @@ object foConexao: TfoConexao
     Left = 0
     Top = 37
     Width = 373
-    Height = 250
+    Height = 288
     Align = alClient
     TabOrder = 2
     object pgcConfig: TPageControl
       Left = 1
       Top = 1
       Width = 371
-      Height = 229
+      Height = 267
       Hint = 'Configura par'#226'metros do banco de dados'
       ActivePage = tsConfigBD
       Align = alClient
@@ -44,10 +44,6 @@ object foConexao: TfoConexao
       TabOrder = 0
       object tsConfigBD: TTabSheet
         Caption = 'Configura BD'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lbStatusConn: TLabel
           Left = 94
           Top = 343
@@ -110,7 +106,7 @@ object foConexao: TfoConexao
         object edDataBase: TLabeledEdit
           AlignWithMargins = True
           Left = 14
-          Top = 110
+          Top = 148
           Width = 284
           Height = 20
           Margins.Left = 2
@@ -124,15 +120,15 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Banco de dados'
-          TabOrder = 4
+          TabOrder = 5
         end
         object btnFindBD: TButton
           Left = 303
-          Top = 110
+          Top = 148
           Width = 27
           Height = 20
           Caption = '...'
-          TabOrder = 5
+          TabOrder = 6
           OnClick = btnFindBDClick
         end
         object cbbTipoCon: TComboBox
@@ -151,7 +147,7 @@ object foConexao: TfoConexao
         end
         object btnConectar1: TButton
           Left = 14
-          Top = 174
+          Top = 212
           Width = 317
           Height = 25
           Caption = 'Conectar'
@@ -159,13 +155,13 @@ object foConexao: TfoConexao
           HotImageIndex = 0
           Images = ilCadastro
           ParentDoubleBuffered = False
-          TabOrder = 8
+          TabOrder = 9
           OnClick = btnConectar1Click
         end
         object edServerName: TLabeledEdit
           AlignWithMargins = True
           Left = 14
-          Top = 149
+          Top = 187
           Width = 284
           Height = 20
           Margins.Left = 2
@@ -179,11 +175,11 @@ object foConexao: TfoConexao
           EditLabel.Margins.Right = 2
           EditLabel.Margins.Bottom = 2
           EditLabel.Caption = 'Servername / IP'
-          TabOrder = 6
+          TabOrder = 7
         end
         object btnPing: TButton
           Left = 303
-          Top = 149
+          Top = 187
           Width = 27
           Height = 20
           Caption = 'Ping'
@@ -193,7 +189,7 @@ object foConexao: TfoConexao
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 7
+          TabOrder = 8
           OnClick = btnPingClick
         end
         object cbbPerfilCon: TComboBox
@@ -202,17 +198,61 @@ object foConexao: TfoConexao
           Width = 155
           Height = 20
           ItemIndex = 0
+          Sorted = True
           TabOrder = 0
           Text = 'MAXXML'
           OnChange = cbbPerfilConChange
+          OnClick = cbbPerfilConClick
+          OnDblClick = cbbPerfilConDblClick
           Items.Strings = (
             'MAXXML')
+        end
+        object edPorta: TLabeledEdit
+          AlignWithMargins = True
+          Left = 13
+          Top = 110
+          Width = 81
+          Height = 20
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          EditLabel.Width = 24
+          EditLabel.Height = 12
+          EditLabel.Margins.Left = 2
+          EditLabel.Margins.Top = 2
+          EditLabel.Margins.Right = 2
+          EditLabel.Margins.Bottom = 2
+          EditLabel.Caption = 'Porta'
+          MaxLength = 4
+          NumbersOnly = True
+          TabOrder = 4
+        end
+        object edServer: TLabeledEdit
+          AlignWithMargins = True
+          Left = 98
+          Top = 110
+          Width = 200
+          Height = 20
+          Margins.Left = 2
+          Margins.Top = 2
+          Margins.Right = 2
+          Margins.Bottom = 2
+          EditLabel.Width = 30
+          EditLabel.Height = 12
+          EditLabel.Margins.Left = 2
+          EditLabel.Margins.Top = 2
+          EditLabel.Margins.Right = 2
+          EditLabel.Margins.Bottom = 2
+          EditLabel.Caption = 'Server'
+          TabOrder = 10
+          OnDblClick = edServerDblClick
         end
       end
     end
     object stat1: TStatusBar
       Left = 1
-      Top = 230
+      Top = 268
       Width = 371
       Height = 19
       Panels = <
@@ -279,7 +319,7 @@ object foConexao: TfoConexao
     Left = 272
     Top = 4
     Bitmap = {
-      494C010104000C00780110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010104000C00940110001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

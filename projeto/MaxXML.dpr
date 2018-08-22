@@ -5,72 +5,68 @@ uses
   Vcl.Controls,
   SysUtils,
   System.MaskUtils,
-  uDMnfebkp in 'J:\fontes\uDMnfebkp.pas' {DM_NFEDFE: TDataModule},
-  uMetodosUteis in 'J:\fontes\uMetodosUteis.pas',
-  uPadraoCons in 'J:\fontes\Padroes\uPadraoCons.pas' {frmPadraoCons},
-  uFoPrincipal in 'J:\fontes\uFoPrincipal.pas' {foPrincipal},
-  Atributos in 'J:\fontes\ORM\Atributos.pas',
-  Base in 'J:\fontes\ORM\Base.pas',
-  DaoFD in 'J:\fontes\ORM\DaoFD.pas',
-  GerarClasse.BancoFirebird in 'J:\fontes\ORM\GerarClasse.BancoFirebird.pas',
-  GerarClasse.BancoMySQL in 'J:\fontes\ORM\GerarClasse.BancoMySQL.pas',
-  GerarClasse in 'J:\fontes\ORM\GerarClasse.pas',
-  GerarClasseFireDac in 'J:\fontes\ORM\GerarClasseFireDac.pas',
-  Configuracoes in 'J:\fontes\classes\Configuracoes.pas',
-  ufoGerarClasse in 'J:\fontes\ORM\ufoGerarClasse.pas' {foGeraClasse},
-  Lm_bkpdfe in 'J:\fontes\classes\Lm_bkpdfe.pas',
-  uPadraoEdicao in 'J:\fontes\Padroes\uPadraoEdicao.pas' {frmPadraoEdi},
-  ufoLoginPadrao in 'J:\fontes\Padroes\ufoLoginPadrao.pas' {foLoginPadrao},
-  ufoLogin in 'J:\fontes\ufoLogin.pas' {foLogin},
-  Usuarios in 'J:\fontes\classes\Usuarios.pas',
-  uFoConsultaPadrao in 'J:\fontes\Padroes\uFoConsultaPadrao.pas' {foConsultaPadrao},
-  uFoConsConfiguracao in 'J:\fontes\uFoConsConfiguracao.pas' {foConsConfiguracoes},
-  ConfigPadrao in 'J:\fontes\classes\ConfigPadrao.pas',
-  uFoConfigPadrao in 'J:\fontes\uFoConfigPadrao.pas' {foConfigPadrao},
-  uRotinas in 'J:\fontes\uRotinas.pas',
-  uFoXMLSimulacao in 'J:\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
-  uFoCadUsuario in 'J:\fontes\uFoCadUsuario.pas' {foCadUsuario},
-  uFoConsUsuario in 'J:\fontes\uFoConsUsuario.pas' {foConsUsuario},
-  uPadraoForm in 'J:\fontes\Padroes\uPadraoForm.pas' {foPadraoForm},
-  ufoTamanhoArquivos in 'J:\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
-  uDirectoryTreeSize in 'J:\fontes\uDirectoryTreeSize.pas',
-  uProgressThread in 'J:\fontes\uProgressThread.pas',
-  uFoFiltroDetalhe in 'J:\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado},
-  uFoConexao in 'J:\fontes\uFoConexao.pas' {foConexao},
-  uFoProgressao in 'J:\fontes\uFoProgressao.pas' {foProgressao},
-  Tpevento in 'J:\fontes\Tpevento.pas';
+  uDMnfebkp in '..\fontes\uDMnfebkp.pas' {DM_NFEDFE: TDataModule},
+  uMetodosUteis in '..\fontes\uMetodosUteis.pas',
+  uPadraoCons in '..\fontes\Padroes\uPadraoCons.pas' {frmPadraoCons},
+  uFoPrincipal in '..\fontes\uFoPrincipal.pas' {foPrincipal},
+  Atributos in '..\fontes\ORM\Atributos.pas',
+  Base in '..\fontes\ORM\Base.pas',
+  DaoFD in '..\fontes\ORM\DaoFD.pas',
+  GerarClasse.BancoFirebird in '..\fontes\ORM\GerarClasse.BancoFirebird.pas',
+  GerarClasse.BancoMySQL in '..\fontes\ORM\GerarClasse.BancoMySQL.pas',
+  GerarClasse in '..\fontes\ORM\GerarClasse.pas',
+  GerarClasseFireDac in '..\fontes\ORM\GerarClasseFireDac.pas',
+  Configuracoes in '..\fontes\classes\Configuracoes.pas',
+  ufoGerarClasse in '..\fontes\ORM\ufoGerarClasse.pas' {foGeraClasse},
+  Lm_bkpdfe in '..\fontes\classes\Lm_bkpdfe.pas',
+  uPadraoEdicao in '..\fontes\Padroes\uPadraoEdicao.pas' {frmPadraoEdi},
+  ufoLoginPadrao in '..\fontes\Padroes\ufoLoginPadrao.pas' {foLoginPadrao},
+  ufoLogin in '..\fontes\ufoLogin.pas' {foLogin},
+  Usuarios in '..\fontes\classes\Usuarios.pas',
+  uFoConsultaPadrao in '..\fontes\Padroes\uFoConsultaPadrao.pas' {foConsultaPadrao},
+  uFoConsConfiguracao in '..\fontes\uFoConsConfiguracao.pas' {foConsConfiguracoes},
+  ConfigPadrao in '..\fontes\classes\ConfigPadrao.pas',
+  uFoConfigPadrao in '..\fontes\uFoConfigPadrao.pas' {foConfigPadrao},
+  uRotinas in '..\fontes\uRotinas.pas',
+  uFoXMLSimulacao in '..\fontes\uFoXMLSimulacao.pas' {foXMLSimulcao},
+  uPadraoForm in '..\fontes\Padroes\uPadraoForm.pas' {foPadraoForm},
+  ufoTamanhoArquivos in '..\fontes\ufoTamanhoArquivos.pas' {foTamArquivos},
+  uDirectoryTreeSize in '..\fontes\uDirectoryTreeSize.pas',
+  uProgressThread in '..\fontes\uProgressThread.pas',
+  uFoFiltroDetalhe in '..\fontes\uFoFiltroDetalhe.pas' {foFiltroDetalahado},
+  uFoConexao in '..\fontes\uFoConexao.pas' {foConexao},
+  uFoProgressao in '..\fontes\uFoProgressao.pas' {foProgressao},
+  Tpevento in '..\fontes\Tpevento.pas',
+  uProgressWheel in '..\Componentes\Progress Wheel Bar\uProgressWheel.pas',
+  ProgressWheel in '..\Componentes\Progress Wheel Bar\ProgressWheel.pas',
+  SplitView in '..\fontes\SplitView.pas',
+  uFoAutoriza in '..\fontes\uFoAutoriza.pas' {foAutoriza};
 
 var
+ CountProcess: integer;
  ShowResult : Byte;
  wMsg, wSenhaAtual, wPathMAX: string;
  SoapUsuario : TUsuarios;
  wTipo : integer;
  wMaxOK : boolean;
 
- const
-  cXMLConsulta   = 0;
-  cXMLEnvio      = 1;
-  cXMLProcessado = 2;
-  cXMLCancProc   = 3;
-  cXMLCancEnvio  = 4;
-  cXMLInut       = 5;
-  cXMLCartaCorr  = 6;
-
 {$R *.res}
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML) - Versão 1.7';
+  Application.Title := 'MAXXML - Gereciador de arquivos fiscais de NFe(XML) - Versão 2.0';
   Application.CreateForm(TDM_NFEDFE, DM_NFEDFE);
   wTipo := StrToIntDef(Trim(ParamStr(1)),0);
 
-//  DM_NFEDFE.fdmoMonitor.Tracing := false;
-//  DM_NFEDFE.fdmoMonitor.FileName :=  IncludeTrailingPathDelimiter(ExtractFilePath(Application.ExeName))+ FormatDateTime('dd-mm-aaaa-hh-nn-zzz',now)+'-Monitor.log';
-//  DM_NFEDFE.fdmoMonitor.Tracing := True;
+   if (pProcessExists('MaxXML.exe',CountProcess)) then
+     if CountProcess > 1 then
+     begin
+       Application.Terminate;
+     end;
 
   if (ParamCount = 0) then
   begin
-    ConecxaoBD.pReadParams(FNomePC);
+    ConecxaoBD.pReadParams(UpperCase(FNomePC));
     ConecxaoBD.pConecta;
 
     Lm_bkpdfe.CNPJDOC.Documento := '*';
@@ -82,9 +78,7 @@ begin
 
     if ShowResult = mrOk then
     begin
-//      wMsg := foLogin.statMsg.Panels[1].Text;
       SoapUsuario :=  tabUsuarios;
-
       FreeAndNil(foLogin); //Libera o form de Login da memória
       Application.CreateForm(TFoPrincipal, FoPrincipal); //Cria a janela principal
       tabUsuarios := SoapUsuario;
@@ -110,7 +104,23 @@ begin
     tabUsuarios.Senha           := Trim(ParamStr(3));
     Lm_bkpdfe.CNPJDOC.Documento := Trim(ParamStr(4));
     Lm_bkpdfe.CNPJDOC.Fantasia  := Trim(ParamStr(5));
+//    byMesAtual                  := Trim(ParamStr(6));
+//    byAnoAtual                  := Trim(ParamStr(7));
     Lm_bkpdfe.CNPJDOC.Parametro := true;
+
+    if true then
+    begin
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'---------- INICIO ----------', true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'0 - ParamStr('+ Trim(ParamStr(0)), True);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'1 - ParamStr('+ Trim(ParamStr(1)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'2 - ParamStr('+ Trim(ParamStr(2)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'3 - ParamStr('+ Trim(ParamStr(3)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'4 - ParamStr('+ Trim(ParamStr(4)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'5 - ParamStr('+ Trim(ParamStr(5)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'6 - ParamStr('+ Trim(ParamStr(6)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'7 - ParamStr('+ Trim(ParamStr(7)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'------------- FIM ----------', true);
+    end;
 
     wSenhaAtual := uMetodosUteis.fSenhaAtual('');
     wPathMAX := ExtractFileDir(ParamStr(0));
@@ -157,9 +167,9 @@ begin
      Application.Terminate;
   end
   else
-  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut,cXMLCartaCorr]) then
+  if (wTipo in [cXMLEnvio,cXMLProcessado, cXMLCancProc,cXMLCancEnvio, cXMLInut,cXMLCartaCorr, cXMLLote]) then
   begin
-    ConecxaoBD.pReadParams(FNomePC);
+    ConecxaoBD.pReadParams(UpperCase(FNomePC));
     ConecxaoBD.pConecta;
 
     if not ConecxaoBD.Conectado then
@@ -168,16 +178,17 @@ begin
       exit;
     end;
 
-    if false then
+    if true then
     begin
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'---------- INICIO ----------', true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(0)), True);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(1)), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(2)), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(3)), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(4)), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(5)), true);
-      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'ParamStr('+ Trim(ParamStr(6)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'0 - ParamStr('+ Trim(ParamStr(0)), True);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'1 - ParamStr('+ Trim(ParamStr(1)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'2 - ParamStr('+ Trim(ParamStr(2)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'3 - ParamStr('+ Trim(ParamStr(3)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'4 - ParamStr('+ Trim(ParamStr(4)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'5 - ParamStr('+ Trim(ParamStr(5)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'6 - ParamStr('+ Trim(ParamStr(6)), true);
+      uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'7 - ParamStr('+ Trim(ParamStr(7)), true);
       uMetodosUteis.AddLog('LOGMAXXML',GetCurrentDir,'------------- FIM ----------', true);
     end;
 
@@ -192,7 +203,6 @@ begin
 
    if (daoLogin.fLogar(tabUsuarios)) then
    begin
-
      try
        if fLoadXMLNFeParam(wTipo,ParamStr(4)) then
      except
@@ -202,4 +212,5 @@ begin
    Application.Terminate;
   end;
     //by Anderson Gaitolini
+  Application.Terminate;
 end.
